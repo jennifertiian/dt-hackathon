@@ -254,6 +254,7 @@ const floor = (n, x) => [n, x, 150 - sz(n)[1]];
 
 const PEOPLE = [
   { id: 'mei', name: 'Mei Lin', line: 'cognitive science · ’27', skin: 'blue', stickers: [['sticker_star', 9, 24]],
+    song: { id: '46rPcSaUj5jHxX60xWmsMD', title: 'From The Start', artist: 'Laufey', caption: 'for golden-hour walks home with a fresh roll of film.' },
     pills: [['cog sci', '#5a75bd'], ['INFJ', '#c46f8b'], ['film photo', '#64924f']],
     facts: [['likes', 'film photography, bouldering, matcha everything'], ['eats', 'Asha Tea House'], ['studies', 'Doe, North Reading Room'], ['also', 'will trade you a polaroid for boba']],
     hello: "hi, i'm Mei! hover over the stuff in my locker to get to know me ✿",
@@ -266,6 +267,7 @@ const PEOPLE = [
       floor('plant', 132).concat(['succulent', 'his name is Gerald. he has survived two midterm seasons.'])
     ] },
   { id: 'haruto', name: 'Haruto Sato', line: 'mechanical engineering · ’26', skin: 'blue', stickers: [],
+    song: { id: '4J2oDU9oacz7lJ7H8A8P8v', title: 'Mayonaka no Door~stay with me', artist: 'Miki Matsubara', caption: 'city pop on the bus after volleyball. always one more listen.' },
     pills: [['mech e', '#5a75bd'], ['ENFP', '#c46f8b'], ['volleyball', '#c97a3c']],
     facts: [['likes', 'volleyball, custom keyboards, cooking for friends'], ['eats', 'Sliver Pizzeria'], ['studies', 'Doe, Heyns Reading Room'], ['also', 'always down for intramural volleyball']],
     hello: "yo! i'm Haruto. poke around, everything in here has a story",
@@ -278,6 +280,7 @@ const PEOPLE = [
       floor('headphones', 120).concat(['headphones', 'currently looping city pop. taking song recs.'])
     ] },
   { id: 'priya', name: 'Priya Raman', line: 'molecular & cell bio · ’27', skin: 'mint', stickers: [['sticker_flower', 14, 24]],
+    song: { id: '3hUxzQpSfdDqwM3ZTFQY0K', title: 'august', artist: 'Taylor Swift', caption: 'my five-minute break between orgo flashcards. sometimes it becomes twenty.' },
     pills: [['MCB', '#4a8573'], ['ISTJ', '#c46f8b'], ['dance', '#8c76c0']],
     facts: [['likes', 'Bharatanatyam, bullet journaling, true crime pods'], ['eats', 'The Cheese Board'], ['studies', 'Doe, Main Stacks lvl C'], ['also', 'my color-coded notes are open source']],
     hello: "hii, Priya here! welcome to my very organized locker",
@@ -290,6 +293,7 @@ const PEOPLE = [
       floor('boba_milk', 130).concat(['milk tea', 'brown sugar, 30% sweet. study fuel.'])
     ] },
   { id: 'diego', name: 'Diego Morales', line: 'architecture · ’26', skin: 'blue', stickers: [],
+    song: { id: '6hHUYqiigde3EvecMg0K8d', title: 'Nunca Es Suficiente', artist: 'Los Ángeles Azules, Natalia Lafourcade', caption: 'the studio playlist needs cumbia. i do not make the rules.' },
     pills: [['arch', '#5a75bd'], ['ENTP', '#c46f8b'], ['skating', '#64924f']],
     facts: [['likes', 'sketching buildings, skateboarding, cumbia'], ['eats', 'Top Dog'], ['studies', 'Doe, 2nd floor windows'], ['also', 'i will draw your dorm if you ask nicely']],
     hello: "hey, Diego. it's a little messy in here, it's an artist thing",
@@ -311,6 +315,7 @@ const PEOPLE = [
       shelf('plant', 87).concat(['starter plant', 'every locker comes with a plant. please water it.'])
     ] },
   { id: 'amara', name: 'Amara Okafor', line: 'economics & poli sci · ’27', skin: 'butter', stickers: [],
+    song: { id: '0prHRcmwD2Kk6no5sMovDD', title: 'Calm Down', artist: 'Rema', caption: 'getting ready for a thrift run with my roommates. volume all the way up.' },
     pills: [['econ', '#b98b3a'], ['ESTJ', '#c46f8b'], ['debate', '#5a75bd']],
     facts: [['likes', 'debate, thrifting, Afrobeats playlists'], ['eats', 'Kingpin Donuts'], ['studies', 'Doe, the café line'], ['also', 'ask me about my thrift finds']],
     hello: "hey hey! Amara. take a look around, then come say hi",
@@ -323,6 +328,7 @@ const PEOPLE = [
       floor('boba_milk', 128).concat(['milk tea', 'honestly i just like holding it. it\'s a vibe.'])
     ] },
   { id: 'sofia', name: 'Sofia Nguyen', line: 'computer science · ’27', skin: 'lavender', stickers: [['sticker_heart', 12, 26]],
+    song: { id: '6fwW6uPloanwDx78kBvH0N', title: 'Spring (The Valley Comes Alive)', artist: 'ConcernedApe', caption: 'one more day in Stardew before i fix that bug. just one more.' },
     pills: [['CS', '#6f5a9e'], ['INTP', '#c46f8b'], ['crochet', '#c46f8b']],
     facts: [['likes', 'indie games, crochet, cats'], ['eats', 'pho on Telegraph'], ['studies', 'Doe, by the globe'], ['also', 'i crochet during lecture, it helps me focus']],
     hello: "oh hi! Sofia. mind the bunny, she bites (she doesn't)",
@@ -335,6 +341,7 @@ const PEOPLE = [
       floor('onigiri', 128).concat(['onigiri', 'emergency snack from the Asian market on University.'])
     ] },
   { id: 'kai', name: 'Kai Thompson', line: 'environmental science · ’28', skin: 'blue', stickers: [['sticker_flower', 26, 26]],
+    song: { id: '02bbqHnBCFchuL4wjVKFep', title: 'Banana Pancakes', artist: 'Jack Johnson', caption: 'slow mornings after an early hike. learning this one on ukulele.' },
     pills: [['env sci', '#4a8573'], ['ENFJ', '#c46f8b'], ['hiking', '#64924f']],
     facts: [['likes', 'hiking, birdwatching, ukulele'], ['eats', 'Berkeley Bowl hot bar'], ['studies', 'Doe, North Reading Room'], ['also', 'i can name every bird on campus']],
     hello: "hey! Kai here. welcome to my tiny forest",
@@ -347,6 +354,7 @@ const PEOPLE = [
       floor('sketchbook', 124).concat(['field journal', 'bird sketches + where i saw them. the Doe Library hawk is a regular.'])
     ] },
   { id: 'lena', name: 'Lena Park', line: 'media studies · ’28', skin: 'pink', stickers: [],
+    song: { id: '5702raF31K9rvD6KZ6sCTo', title: 'Ditto', artist: 'NewJeans', caption: 'cutting up magazines for my next zine with this on repeat.' },
     pills: [['media', '#c96f92'], ['ESFP', '#c46f8b'], ['zines', '#b98b3a']],
     facts: [['likes', 'k-dramas, zine making, roller skating'], ['eats', 'Yogurt Park'], ['studies', 'Doe, Heyns Reading Room'], ['also', 'my zine drops monthly, want one?']],
     hello: "annyeong! Lena. my locker is basically a zine, enjoy ♡",
@@ -443,7 +451,8 @@ function openLocker(p) {
     it.style.left = x + 'px'; it.style.top = y + 'px';
     const show = () => { items.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); it.classList.add('sel'); tab.textContent = label; say(desc); };
     it.addEventListener('mouseenter', show); it.addEventListener('focus', show); it.addEventListener('click', show);
-    if (p.you && isMusicAsset(n) && lockerSong) it.addEventListener('click', () => openSongPlayer(lockerSong));
+    const song = p.you ? lockerSong : p.song;
+    if (song && isMusicAsset(n)) it.addEventListener('click', () => openSongPlayer(song, p.you ? undefined : p.name));
     items.append(it);
   });
 

@@ -18,6 +18,9 @@ const CASSETTE_SVG = `<svg viewBox="0 0 88 56" width="28" height="18" xmlns="htt
 </svg>`;
 A[MUSIC_OBJECT] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(CASSETTE_SVG);
 SIZES[MUSIC_OBJECT] = [28, 18];
+for (const person of PEOPLE) {
+  if (person.song) person.items.push(floor(MUSIC_OBJECT, 44).concat([person.song.title, person.song.caption]));
+}
 const SONG_STORAGE = 'homeroom.locker-song.v1';
 let lockerSong = readLockerSong();
 let musicLayer = null;
@@ -122,8 +125,8 @@ function musicHeading(title, subtitle, closeLabel = 'Close music editor') {
   return el('header', { className: 'music-heading' }, [copy, close]);
 }
 
-function openSongPlayer(song) {
-  const dialog = openMusicLayer('Your locker soundtrack', true);
+function openSongPlayer(song, owner) {
+  const dialog = openMusicLayer(owner ? `${owner}'s locker soundtrack` : 'Your locker soundtrack', true);
   musicLayer.classList.add('music-playback-layer');
   dialog.append(musicHeading('Currently on repeat', `${song.title} · ${song.artist}`, 'Close Spotify player'), spotifyFrame(song));
   if (song.caption) dialog.append(el('p', { className: 'music-player-caption', textContent: song.caption }));
