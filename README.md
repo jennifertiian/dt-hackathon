@@ -19,13 +19,28 @@ The prototype covers the first flow:
 5. **Send:** an envelope animation, then the note shows up under mailbox → sent.
 6. **Mailbox:** accept a received note to open a DM.
 
-The edit button is a placeholder for the next flow (making your own locker). All people in the prototype are made-up examples.
+All people in the prototype are made-up examples.
+
+### Onboarding, quiz and notes (`src/flows.template.html`)
+
+Opening the page now starts at sign-in. Add `#hallway` to the URL to skip straight to the hallway with an example profile.
+
+1. **Sign in:** `@berkeley.edu` email only → mock magic-link inbox → optional friend invite.
+2. **Make your locker · about you:** the form sits on the inside of your locker door (name, pronouns, major, year, MBTI, likes, classes, food spot, study spot, hobbies, artist, fun fact). Major / MBTI / year / first hobby become door tags. Below that is the theme picker: 14 interior wallpapers × 5 exterior colors, plus a door sticker. "✨ fill example" fills everything in for a demo.
+3. **Sprite maker:** click your circle. Tabs for face (eyes, mouth, skin, blush), hair (9 styles + any color), shirt and background, plus a "surprise me" button. It's drawn at 24×24 in the same style as the other avatars.
+4. **Decorate:** drag photos, stickers and objects into your locker. Click a placed item to give it a title and description and to resize, rotate, flip or remove it. Drag an item out of the locker to remove it. Objects settle onto the shelf or the floor. **Upload** turns any photo into a pixel polaroid (3 sizes) or any image into a die-cut sticker.
+5. **Go live:** your locker shows up in the hallway, and the **daily quiz** pops up (multiple choice or write your own). Today's answer decides tomorrow's neighbors.
+6. **Past quizzes** (clipboard button): a 3×3 grid of past questions and your answers.
+7. **Notes:** every note opens a DM by default. Unviewed notes poke out of your locker's vent. Click your locker (or press →) to unfold them one by one, or see all new ones in a grid. Once a note is viewed it leaves your locker and the notes grid and lives only in your DMs (mailbox → DMs).
+
+The pencil buttons (top bar, and "edit locker" inside your own locker) reopen the editor.
 
 ## Repo layout
 
 ```
 index.html                 built prototype (generated, open this)
-src/index.template.html    page source: layout, styles, interactions, example data
+src/index.template.html    page source: hallway layout, styles, interactions, example data
+src/flows.template.html    sign-in, locker editor, sprite maker, daily quiz, notes
 art/                       pixel-art generators (Python + Pillow)
   hallway.py               hallway background (480×270)
   assets.py                locker skins, big doors, interiors, items, avatars, icons
@@ -43,6 +58,7 @@ exports/                   full-size PNGs for slides and Figma
   ```sh
   pip install pillow
   python3 assets.py                                  # sprites → art/assets/
+  python3 flow_assets.py                             # editor wallpapers, quiz icon, note sprite
   NOCLOCK=1 python3 hallway.py hallway_noclock       # background used by the page
   python3 build.py                                   # → ../index.html
   ```
