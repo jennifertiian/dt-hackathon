@@ -225,6 +225,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
     <div id="logo" class="abs"><img id="logoStar" alt="" width="15" height="15"><div><b>homeroom</b><small>find your people · cal</small></div></div>
     <div id="sign" class="abs">Take a look at today’s locker neighbors!</div>
     <div id="topbtns" class="abs">
+      <button class="ibtn" id="btnQuiz" aria-label="Past quizzes"><img id="icQuiz" alt="" width="13" height="13"><span class="tip">past quizzes</span></button>
       <button class="ibtn" id="btnEdit" aria-label="Edit your locker"><img id="icPencil" alt="" width="13" height="13"><span class="tip">edit locker</span></button>
       <button class="ibtn" id="btnMail" aria-label="Open your mailbox"><img id="icMail" alt="" width="14" height="11"><span class="badge" id="mailBadge">1</span><span class="tip">mailbox</span></button>
       <button class="ibtn round" id="btnProfile" aria-label="Open your own locker"><img id="icAvatar" alt="" width="24" height="24"><span class="tip">your locker</span></button>
@@ -379,6 +380,8 @@ $('#icPencil').src = A.icon_pencil; $('#icMail').src = A.icon_mail; $('#icAvatar
 
 /* ---------- home grid ---------- */
 const grid = $('#grid');
+function renderGrid() {
+grid.innerHTML = '';
 PEOPLE.forEach((p, i) => {
   const c = i % 3, r = Math.floor(i / 3);
   const b = el('button', { className: 'locker' }); b.setAttribute('aria-label', p.you ? 'Your locker' : `Peek inside ${p.name}'s locker`);
@@ -386,13 +389,16 @@ PEOPLE.forEach((p, i) => {
   b.append(img('tile_' + p.skin, 64, 64, { className: 'tile' }));
   p.stickers.forEach(([n, x, y]) => { const s = img(n, ...sz(n), { className: 'stk' }); s.style.left = x + 'px'; s.style.top = y + 'px'; b.append(s); });
   if (p.you) b.append(el('span', { className: 'youplate', textContent: 'YOU' }));
+  if (p.you && typeof unreadNotes === 'function' && unreadNotes()) b.append(img('note_peek', 14, 11, { className: 'notepeek' }));
   b.append(el('span', { className: 'shine' }));
   b.append(el('span', { className: 'peek', textContent: p.you ? 'your locker' : p.name.split(' ')[0] }));
-  b.addEventListener('mouseenter', () => sayHome(p.you ? "that's your locker! click to see what your neighbors see." : `that's ${p.name.split(' ')[0]}'s locker. click to peek inside!`));
+  b.addEventListener('mouseenter', () => sayHome(p.you ? (typeof unreadNotes === 'function' && unreadNotes() ? "someone slipped notes into your locker! click to read them ✉" : "that's your locker! click to see what your neighbors see.") : `that's ${p.name.split(' ')[0]}'s locker. click to peek inside!`));
   b.addEventListener('focus', () => b.dispatchEvent(new Event('mouseenter')));
-  b.addEventListener('click', () => openLocker(p));
+  b.addEventListener('click', () => (p.you && typeof unreadNotes === 'function' && unreadNotes()) ? openNoteStack() : openLocker(p));
   grid.append(b);
 });
+}
+renderGrid();
 grid.addEventListener('mouseleave', () => sayHome(HOME_HELLO));
 sayHome(HOME_HELLO);
 
@@ -442,7 +448,7 @@ function openLocker(p) {
   const side = el('div', { id: 'sidebtns', className: 'abs' });
   if (p.you) {
     const edit = sbtn('icon_pencil', 13, 13, 'edit locker', 'tall');
-    edit.addEventListener('click', () => toast('locker editing is the next flow ✏️'));
+    edit.addEventListener('click', () => { closeLocker(); openEditor(2); });
     side.append(edit);
   } else {
     const liked = state.liked.has(p.id);
@@ -574,7 +580,7 @@ function playSent(p, text) {
     state.sentTo.add(p.id); state.sent.unshift({ to: p, text, at: new Date() });
     const nb = $('#noteBtn'); if (nb) { nb.classList.add('sent'); nb.querySelector('span').textContent = 'note sent!'; }
     const tab = $('#lockerTab'); const t = $('#lockerTxt');
-    if (tab && t) { tab.textContent = 'Mochi'; t.textContent = `your note is in ${p.name.split(' ')[0]}'s mailbox! if they accept, a DM opens up. you can find it under mailbox → sent.`; }
+    if (tab && t) { tab.textContent = 'Mochi'; t.textContent = `your note is slipped into ${p.name.split(' ')[0]}'s locker! it opens a DM between you two. find it under mailbox → sent.`; }
   }, 1900 * T + 20);
 }
 
@@ -591,7 +597,7 @@ function openMail() {
   box.append(el('h2', {}, [el('span', { textContent: 'mailbox' }), close]));
   const tabs = el('div', { className: 'tabs' }); tabs.setAttribute('role', 'tablist');
   ['received', 'sent'].forEach(t => {
-    const b = el('button', { className: 'tab', textContent: t === 'received' ? 'received (1)' : `sent (${state.sent.length})`, type: 'button' });
+    const b = el('button', { className: 'tab', textContent: t === 'received' ? `DMs (${typeof NOTES !== 'undefined' ? NOTES.length : 1})` : `sent (${state.sent.length})`, type: 'button' });
     b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', t === mailTab);
     b.addEventListener('click', () => { mailTab = t; state.dmOpen = false; renderMail(); tabs.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === b)); });
     tabs.append(b);
@@ -599,7 +605,7 @@ function openMail() {
   const body = el('div', { id: 'mailBody' });
   box.append(tabs, body);
   mailLayer.append(dim, box); $('#stage').append(mailLayer);
-  $('#mailBadge').hidden = true;
+  if (typeof updateBadges === 'function') updateBadges(); else $('#mailBadge').hidden = true;
   renderMail();
 }
 function closeMail() { if (mailLayer) { mailLayer.remove(); mailLayer = null; } }
@@ -607,40 +613,48 @@ function renderMail() {
   const body = $('#mailBody'); if (!body) return; body.innerHTML = '';
   if (mailTab === 'received') {
     if (state.dmOpen) return renderDM(body);
-    const r = RECEIVED;
-    const m = el('div', { className: 'mail' }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [
-      el('b', { textContent: `${r.from.name} left you a note` }), el('p', { textContent: r.text }), el('span', { className: 'when', textContent: r.when })])]);
-    const act = el('div', { className: 'mailact' });
-    const acc = el('button', { className: 'chip go', textContent: 'accept → open DM', type: 'button' });
-    const peek = el('button', { className: 'chip', textContent: 'peek at their locker', type: 'button' });
-    acc.addEventListener('click', () => { state.dmOpen = true; renderMail(); });
-    peek.addEventListener('click', () => { closeMail(); openLocker(r.from); });
-    act.append(acc, peek); m.querySelector('div').append(act);
-    body.append(m);
+    // every note opens a DM thread by default; unviewed ones are marked "new"
+    (typeof NOTES !== 'undefined' ? NOTES : [RECEIVED]).forEach(r => {
+      const m = el('div', { className: 'mail' + (r.read ? '' : ' unread') }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [
+        el('b', { textContent: `${r.from.name}${r.read ? '' : '  · new'}` }), el('p', { textContent: r.text }), el('span', { className: 'when', textContent: r.when + (r.read ? ' · viewed' : ' · not viewed yet') })])]);
+      const act = el('div', { className: 'mailact' });
+      const acc = el('button', { className: 'chip go', textContent: 'open DM', type: 'button' });
+      const peek = el('button', { className: 'chip', textContent: 'peek at their locker', type: 'button' });
+      acc.addEventListener('click', () => { r.read = true; state.dmWith = r; state.dmOpen = true; if (typeof updateBadges === 'function') updateBadges(); renderMail(); });
+      peek.addEventListener('click', () => { closeMail(); openLocker(r.from); });
+      act.append(acc, peek); m.querySelector('div').append(act);
+      body.append(m);
+    });
   } else {
     if (!state.sent.length) { body.append(el('p', { className: 'empty', textContent: 'no notes sent yet.\nopen a neighbor\'s locker and tap "leave a note" ✿' })); return; }
     state.sent.forEach(s => body.append(el('div', { className: 'mail' }, [img('avatar_' + s.to.id, 24, 24), el('div', {}, [
-      el('b', { textContent: `to ${s.to.name}` }), el('p', { textContent: s.text }), el('span', { className: 'when', textContent: 'just now · waiting for them to accept' })])])));
+      el('b', { textContent: `to ${s.to.name}` }), el('p', { textContent: s.text }), el('span', { className: 'when', textContent: 'just now · delivered to their DMs' })])])));
   }
 }
 function renderDM(body) {
-  const r = RECEIVED;
-  const head = el('div', { className: 'mail' }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [el('b', { textContent: `DM with ${r.from.name}` }), el('span', { className: 'when', textContent: 'you accepted their note ✿' })])]);
+  const r = state.dmWith || RECEIVED;
+  const back = el('button', { className: 'chip', textContent: '← all DMs', type: 'button' }); back.addEventListener('click', () => { state.dmOpen = false; renderMail(); });
+  const head = el('div', { className: 'mail' }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [el('b', { textContent: `DM with ${r.from.name}` }), el('span', { className: 'when', textContent: 'started from their note ✿' }), el('div', { className: 'mailact' }, [back])])]);
   body.append(head, el('div', { className: 'bubble', textContent: r.text }));
-  state.dm.forEach(t => body.append(el('div', { className: 'bubble me', textContent: t })));
+  state.dms = state.dms || {};
+  const thread = state.dms[r.from.id] = state.dms[r.from.id] || [];
+  thread.forEach(t => body.append(el('div', { className: 'bubble me', textContent: t })));
   const form = el('form', { className: 'dmform' });
   const input = el('input', { id: 'dmInput', placeholder: 'reply...', maxLength: 140, autocomplete: 'off' });
   form.append(input, el('button', { className: 'chip go', textContent: 'send', type: 'submit' }));
-  form.addEventListener('submit', e => { e.preventDefault(); const v = input.value.trim(); if (!v) return; state.dm.push(v); renderMail(); $('#dmInput').focus(); });
+  form.addEventListener('submit', e => { e.preventDefault(); const v = input.value.trim(); if (!v) return; thread.push(v); renderMail(); $('#dmInput').focus(); });
   body.append(form); body.scrollTop = body.scrollHeight;
 }
 
 /* ---------- top buttons ---------- */
 $('#btnMail').addEventListener('click', openMail);
 $('#btnProfile').addEventListener('click', () => openLocker(PEOPLE.find(p => p.you)));
-$('#btnEdit').addEventListener('click', () => toast('locker editing is the next flow ✏️'));
+$('#btnEdit').addEventListener('click', () => { closeMail(); if (viewer) closeLocker(); openEditor(2); });
+$('#btnQuiz').addEventListener('click', () => { closeMail(); if (viewer) closeLocker(); openPastQuizzes(); });
+$('#icQuiz').src = A.icon_quiz;
 addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  if (typeof flowEscape === 'function' && flowEscape()) return;
   if (noteLayer) closeNote(); else if (mailLayer) closeMail(); else if (viewer) closeLocker();
 });
 
