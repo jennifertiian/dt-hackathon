@@ -13,8 +13,10 @@
   --paper-3: #e2cfae;
   --wood: #ddb07a;
   --wood-dark: #c9945f;
-  --blush: #ef8fa6;
-  --blush-deep: #c46f8b;
+  --blush: #d9573b;        /* accent: brick red (was pink) */
+  --blush-deep: #a8432c;
+  --tint: #f3e3cf;         /* selected / liked surfaces */
+  --tint-2: #f8eee0;
   --sage: #a9cd72;
   --sage-deep: #64924f;
   --dialog-text: #4a3f5c;
@@ -36,6 +38,7 @@ body {
   position: absolute; left: 0; top: 0; width: 480px; height: 270px;
   transform-origin: 0 0; overflow: hidden; background: #f4e9d2;
   font-family: var(--font-ui); color: var(--ink-deep);
+  font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; /* the pixel font has no fi/fl glyphs */
 }
 #stage img { image-rendering: pixelated; image-rendering: crisp-edges; display: block; max-width: none; user-select: none; -webkit-user-drag: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -43,18 +46,20 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .abs { position: absolute; }
 
 /* ---------- home ---------- */
-#logo { left: 12px; top: 18px; display: flex; align-items: center; gap: 4px; }
-#logo b { font-size: 19px; font-weight: 700; letter-spacing: .2px; color: var(--ink); text-shadow: 1px 1px 0 var(--paper), 2px 2px 0 var(--paper-3); line-height: 1; }
-#logo small { display: block; font-family: var(--font-ui); font-size: 5.5px; letter-spacing: .6px; text-transform: uppercase; color: var(--wood-dark); margin-top: 2px; }
+#logo { left: 10px; top: 9px; display: flex; align-items: flex-start; gap: 4px; }
+#logo small { display: block; font-family: var(--font-ui); font-size: 5.5px; letter-spacing: .6px; text-transform: uppercase; color: var(--wood-dark); margin: 2px 0 0 1px; }
+#countdown { left: 10px; top: 36px; box-sizing: border-box; padding: 3px 5px 3px; background: #2f3a33; border: 1px solid var(--ink-deep);
+  box-shadow: inset 0 0 0 1px #4a5a4f, 0 2px 0 rgba(60,40,30,.35); color: #e9efe2; font-size: 5.5px; letter-spacing: .5px; text-transform: uppercase; line-height: 7px; }
+#countdown b { display: block; font-size: 10px; letter-spacing: 1px; color: #fff6c9; font-variant-numeric: tabular-nums; line-height: 11px; }
 #sign {
-  left: 132px; top: 17px; width: 216px; height: 14px; box-sizing: border-box;
+  left: 150px; top: 6px; width: 180px; height: 14px; box-sizing: border-box;
   background: var(--wood); border: 1px solid var(--ink);
   box-shadow: inset 0 1px 0 #ecca97, inset 0 -1px 0 var(--wood-dark), 0 1px 0 #d9c6a2;
   display: grid; place-items: center; font-size: 7.5px; font-weight: 600; color: var(--ink-deep); letter-spacing: .1px;
 }
 #sign::before, #sign::after { content: ""; position: absolute; top: 5px; width: 2px; height: 2px; background: var(--ink); }
 #sign::before { left: 3px; } #sign::after { right: 3px; }
-#topbtns { right: 14px; top: 20px; display: flex; gap: 5px; align-items: center; }
+#topbtns { right: 12px; top: 8px; display: flex; gap: 5px; align-items: center; }
 .ibtn {
   width: 22px; height: 22px; display: grid; place-items: center; position: relative;
   background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 2px 0 var(--wood-dark);
@@ -74,6 +79,16 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .locker:hover .shine, .locker:focus-visible .shine { opacity: 1; }
 .shine { position: absolute; inset: 1px; border: 1px solid #fff; opacity: 0; transition: opacity .12s; pointer-events: none; }
 .locker .stk { position: absolute; }
+.nametag {
+  position: absolute; left: 10px; top: 22px; width: 34px; height: 11px; box-sizing: border-box; padding: 0 2px;
+  background: var(--paper); border: 1px solid #2f3346; box-shadow: inset 0 -1px 0 #e2d4bb, 0 1px 0 rgba(0,0,0,.3);
+  font-family: var(--font-talk); font-size: 6.5px; line-height: 9px; text-align: center; color: var(--ink-deep); letter-spacing: .3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;
+}
+.nametag.you { background: #fff1c9; overflow: visible; }
+.nametag.you i { position: absolute; left: -1px; top: -7px; font-style: normal; font-size: 4.5px; line-height: 5px; padding: 0 2px; background: var(--blush-deep); color: var(--paper); letter-spacing: .4px; }
+.locker .notepeek { position: absolute; left: 24px; top: 1px; }
+.locker .notebadge { right: 2px; top: -2px; }
 .youplate {
   position: absolute; left: 18px; top: 22px; width: 24px; height: 11px; box-sizing: border-box;
   background: var(--paper); border: 1px solid var(--ink); display: grid; place-items: center;
@@ -93,9 +108,14 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .dialog .more { position: absolute; right: 6px; bottom: 3px; width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-top: 3px solid var(--dialog-text); animation: bob 1s steps(2) infinite; }
 .nametab { position: absolute; z-index: 3; background: var(--ink-deep); color: var(--paper); font-family: var(--font-ui); font-size: 7px; font-weight: 600; padding: 1px 5px 1px; letter-spacing: .3px; box-shadow: 0 0 0 1px var(--paper); }
 @keyframes bob { 50% { transform: translateY(1px); } }
-#homeDialog { left: 104px; top: 243px; width: 272px; height: 24px; padding: 4px 8px; }
-#homeDialog .txt { font-size: 7px; line-height: 9px; }
-#homeTab { left: 110px; top: 236px; }
+#homeDialog { left: 140px; top: 236px; width: 248px; height: 30px; padding: 5px 9px 4px; overflow: hidden; }
+#homeDialog .txt { font-size: 7px; line-height: 10px; }
+#homeTab { left: 146px; top: 229px; }
+#mitBadge { left: 106px; top: 234px; width: 30px; height: 30px; box-sizing: border-box; border-radius: 50%; background: #e9dcc0; border: 1px solid var(--ink-deep);
+  box-shadow: inset 0 0 0 1px var(--paper), 0 2px 0 rgba(60,40,30,.35); display: grid; place-items: center; overflow: hidden; }
+#mitBadge.talk img { animation: talk .25s steps(2) 4; }
+@keyframes talk { 50% { transform: translateY(-1px); } }
+#stage.viewing #mitBadge { visibility: hidden; }
 
 /* ---------- open locker view ---------- */
 #viewer { inset: 0; z-index: 10; }
@@ -138,7 +158,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .sbtn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--wood-dark); }
 .sbtn.tall { min-height: 30px; }
 .sbtn.small { min-height: 15px; font-size: 6.5px; background: var(--paper-2); }
-.sbtn.liked { background: #fde0e8; border-color: var(--blush-deep); }
+.sbtn.liked { background: var(--tint); border-color: var(--blush-deep); }
 .sbtn.sent { background: #dcebc6; border-color: var(--sage-deep); box-shadow: 0 2px 0 var(--sage-deep); cursor: default; }
 .sbtn.sent:hover { transform: none; background: #dcebc6; }
 .sbtn.dimmed { background: #d9cfc0; color: #9a8b7e; border-color: #9a8b7e; box-shadow: 0 2px 0 #b9ab98; pointer-events: none; }
@@ -148,6 +168,11 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 
 #lockerDialog { left: 96px; top: 221px; width: 290px; height: 42px; z-index: 5; animation: fadeIn .3s .4s both; }
 #lockerTab { left: 104px; top: 213px; z-index: 6; animation: fadeIn .3s .4s both; }
+#lockerDialog .fullpic { display: none; }
+#lockerDialog.photo { top: 60px; height: 203px; display: grid; grid-template-columns: 170px 1fr; gap: 8px; align-items: start; padding: 8px; transition: top .2s; }
+#lockerDialog.photo .fullpic { display: block; width: 170px; height: 185px; object-fit: contain; image-rendering: auto !important; background: var(--paper-2); border: 1px solid var(--ink); }
+#viewer:has(#lockerDialog.photo) #lockerTab { top: 52px; }
+.item.hasfull::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: 5px; height: 5px; background: var(--paper); border: 1px solid var(--ink); }
 
 /* ---------- note ---------- */
 #noteLayer { inset: 0; z-index: 20; }
@@ -155,7 +180,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 #paper {
   left: 112px; top: 26px; width: 256px; height: 212px; box-sizing: border-box;
   background-color: var(--paper);
-  background-image: linear-gradient(90deg, transparent 21px, #f2b9c4 21px, #f2b9c4 22px, transparent 22px);
+  background-image: linear-gradient(90deg, transparent 21px, #e2a48f 21px, #e2a48f 22px, transparent 22px);
   border: 1px solid var(--ink); box-shadow: 0 3px 0 rgba(40,25,30,.35);
   padding: 9px 12px 8px 28px; animation: popIn .22s cubic-bezier(.2,.9,.3,1.2) both;
   display: flex; flex-direction: column;
@@ -170,7 +195,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 #noteText::placeholder { color: #b9a69a; }
 .starters { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
 .starter { font-family: var(--font-talk); font-size: 6px; padding: 1px 4px; border: 1px solid var(--paper-3); background: #fff; color: var(--dialog-text); }
-.starter:hover { border-color: var(--blush); background: #fff4f6; }
+.starter:hover { border-color: var(--blush); background: var(--tint-2); }
 .count { font-size: 5.5px; color: #b9a69a; text-align: right; margin-top: 3px; }
 #noteBtns { left: 410px; top: 44px; display: flex; flex-direction: column; gap: 6px; width: 58px; z-index: 21; }
 .shake { animation: shake .3s; }
@@ -204,9 +229,10 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .chip { font-size: 6.5px; font-weight: 600; padding: 2px 5px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 0 1px 0 var(--wood-dark); }
 .chip.go { background: #dcebc6; border-color: var(--sage-deep); box-shadow: 0 1px 0 var(--sage-deep); }
 .bubble { max-width: 75%; font-family: var(--font-talk); font-size: 7px; line-height: 9px; padding: 3px 5px; border: 1px solid var(--paper-3); background: #fff; color: var(--dialog-text); }
-.bubble.me { align-self: flex-end; background: #fde0e8; border-color: var(--blush); }
+.bubble.me { align-self: flex-end; background: var(--tint); border-color: var(--blush); }
 .dmform { display: flex; gap: 3px; margin-top: 4px; }
 .dmform input { flex: 1; min-width: 0; font-family: var(--font-talk); font-size: 7px; border: 1px solid var(--ink); padding: 2px 3px; background: #fff; color: var(--dialog-text); outline: 0; }
+.hint2 { margin: 0 0 2px; font-family: var(--font-talk); font-size: 6px; color: #9a8579; }
 .empty { font-family: var(--font-talk); font-size: 7px; color: #8a6a5c; text-align: center; margin-top: 30px; line-height: 10px; }
 
 #toast { left: 50%; top: 40px; transform: translateX(-50%); z-index: 40; background: var(--ink-deep); color: var(--paper); font-size: 7px; padding: 4px 8px; border: 1px solid var(--paper); white-space: nowrap; animation: fadeIn .15s both; }
@@ -222,20 +248,23 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 <div id="fit">
   <div id="stage" role="application" aria-label="Homeroom prototype">
     <img class="abs" id="bg" alt="" style="left:0;top:0" width="480" height="270">
-    <div id="logo" class="abs"><img id="logoStar" alt="" width="15" height="15"><div><b>homeroom</b><small>find your people · cal</small></div></div>
-    <div id="sign" class="abs">Take a look at today’s locker neighbors!</div>
+    <div id="logo" class="abs"><img id="logoMark" alt="" width="12" height="16"><div><img id="logoWord" alt="homeroom" width="96" height="19"><small>find your people · cal</small></div></div>
+    <div id="countdown" class="abs" aria-live="off">new neighbors in<b id="cdTime">--:--:--</b></div>
+    <div id="sign" class="abs">Today’s locker neighbors</div>
     <div id="topbtns" class="abs">
       <button class="ibtn" id="btnQuiz" aria-label="Past quizzes"><img id="icQuiz" alt="" width="13" height="13"><span class="tip">past quizzes</span></button>
       <button class="ibtn" id="btnEdit" aria-label="Edit your locker"><img id="icPencil" alt="" width="13" height="13"><span class="tip">edit locker</span></button>
-      <button class="ibtn" id="btnMail" aria-label="Open your mailbox"><img id="icMail" alt="" width="14" height="11"><span class="badge" id="mailBadge">1</span><span class="tip">mailbox</span></button>
+      <button class="ibtn" id="btnMail" aria-label="Open your mailbox"><img id="icMail" alt="" width="14" height="11"><span class="badge" id="mailBadge">1</span><span class="tip">missed notes</span></button>
+      <button class="ibtn" id="btnDM" aria-label="Open your messages"><img id="icChat" alt="" width="14" height="9"><span class="badge" id="dmBadge" hidden>1</span><span class="tip">messages</span></button>
       <button class="ibtn round" id="btnProfile" aria-label="Open your own locker"><img id="icAvatar" alt="" width="24" height="24"><span class="tip">your locker</span></button>
     </div>
     <div id="grid"></div>
-    <span class="nametab abs" id="homeTab">Mochi the hall cat</span>
+    <div id="mitBadge" class="abs" aria-hidden="true"><img id="mitFace" alt="" width="24" height="24"></div>
+    <span class="nametab abs" id="homeTab">Mittens the hall cat</span>
     <div class="dialog abs" id="homeDialog" aria-live="polite"><div class="txt" id="homeTxt"></div><span class="more"></span></div>
   </div>
 </div>
-<p id="narrow">Turn your phone sideways for the full hallway ✿</p>
+<p id="narrow">Turn your phone sideways for the full hallway </p>
 
 <script>
 const A = __ASSETS__;
@@ -245,7 +274,7 @@ const img = (name, w, h, extra = {}) => el('img', Object.assign({ src: A[name], 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- people (example neighbors, matched today on: favorite study spot) ---------- */
-const SIZES = { polaroid: [20, 24], sticker_star: [15, 15], sticker_heart: [16, 16], sticker_flower: [15, 15], sticker_bear: [15, 15], schedule: [30, 24], whiteboard: [32, 22], plant: [16, 18], books: [24, 16], boba_milk: [12, 20], boba_matcha: [12, 20], headphones: [18, 15], bunny: [16, 20], onigiri: [13, 12], camera: [20, 14], volleyball: [13, 13], sketchbook: [18, 22], mirror: [16, 20], bunting: [128, 12], sticky: [20, 20] };
+const SIZES = { polaroid: [20, 24], sticker_star: [14, 14], sticker_heart: [14, 14], sticker_flower: [15, 15], sticker_bear: [15, 15], sticker_bolt: [12, 14], sticker_pennant: [16, 16], sticker_controller: [16, 16], sticker_pizza: [14, 14], sticker_note: [14, 14], note_slot: [16, 11], schedule: [30, 24], whiteboard: [32, 22], plant: [16, 18], books: [24, 16], boba_milk: [12, 20], boba_matcha: [12, 20], headphones: [18, 15], bunny: [16, 20], onigiri: [13, 12], camera: [20, 14], volleyball: [13, 13], sketchbook: [18, 22], mirror: [16, 20], bunting: [128, 12], sticky: [20, 20] };
 const sz = n => SIZES[n] || SIZES[n.split('_')[0]];
 // item placement: shelf items sit on y=98, floor items on y=150
 const shelf = (n, x) => [n, x, 98 - sz(n)[1]];
@@ -253,9 +282,9 @@ const floor = (n, x) => [n, x, 150 - sz(n)[1]];
 
 const PEOPLE = [
   { id: 'mei', name: 'Mei Lin', line: 'cognitive science · ’27', skin: 'blue', stickers: [['sticker_star', 9, 24]],
-    pills: [['cog sci', '#5a75bd'], ['INFJ', '#c46f8b'], ['film photo', '#64924f']],
+    pills: [['cog sci', '#5a75bd'], ['INFJ', '#7a5aa0'], ['film photo', '#64924f']],
     facts: [['likes', 'film photography, bouldering, matcha everything'], ['eats', 'Asha Tea House'], ['studies', 'Doe, North Reading Room'], ['also', 'will trade you a polaroid for boba']],
-    hello: "hi, i'm Mei! hover over the stuff in my locker to get to know me ✿",
+    hello: "hi, i'm Mei! hover over the stuff in my locker to get to know me",
     items: [
       ['polaroid_sunset', 38, 30, 'sunset polaroid', 'shot this on my instax up at the Lawrence Hall of Science lookout. worth the hike, every single time.'],
       ['polaroid_friends', 64, 36, 'roommates', 'my roommates and me on move-in day. we still haven\'t hung anything on our walls lol'],
@@ -265,43 +294,43 @@ const PEOPLE = [
       floor('plant', 132).concat(['succulent', 'his name is Gerald. he has survived two midterm seasons.'])
     ] },
   { id: 'haruto', name: 'Haruto Sato', line: 'mechanical engineering · ’26', skin: 'blue', stickers: [],
-    pills: [['mech e', '#5a75bd'], ['ENFP', '#c46f8b'], ['volleyball', '#c97a3c']],
+    pills: [['mech e', '#5a75bd'], ['ENFP', '#7a5aa0'], ['volleyball', '#c97a3c']],
     facts: [['likes', 'volleyball, custom keyboards, cooking for friends'], ['eats', 'Sliver Pizzeria'], ['studies', 'Doe, Heyns Reading Room'], ['also', 'always down for intramural volleyball']],
     hello: "yo! i'm Haruto. poke around, everything in here has a story",
     items: [
       ['schedule', 36, 30, 'class schedule', 'ME 104 and ME 132 on the same day... pray for me. my free afternoons are tues/thurs if anyone wants to grab food!'],
       ['polaroid_beach', 76, 32, 'beach day', 'our club volleyball team at Ocean Beach before the season started.'],
-      ['sticker_bear', 108, 34, 'bear sticker', 'got this at Cal Day and slapped it on immediately. no regrets.'],
+      ['sticker_controller', 106, 36, 'controller sticker', 'from the Smash club table at Calapalooza. come get destroyed on thursdays.'],
       shelf('volleyball', 42).concat(['volleyball', 'intramural team "Set Happens" is recruiting. we are bad but we have fun.']),
       shelf('onigiri', 64).concat(['onigiri', 'my mom\'s recipe. i make a batch before every exam. umeboshi is the best filling, fight me.']),
       floor('headphones', 120).concat(['headphones', 'currently looping city pop. taking song recs.'])
     ] },
   { id: 'priya', name: 'Priya Raman', line: 'molecular & cell bio · ’27', skin: 'mint', stickers: [['sticker_flower', 14, 24]],
-    pills: [['MCB', '#4a8573'], ['ISTJ', '#c46f8b'], ['dance', '#8c76c0']],
+    pills: [['MCB', '#4a8573'], ['ISTJ', '#7a5aa0'], ['dance', '#8c76c0']],
     facts: [['likes', 'Bharatanatyam, bullet journaling, true crime pods'], ['eats', 'The Cheese Board'], ['studies', 'Doe, Main Stacks lvl C'], ['also', 'my color-coded notes are open source']],
     hello: "hii, Priya here! welcome to my very organized locker",
     items: [
       ['schedule', 34, 32, 'study planner', 'every assignment, color coded. pink is orgo. orgo is always pink.'],
-      ['sticker_flower', 72, 34, 'flower sticker', 'from my dance team\'s showcase last spring!'],
+      ['sticker_note', 72, 34, 'music note', 'from my dance team\'s showcase last spring. the set list is still stuck in my head.'],
       ['mirror', 124, 30, 'little mirror', 'for fixing my bindi before practice. also for pep talks.'],
       shelf('books', 40).concat(['textbooks', 'organic chemistry, my nemesis and also my favorite class? it\'s complicated.']),
       shelf('plant', 108).concat(['basil plant', 'growing basil for Cheese Board copycat pizza nights. results pending.']),
       floor('boba_milk', 130).concat(['milk tea', 'brown sugar, 30% sweet. study fuel.'])
     ] },
   { id: 'diego', name: 'Diego Morales', line: 'architecture · ’26', skin: 'blue', stickers: [],
-    pills: [['arch', '#5a75bd'], ['ENTP', '#c46f8b'], ['skating', '#64924f']],
+    pills: [['arch', '#5a75bd'], ['ENTP', '#7a5aa0'], ['skating', '#64924f']],
     facts: [['likes', 'sketching buildings, skateboarding, cumbia'], ['eats', 'Top Dog'], ['studies', 'Doe, 2nd floor windows'], ['also', 'i will draw your dorm if you ask nicely']],
     hello: "hey, Diego. it's a little messy in here, it's an artist thing",
     items: [
       ['whiteboard', 34, 32, 'whiteboard', 'studio crit is friday. the heart is to stay emotionally stable.'],
       ['polaroid_ramen', 76, 34, 'ramen night', 'post-review ramen with my studio. tradition at this point.'],
-      ['sticker_bear', 104, 40, 'bear sticker', 'a bear for every all-nighter in Wurster. i need a bigger door.'],
+      ['sticker_bolt', 106, 38, 'lightning bolt', 'one bolt for every all-nighter in Wurster. i need a bigger door.'],
       shelf('sketchbook', 46).concat(['sketchbook', 'one building on campus per page. I\'m on page 41. Sather Gate was the hardest.']),
       shelf('camera', 104).concat(['camera', 'for reference photos. and skate clips. mostly skate clips.']),
       floor('books', 112).concat(['books', 'architecture theory i swear i\'m going to finish reading'])
     ] },
   { id: 'you', name: 'You', line: 'this is your locker', skin: 'blue', you: true, stickers: [],
-    pills: [['your major', '#5a75bd'], ['MBTI', '#c46f8b']],
+    pills: [['your major', '#5a75bd'], ['MBTI', '#7a5aa0']],
     facts: [['likes', 'add yours with the pencil button'], ['eats', '?'], ['studies', 'Doe Library'], ['also', 'this is what your neighbors see']],
     hello: "this is your locker! it's what your neighbors see when they peek in. editing it is the next flow ✏️",
     items: [
@@ -310,7 +339,7 @@ const PEOPLE = [
       shelf('plant', 87).concat(['starter plant', 'every locker comes with a plant. please water it.'])
     ] },
   { id: 'amara', name: 'Amara Okafor', line: 'economics & poli sci · ’27', skin: 'butter', stickers: [],
-    pills: [['econ', '#b98b3a'], ['ESTJ', '#c46f8b'], ['debate', '#5a75bd']],
+    pills: [['econ', '#b98b3a'], ['ESTJ', '#7a5aa0'], ['debate', '#5a75bd']],
     facts: [['likes', 'debate, thrifting, Afrobeats playlists'], ['eats', 'Kingpin Donuts'], ['studies', 'Doe, the café line'], ['also', 'ask me about my thrift finds']],
     hello: "hey hey! Amara. take a look around, then come say hi",
     items: [
@@ -322,44 +351,44 @@ const PEOPLE = [
       floor('boba_milk', 128).concat(['milk tea', 'honestly i just like holding it. it\'s a vibe.'])
     ] },
   { id: 'sofia', name: 'Sofia Nguyen', line: 'computer science · ’27', skin: 'lavender', stickers: [['sticker_heart', 12, 26]],
-    pills: [['CS', '#6f5a9e'], ['INTP', '#c46f8b'], ['crochet', '#c46f8b']],
+    pills: [['CS', '#6f5a9e'], ['INTP', '#7a5aa0'], ['crochet', '#a8432c']],
     facts: [['likes', 'indie games, crochet, cats'], ['eats', 'pho on Telegraph'], ['studies', 'Doe, by the globe'], ['also', 'i crochet during lecture, it helps me focus']],
     hello: "oh hi! Sofia. mind the bunny, she bites (she doesn't)",
     items: [
       ['polaroid_cat', 38, 32, 'Bao', 'this is my cat Bao back home. she\'s the reason my laptop wallpaper is a cat.'],
       ['whiteboard', 66, 36, 'whiteboard', 'pseudocode for my game jam project. it\'s a cozy fishing game. please playtest it.'],
-      ['sticker_heart', 112, 34, 'heart sticker', 'from a game dev meetup in SF!'],
+      ['sticker_controller', 108, 36, 'controller sticker', 'from a game dev meetup in SF. ask me about my fishing game.'],
       shelf('bunny', 44).concat(['bunny plush', 'i crocheted her! took 3 weeks and 2 lectures of CS 61B. her name is Byte.']),
       shelf('headphones', 110).concat(['headphones', 'currently listening to the Stardew Valley soundtrack on loop.']),
       floor('onigiri', 128).concat(['onigiri', 'emergency snack from the Asian market on University.'])
     ] },
   { id: 'kai', name: 'Kai Thompson', line: 'environmental science · ’28', skin: 'blue', stickers: [['sticker_flower', 26, 26]],
-    pills: [['env sci', '#4a8573'], ['ENFJ', '#c46f8b'], ['hiking', '#64924f']],
+    pills: [['env sci', '#4a8573'], ['ENFJ', '#7a5aa0'], ['hiking', '#64924f']],
     facts: [['likes', 'hiking, birdwatching, ukulele'], ['eats', 'Berkeley Bowl hot bar'], ['studies', 'Doe, North Reading Room'], ['also', 'i can name every bird on campus']],
     hello: "hey! Kai here. welcome to my tiny forest",
     items: [
       ['polaroid_mountains', 38, 30, 'Mt. Tam', 'sunrise hike up Mt. Tam. 4am alarm, zero regrets.'],
-      ['sticker_flower', 66, 34, 'California poppy', 'well, it\'s supposed to be a poppy. close enough.'],
+      ['sticker_pennant', 64, 34, 'pennant', 'from my first Cal game. i still don\'t fully understand football.'],
       ['polaroid_beach', 108, 34, 'Point Reyes', 'saw 14 different birds that day. i kept a list. obviously.'],
       shelf('plant', 44).concat(['fern cutting', 'propagated from a plant at the UC Botanical Garden (with permission!)']),
       shelf('camera', 100).concat(['camera', 'for bird photos. most of them are blurry. the birds are fast.']),
       floor('sketchbook', 124).concat(['field journal', 'bird sketches + where i saw them. the Doe Library hawk is a regular.'])
     ] },
   { id: 'lena', name: 'Lena Park', line: 'media studies · ’28', skin: 'pink', stickers: [],
-    pills: [['media', '#c96f92'], ['ESFP', '#c46f8b'], ['zines', '#b98b3a']],
+    pills: [['media', '#b5523b'], ['ESFP', '#7a5aa0'], ['zines', '#b98b3a']],
     facts: [['likes', 'k-dramas, zine making, roller skating'], ['eats', 'Yogurt Park'], ['studies', 'Doe, Heyns Reading Room'], ['also', 'my zine drops monthly, want one?']],
-    hello: "annyeong! Lena. my locker is basically a zine, enjoy ♡",
+    hello: "annyeong! Lena. my locker is basically a zine, enjoy",
     items: [
       ['bunting', 31, 23, 'bunting', 'made from leftover zine paper. reduce reuse recycle!'],
       ['mirror', 36, 40, 'mirror', 'decorated with nail polish. it\'s a whole aesthetic.'],
       ['polaroid_ramen', 64, 40, 'ramen run', 'k-drama marathon fuel. currently watching a slow burn and i\'m losing it.'],
-      ['sticker_heart', 120, 40, 'heart sticker', 'i put these on everything. you\'ve been warned.'],
+      ['sticker_pizza', 118, 40, 'pizza sticker', 'from Cheese Board. i put stickers on everything, you\'ve been warned.'],
       shelf('boba_milk', 52).concat(['milk tea', 'taro is the best flavor and i will not be taking questions.']),
       shelf('bunny', 104).concat(['bunny plush', 'won her from a claw machine on the first try. still my proudest moment.'])
     ] },
 ];
-// Mochi's narration when hovering lockers on the hallway
-const HOME_HELLO = "good morning! today's neighbors were matched on favorite study spot: Doe Library ✿ click a locker to peek inside!";
+// Mittens' narration when hovering lockers on the hallway
+const HOME_HELLO = "today's theme: favorite study spot. you all said Doe Library. click a locker to peek inside!";
 
 /* ---------- typewriter dialogue ---------- */
 function typer(txtEl) {
@@ -375,7 +404,7 @@ function typer(txtEl) {
 const sayHome = typer($('#homeTxt'));
 
 /* ---------- static art ---------- */
-$('#bg').src = A.hallway; $('#logoStar').src = A.sticker_star;
+$('#bg').src = A.hallway; $('#logoMark').src = A.logo_mark; $('#logoWord').src = A.logo_word; $('#icChat').src = A.icon_chat;
 $('#icPencil').src = A.icon_pencil; $('#icMail').src = A.icon_mail; $('#icAvatar').src = A.avatar_you;
 
 /* ---------- home grid ---------- */
@@ -385,11 +414,13 @@ grid.innerHTML = '';
 PEOPLE.forEach((p, i) => {
   const c = i % 3, r = Math.floor(i / 3);
   const b = el('button', { className: 'locker' }); b.setAttribute('aria-label', p.you ? 'Your locker' : `Peek inside ${p.name}'s locker`);
-  b.style.left = 144 + c * 64 + 'px'; b.style.top = 42 + r * 64 + 'px';
+  b.style.left = 144 + c * 64 + 'px'; b.style.top = 30 + r * 64 + 'px';
   b.append(img('tile_' + p.skin, 64, 64, { className: 'tile' }));
-  p.stickers.forEach(([n, x, y]) => { const s = img(n, ...sz(n), { className: 'stk' }); s.style.left = x + 'px'; s.style.top = y + 'px'; b.append(s); });
-  if (p.you) b.append(el('span', { className: 'youplate', textContent: 'YOU' }));
-  if (p.you && typeof unreadNotes === 'function' && unreadNotes()) b.append(img('note_peek', 14, 11, { className: 'notepeek' }));
+  b.append(nameTag(p));
+  if (p.you && typeof unreadNotes === 'function' && unreadNotes()) {
+    b.append(img('note_slot', 16, 11, { className: 'notepeek' }));
+    b.append(el('span', { className: 'badge notebadge', textContent: unreadNotes() }));
+  }
   b.append(el('span', { className: 'shine' }));
   b.append(el('span', { className: 'peek', textContent: p.you ? 'your locker' : p.name.split(' ')[0] }));
   b.addEventListener('mouseenter', () => sayHome(p.you ? (typeof unreadNotes === 'function' && unreadNotes() ? "someone slipped notes into your locker! click to read them ✉" : "that's your locker! click to see what your neighbors see.") : `that's ${p.name.split(' ')[0]}'s locker. click to peek inside!`));
@@ -401,6 +432,13 @@ PEOPLE.forEach((p, i) => {
 renderGrid();
 grid.addEventListener('mouseleave', () => sayHome(HOME_HELLO));
 sayHome(HOME_HELLO);
+
+/* name tag on the outside of every locker */
+function nameTag(p) {
+  const t = el('span', { className: 'nametag' + (p.you ? ' you' : ''), textContent: (p.you && p.name === 'You') ? 'you' : p.name.split(' ')[0] });
+  if (p.you) t.append(el('i', { textContent: 'you' }));
+  return t;
+}
 
 /* ---------- toast ---------- */
 let toastTimer;
@@ -436,12 +474,14 @@ function openLocker(p) {
   const dlg = el('div', { className: 'dialog abs', id: 'lockerDialog' }, [el('div', { className: 'txt', id: 'lockerTxt' }), el('span', { className: 'more' })]);
   const say = typer(dlg.querySelector('.txt'));
 
-  p.items.forEach(([n, x, y, label, desc]) => {
+  const big = el('img', { className: 'fullpic', alt: '' }); dlg.prepend(big);
+  p.items.forEach(([n, x, y, label, desc, full]) => {
     const [w, h] = sz(n);
-    const it = el('button', { className: 'item' }, [img(n, w, h)]); it.setAttribute('aria-label', label);
+    const it = el('button', { className: 'item' + (full ? ' hasfull' : '') }, [img(n, w, h)]); it.setAttribute('aria-label', full ? label + ' (click to see the photo)' : label);
     it.style.left = x + 'px'; it.style.top = y + 'px';
-    const show = () => { items.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); it.classList.add('sel'); tab.textContent = label; say(desc); };
-    it.addEventListener('mouseenter', show); it.addEventListener('focus', show); it.addEventListener('click', show);
+    const show = () => { dlg.classList.remove('photo'); items.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); it.classList.add('sel'); tab.textContent = label; say(full ? desc + '  (click to see the photo)' : desc); };
+    const open = () => { show(); if (!full) return; big.src = full; big.alt = label; dlg.classList.add('photo'); say(desc); };
+    it.addEventListener('mouseenter', show); it.addEventListener('focus', show); it.addEventListener('click', open);
     items.append(it);
   });
 
@@ -551,7 +591,7 @@ function openNote(p) {
 
   function send() {
     const text = ta.value.trim();
-    if (!text) { paper.classList.remove('shake'); void paper.offsetWidth; paper.classList.add('shake'); ta.placeholder = 'write something first! even a "hi" works ✿'; ta.focus(); return; }
+    if (!text) { paper.classList.remove('shake'); void paper.offsetWidth; paper.classList.add('shake'); ta.placeholder = 'write something first! even a "hi" works '; ta.focus(); return; }
     closeNote(true);
     playSent(p, text);
   }
@@ -580,7 +620,7 @@ function playSent(p, text) {
     state.sentTo.add(p.id); state.sent.unshift({ to: p, text, at: new Date() });
     const nb = $('#noteBtn'); if (nb) { nb.classList.add('sent'); nb.querySelector('span').textContent = 'note sent!'; }
     const tab = $('#lockerTab'); const t = $('#lockerTxt');
-    if (tab && t) { tab.textContent = 'Mochi'; t.textContent = `your note is slipped into ${p.name.split(' ')[0]}'s locker! it opens a DM between you two. find it under mailbox → sent.`; }
+    if (tab && t) { tab.textContent = 'Mittens'; t.textContent = `your note is slipped into ${p.name.split(' ')[0]}'s locker! it opens a DM between you two. find it under mailbox → sent.`; }
   }, 1900 * T + 20);
 }
 
@@ -594,10 +634,10 @@ function openMail() {
   const dim = el('div', { id: 'mailDim', className: 'abs' }); dim.addEventListener('click', closeMail);
   const box = el('div', { id: 'mailbox', className: 'abs' }); box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Mailbox');
   const close = el('button', { className: 'chip', textContent: 'close', type: 'button' }); close.addEventListener('click', closeMail);
-  box.append(el('h2', {}, [el('span', { textContent: 'mailbox' }), close]));
+  box.append(el('h2', {}, [el('span', { textContent: 'missed notes' }), close]));
   const tabs = el('div', { className: 'tabs' }); tabs.setAttribute('role', 'tablist');
   ['received', 'sent'].forEach(t => {
-    const b = el('button', { className: 'tab', textContent: t === 'received' ? `DMs (${typeof NOTES !== 'undefined' ? NOTES.length : 1})` : `sent (${state.sent.length})`, type: 'button' });
+    const b = el('button', { className: 'tab', textContent: t === 'received' ? `missed (${typeof MISSED !== 'undefined' ? MISSED.filter(n => !n.accepted).length : 1})` : `sent (${state.sent.length})`, type: 'button' });
     b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', t === mailTab);
     b.addEventListener('click', () => { mailTab = t; state.dmOpen = false; renderMail(); tabs.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === b)); });
     tabs.append(b);
@@ -612,42 +652,31 @@ function closeMail() { if (mailLayer) { mailLayer.remove(); mailLayer = null; } 
 function renderMail() {
   const body = $('#mailBody'); if (!body) return; body.innerHTML = '';
   if (mailTab === 'received') {
-    if (state.dmOpen) return renderDM(body);
-    // every note opens a DM thread by default; unviewed ones are marked "new"
-    (typeof NOTES !== 'undefined' ? NOTES : [RECEIVED]).forEach(r => {
-      const m = el('div', { className: 'mail' + (r.read ? '' : ' unread') }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [
-        el('b', { textContent: `${r.from.name}${r.read ? '' : '  · new'}` }), el('p', { textContent: r.text }), el('span', { className: 'when', textContent: r.when + (r.read ? ' · viewed' : ' · not viewed yet') })])]);
+    // missed notes: sent before the last refresh and never seen. accept one to start a DM.
+    const list = typeof MISSED !== 'undefined' ? MISSED.filter(n => !n.accepted) : [RECEIVED];
+    if (!list.length) { body.append(el('p', { className: 'empty', textContent: 'no missed notes.\nnotes you didn\'t open before the lockers refreshed show up here.' })); return; }
+    body.append(el('p', { className: 'hint2', textContent: 'these came in before the lockers refreshed and you never opened them' }));
+    list.forEach(r => {
+      const m = el('div', { className: 'mail unread' }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [
+        el('b', { textContent: `${r.from.name} left you a note` }), el('p', { textContent: r.text }), el('span', { className: 'when', textContent: r.when })])]);
       const act = el('div', { className: 'mailact' });
-      const acc = el('button', { className: 'chip go', textContent: 'open DM', type: 'button' });
+      const acc = el('button', { className: 'chip go', textContent: 'accept → message', type: 'button' });
       const peek = el('button', { className: 'chip', textContent: 'peek at their locker', type: 'button' });
-      acc.addEventListener('click', () => { r.read = true; state.dmWith = r; state.dmOpen = true; if (typeof updateBadges === 'function') updateBadges(); renderMail(); });
+      acc.addEventListener('click', () => { closeMail(); acceptNote(r); });
       peek.addEventListener('click', () => { closeMail(); openLocker(r.from); });
       act.append(acc, peek); m.querySelector('div').append(act);
       body.append(m);
     });
   } else {
-    if (!state.sent.length) { body.append(el('p', { className: 'empty', textContent: 'no notes sent yet.\nopen a neighbor\'s locker and tap "leave a note" ✿' })); return; }
+    if (!state.sent.length) { body.append(el('p', { className: 'empty', textContent: 'no notes sent yet.\nopen a neighbor\'s locker and tap "leave a note" ' })); return; }
     state.sent.forEach(s => body.append(el('div', { className: 'mail' }, [img('avatar_' + s.to.id, 24, 24), el('div', {}, [
       el('b', { textContent: `to ${s.to.name}` }), el('p', { textContent: s.text }), el('span', { className: 'when', textContent: 'just now · delivered to their DMs' })])])));
   }
 }
-function renderDM(body) {
-  const r = state.dmWith || RECEIVED;
-  const back = el('button', { className: 'chip', textContent: '← all DMs', type: 'button' }); back.addEventListener('click', () => { state.dmOpen = false; renderMail(); });
-  const head = el('div', { className: 'mail' }, [img('avatar_' + r.from.id, 24, 24), el('div', {}, [el('b', { textContent: `DM with ${r.from.name}` }), el('span', { className: 'when', textContent: 'started from their note ✿' }), el('div', { className: 'mailact' }, [back])])]);
-  body.append(head, el('div', { className: 'bubble', textContent: r.text }));
-  state.dms = state.dms || {};
-  const thread = state.dms[r.from.id] = state.dms[r.from.id] || [];
-  thread.forEach(t => body.append(el('div', { className: 'bubble me', textContent: t })));
-  const form = el('form', { className: 'dmform' });
-  const input = el('input', { id: 'dmInput', placeholder: 'reply...', maxLength: 140, autocomplete: 'off' });
-  form.append(input, el('button', { className: 'chip go', textContent: 'send', type: 'submit' }));
-  form.addEventListener('submit', e => { e.preventDefault(); const v = input.value.trim(); if (!v) return; thread.push(v); renderMail(); $('#dmInput').focus(); });
-  body.append(form); body.scrollTop = body.scrollHeight;
-}
 
 /* ---------- top buttons ---------- */
 $('#btnMail').addEventListener('click', openMail);
+$('#btnDM').addEventListener('click', () => { closeMail(); if (viewer) closeLocker(); openDMs(); });
 $('#btnProfile').addEventListener('click', () => openLocker(PEOPLE.find(p => p.you)));
 $('#btnEdit').addEventListener('click', () => { closeMail(); if (viewer) closeLocker(); openEditor(2); });
 $('#btnQuiz').addEventListener('click', () => { closeMail(); if (viewer) closeLocker(); openPastQuizzes(); });

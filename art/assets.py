@@ -62,7 +62,10 @@ def poly(pts):
 OL = h("#6e4a3c"); OLD = h("#4f362e")
 CU0 = h("#fffaf0"); CU1 = h("#f3e6cf"); CU2 = h("#e2cfae"); CUO = h("#c4a37f")
 W1 = h("#a8714e"); W2 = h("#c9945f"); W3 = h("#ddb07a"); W4 = h("#ecca97"); W5 = h("#f6e0b8")
-P0 = h("#c46f8b"); P1 = h("#e595ab"); P2 = h("#f4b8c7"); P3 = h("#fbd9e1"); P4 = h("#fff0f3")
+# accent ramp: muted brick red (was pink)
+P0 = h("#8e3a2a"); P1 = h("#c4583d"); P2 = h("#e08a6a"); P3 = h("#f0b79a"); P4 = h("#f9dccb")
+# masking tape
+TP1 = h("#e6d3a3"); TP2 = h("#d3bb85")
 G0 = h("#4c7547"); G1 = h("#64924f"); G2 = h("#84b25e"); G3 = h("#a9cd72"); G4 = h("#d3e595")
 TC0 = h("#a85a45"); TC1 = h("#cf7a5a"); TC2 = h("#e8a07a"); TC3 = h("#f4c19c")
 ST0 = h("#80869e"); ST1 = h("#a9afc4"); ST2 = h("#d5d9e5"); WHT = h("#ffffff")
@@ -170,7 +173,7 @@ def door_back(skin):
         for i in range(16):
             for j in range(5):
                 x = tx + i; y = cy0 - 3 + j + (i // 4) * ang + (0 if ang > 0 else 3)
-                c = P2 if (i + j) % 6 < 3 else P3
+                c = TP1 if (i + j) % 6 < 3 else TP2
                 s.p(x, y, c)
     s.save("doorback_" + skin)
 
@@ -200,7 +203,7 @@ def wallpaper(kind, x, y):
         gx, gy = x % 12, y % 12
         off = (y // 12) % 2 * 6
         gx = (x + off) % 12
-        if (gx, gy) in ((5, 4), (7, 4), (6, 3), (6, 5)): return h("#f4b8c7")
+        if (gx, gy) in ((5, 4), (7, 4), (6, 3), (6, 5)): return h("#e08a6a")
         if (gx, gy) == (6, 4): return h("#f7d26e")
         if (gx, gy) in ((4, 6), (3, 7)): return h("#a9cd72")
         return base
@@ -287,7 +290,7 @@ def polaroid(name, pic):
     s.hl(2, 17, 18, CU2)
     # washi tape
     for x in range(6, 14):
-        s.p(x, 0, P2); s.p(x, 1, P3 if x % 2 else P2); s.p(x, 2, P2)
+        s.p(x, 0, TP2); s.p(x, 1, TP1 if x % 2 else TP2); s.p(x, 2, TP2)
     s.save(name)
 
 def pic_sunset(t):
@@ -307,9 +310,9 @@ def pic_cat(t):
     for (x, y) in face:
         if y > 11: t.p(x, y, h("#f7cf8f"))
     for (x, y) in ((3, 4), (4, 3), (4, 4), (5, 4), (12, 4), (11, 3), (11, 4), (13, 4)): t.p(x, y, h("#e8a65c"))
-    t.p(4, 4, h("#f4b8c7")); t.p(12, 4, h("#f4b8c7"))
-    t.p(6, 9, OLD); t.p(10, 9, OLD); t.p(8, 11, h("#e595ab"))
-    t.p(5, 11, h("#f4b8c7")); t.p(11, 11, h("#f4b8c7"))
+    t.p(4, 4, h("#e08a6a")); t.p(12, 4, h("#e08a6a"))
+    t.p(6, 9, OLD); t.p(10, 9, OLD); t.p(8, 11, h("#c4583d"))
+    t.p(5, 11, h("#e08a6a")); t.p(11, 11, h("#e08a6a"))
     t.hl(6, 10, 6, h("#b9783f"))
 
 def pic_beach(t):
@@ -317,7 +320,7 @@ def pic_beach(t):
     t.fill(disc(12, 3, 2), YEL)
     for x in (2, 3, 8, 9, 13): t.p(x, 9, WHT)
     t.hl(0, 15, 11, h("#fbeccb"))
-    t.p(4, 13, h("#e595ab")); t.p(5, 13, h("#e595ab")); t.p(4, 12, h("#e595ab"))
+    t.p(4, 13, h("#c4583d")); t.p(5, 13, h("#c4583d")); t.p(4, 12, h("#c4583d"))
 
 def pic_ramen(t):
     t.rect(0, 0, 15, 14, h("#f6e3c4"))
@@ -326,7 +329,7 @@ def pic_ramen(t):
     t.hl(1, 15, 8, h("#8e3a37"))
     t.fill(ellipse(8, 7, 6, 1.6), h("#f2c27a"))
     t.fill(disc(6, 7, 1.3), WHT); t.p(6, 7, h("#f7c548"))
-    t.rect(9, 5, 11, 7, h("#3f5a3a")); t.p(12, 7, h("#f4b8c7"))
+    t.rect(9, 5, 11, 7, h("#3f5a3a")); t.p(12, 7, h("#e08a6a"))
     for i in range(9): t.p(9 + i // 2, 4 - i // 3, h("#a8714e")); t.p(11 + i // 2, 5 - i // 3, h("#a8714e"))
 
 def pic_mountains(t):
@@ -384,7 +387,7 @@ def heart_mask():
     m = disc(4.2, 4.6, 3.3) | disc(9.8, 4.6, 3.3) | poly([(1.0, 5.6), (13.0, 5.6), (7.0, 12.6)])
     return {(x, y) for (x, y) in m if 0 <= x < 15 and 0 <= y < 14}
 def paint_heart(s, m):
-    s.fill(m, h("#ef8fa6"))
+    s.fill(m, h("#d9573b"))
     for (x, y) in m:
         if y > 8: s.p(x, y, h("#d9708c"))
     s.p(4, 4, P4); s.p(4, 5, P3); s.p(5, 4, P3)
@@ -416,7 +419,7 @@ sticker("sticker_bear", bear_mask, 15, paint_bear)
 s = S(30, 24)
 s.rect(0, 2, 29, 23, OL); s.rect(1, 3, 28, 22, CU0); s.rect(1, 3, 28, 6, P1); s.hl(1, 28, 6, P0)
 for x in (6, 23): s.rect(x, 0, x + 1, 3, ST0); s.p(x, 0, ST2)
-cols = [h("#97b3e8"), h("#a9cd72"), h("#f4b8c7"), h("#f7d26e"), h("#c6b8ea")]
+cols = [h("#97b3e8"), h("#a9cd72"), h("#e08a6a"), h("#f7d26e"), h("#c6b8ea")]
 for d in range(5):
     x0 = 3 + d * 5
     s.hl(x0, x0 + 3, 8, CU2)
@@ -430,12 +433,12 @@ s.save("schedule")
 s = S(32, 22)
 s.rect(0, 0, 31, 19, ST0); s.rect(1, 1, 30, 18, h("#f6f9ff")); s.hl(1, 30, 1, WHT); s.hl(1, 30, 18, h("#dde4f2"))
 small = {(x // 2 + 3, y // 2 + 3) for (x, y) in heart_mask()}
-s.fill(small, h("#f4b8c7")); s.outline(small, h("#ef8fa6"))
+s.fill(small, h("#e08a6a")); s.outline(small, h("#d9573b"))
 for (x0, y0, n, c) in ((14, 5, 13, h("#5a75bd")), (14, 9, 9, h("#5a75bd")), (4, 14, 22, h("#64924f"))):
     for i in range(n):
         if i % 5 != 4: s.p(x0 + i, y0 + (1 if i % 3 == 1 else 0), c)
 s.rect(4, 19, 27, 21, ST1); s.hl(4, 27, 19, ST2); s.hl(4, 27, 21, ST0)
-s.rect(8, 18, 12, 19, h("#ef8fa6")); s.rect(15, 18, 19, 19, h("#5a75bd"))
+s.rect(8, 18, 12, 19, h("#d9573b")); s.rect(15, 18, 19, 19, h("#5a75bd"))
 s.save("whiteboard")
 
 # succulent
@@ -453,7 +456,7 @@ s.save("plant")
 
 # stack of books
 s = S(24, 16)
-for (y, x0, x1, c, d) in ((11, 1, 22, h("#97b3e8"), h("#5a75bd")), (6, 3, 21, h("#f4b8c7"), h("#c46f8b")), (1, 2, 19, h("#a9cd72"), h("#64924f"))):
+for (y, x0, x1, c, d) in ((11, 1, 22, h("#97b3e8"), h("#5a75bd")), (6, 3, 21, h("#e08a6a"), h("#8e3a2a")), (1, 2, 19, h("#a9cd72"), h("#64924f"))):
     s.rect(x0, y, x1, y + 4, OL); s.rect(x0 + 1, y + 1, x1 - 1, y + 3, c)
     s.vl(x1 - 2, y + 1, y + 3, CU0); s.vl(x1 - 3, y + 1, y + 3, CU1); s.hl(x0 + 1, x1 - 4, y + 3, d)
     s.hl(x0 + 3, x0 + 6, y + 2, GD3)
@@ -470,7 +473,7 @@ def boba(name, tea, tea_d):
     for (x, y) in ((4, 17), (6, 18), (8, 17), (5, 16), (7, 16), (4, 18)): s.p(x, y, h("#3a2a2a"))
     s.outline(cup, h("#7c84a8"))
     s.hl(1, 10, 4, h("#7c84a8")); s.hl(2, 9, 3, WHT); s.hl(3, 8, 2, h("#7c84a8"))
-    for i in range(7): s.p(8 - i // 3, 0 + i, h("#ef8fa6")); s.p(9 - i // 3, 0 + i, h("#ef8fa6"))
+    for i in range(7): s.p(8 - i // 3, 0 + i, h("#d9573b")); s.p(9 - i // 3, 0 + i, h("#d9573b"))
     s.vl(3, 8, 14, WHT)
     s.save(name)
 boba("boba_milk", h("#e2b88f"), h("#d3a274"))
@@ -534,7 +537,7 @@ s.save("volleyball")
 s = S(18, 22)
 s.rect(1, 2, 16, 21, OLD); s.rect(2, 3, 15, 20, h("#5f8f8a")); s.vl(2, 3, 20, h("#7fb0a8"))
 for x in range(3, 16, 2): s.p(x, 1, ST0); s.p(x, 2, ST1)
-s.vl(12, 3, 20, h("#e595ab"))
+s.vl(12, 3, 20, h("#c4583d"))
 s.rect(4, 8, 10, 12, CU0); s.hl(5, 9, 10, CU2)
 for i in range(13): s.p(16 - i // 4, 9 + i, GD3)
 s.p(13, 21, OLD)
@@ -557,7 +560,7 @@ s = S(128, 12)
 for x in range(128):
     y = int(2 + 3 * math.sin(math.pi * x / 127))
     s.p(x, y, OL)
-cols3 = [h("#f4b8c7"), h("#a9cd72"), h("#97b3e8"), h("#f7d26e"), h("#c6b8ea")]
+cols3 = [h("#e08a6a"), h("#a9cd72"), h("#97b3e8"), h("#f7d26e"), h("#c6b8ea")]
 for i in range(8):
     x0 = 4 + i * 15
     y0 = int(2 + 3 * math.sin(math.pi * (x0 + 4) / 127)) + 1
@@ -570,7 +573,7 @@ s = S(20, 20)
 s.rect(1, 1, 19, 19, h("#000000", 30)); s.rect(0, 0, 18, 18, h("#e9c84f")); s.rect(0, 0, 17, 17, h("#fbe48a"))
 s.hl(0, 17, 0, h("#fff1b8"))
 for (y, n) in ((5, 12), (8, 9), (11, 11)): s.hl(3, 3 + n, y, h("#c9a33a"))
-s.p(13, 13, h("#e595ab")); s.p(14, 12, h("#e595ab")); s.p(15, 13, h("#e595ab")); s.p(14, 14, h("#e595ab"))
+s.p(13, 13, h("#c4583d")); s.p(14, 12, h("#c4583d")); s.p(15, 13, h("#c4583d")); s.p(14, 14, h("#c4583d"))
 s.save("sticky")
 
 # =================================================================
@@ -622,8 +625,8 @@ avatar("you", h("#fff1b8"), SK[1], h("#2a2026"), "bun")
 # UI icons
 # =================================================================
 s = S(13, 12); m = {(x - 1, y - 1) for (x, y) in heart_mask()}; m = {(x, y) for (x, y) in m if x < 13 and y < 12}
-s.outline(m, h("#c46f8b")); s.save("icon_heart_empty")
-s = S(13, 12); s.fill(m, h("#ef8fa6")); s.outline(m, h("#c46f8b")); s.p(3, 3, P4); s.p(4, 3, P3); s.save("icon_heart_full")
+s.outline(m, h("#8e3a2a")); s.save("icon_heart_empty")
+s = S(13, 12); s.fill(m, h("#d9573b")); s.outline(m, h("#8e3a2a")); s.p(3, 3, P4); s.p(4, 3, P3); s.save("icon_heart_full")
 
 s = S(14, 11)
 s.rect(0, 0, 13, 10, OL); s.rect(1, 1, 12, 9, CU0)
@@ -634,7 +637,7 @@ s.save("icon_mail")
 s = S(13, 13)
 for i in range(10):
     s.p(2 + i, 10 - i, h("#e9a849")); s.p(3 + i, 10 - i, h("#f7d26e")); s.p(2 + i, 11 - i, h("#c97a3c"))
-s.p(11, 1, h("#ef8fa6")); s.p(12, 1, h("#ef8fa6")); s.p(12, 2, h("#ef8fa6")); s.p(11, 2, h("#e595ab"))
+s.p(11, 1, h("#d9573b")); s.p(12, 1, h("#d9573b")); s.p(12, 2, h("#d9573b")); s.p(11, 2, h("#c4583d"))
 s.p(1, 11, OLD); s.p(2, 11, h("#f6e0b8")); s.p(1, 10, h("#f6e0b8"))
 s.save("icon_pencil")
 
@@ -656,7 +659,7 @@ def envelope(closed):
         flap = poly([(0, 20), (120, 20), (60, 56)])
         s.fill(flap, CU1); s.outline({(x, y) for (x, y) in flap if y > 20}, OL)
         hm2 = {(x * 1 + 53, y * 1 + 49) for (x, y) in heart_mask()}
-        s.fill(hm2, h("#ef8fa6")); s.outline(hm2, h("#c46f8b"))
+        s.fill(hm2, h("#d9573b")); s.outline(hm2, h("#8e3a2a"))
     else:
         flap = poly([(0, 21), (120, 21), (60, 0)])
         s.fill(flap, CU1); s.outline({(x, y) for (x, y) in flap if y < 21}, OL)

@@ -24,7 +24,7 @@
   font-family: var(--font-talk); font-size: 7px; color: var(--dialog-text); background: #fff; border: 1px solid var(--ink);
   padding: 2px 4px; outline: 0; box-sizing: border-box; width: 100%; border-radius: 0;
 }
-.fin:focus { border-color: var(--blush-deep); box-shadow: 0 0 0 1px #fde0e8; }
+.fin:focus { border-color: var(--blush-deep); box-shadow: 0 0 0 1px var(--tint); }
 .fin::placeholder { color: #b9a69a; }
 .bigbtn {
   font-size: 8px; font-weight: 700; padding: 4px 9px; background: #dcebc6; border: 1px solid var(--sage-deep);
@@ -32,7 +32,7 @@
 }
 .bigbtn:hover { transform: translateY(-1px); background: #e8f3d8; }
 .bigbtn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--sage-deep); }
-.bigbtn.pink { background: #fde0e8; border-color: var(--blush-deep); box-shadow: 0 2px 0 var(--blush-deep); }
+.bigbtn.pink { background: var(--tint); border-color: var(--blush-deep); box-shadow: 0 2px 0 var(--blush-deep); }
 .bigbtn.plain { background: var(--paper); border-color: var(--ink); box-shadow: 0 2px 0 var(--wood-dark); }
 .bigbtn[disabled] { opacity: .45; pointer-events: none; }
 .err { font-family: var(--font-talk); font-size: 6px; color: var(--blush-deep); min-height: 8px; text-align: center; }
@@ -50,11 +50,11 @@
 /* ---------- editor shell ---------- */
 #editor { background: #f4e9d2; }
 #editor .ebg { position: absolute; inset: 0; opacity: .22; }
-#edTitle { left: 132px; top: 17px; width: 216px; height: 14px; box-sizing: border-box; background: var(--wood); border: 1px solid var(--ink);
+#edTitle { left: 150px; top: 5px; width: 180px; height: 14px; box-sizing: border-box; background: var(--wood); border: 1px solid var(--ink);
   box-shadow: inset 0 1px 0 #ecca97, inset 0 -1px 0 var(--wood-dark), 0 1px 0 #d9c6a2; display: grid; place-items: center; font-size: 7.5px; font-weight: 600; color: var(--ink-deep); }
-#edSteps { left: 160px; top: 32px; width: 160px; padding: 1px 0; background: var(--paper); border: 1px solid var(--paper-3); text-align: center; font-size: 5.5px; letter-spacing: .5px; text-transform: uppercase; color: var(--wood-dark); }
+#edSteps { left: 140px; top: 23px; width: 200px; padding: 2px 0; background: var(--paper); border: 1px solid var(--paper-3); text-align: center; font-size: 5.5px; letter-spacing: .5px; text-transform: uppercase; color: var(--wood-dark); }
 #edSteps b { color: var(--blush-deep); }
-#edLogo { left: 12px; top: 18px; display: flex; align-items: center; gap: 4px; }
+#edLogo { left: 10px; top: 9px; display: flex; align-items: flex-start; gap: 4px; }
 #edLogo b { font-size: 15px; font-weight: 700; color: var(--ink); text-shadow: 1px 1px 0 var(--paper), 2px 2px 0 var(--paper-3); }
 #edDoor { left: 30px; top: 47px; width: 176px; height: 152px; }
 #edDoor > img { position: absolute; inset: 0; }
@@ -86,12 +86,12 @@
 .edform::-webkit-scrollbar { width: 3px; } .edform::-webkit-scrollbar-thumb { background: var(--paper-3); }
 .edform label { font-size: 5px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; color: var(--blush-deep); line-height: 6px; }
 .edform input, .edform select { font-family: var(--font-talk); font-size: 6.5px; color: var(--dialog-text); border: 0; border-bottom: 1px solid #e9dcc6; background: transparent; padding: 1px 0; outline: 0; min-width: 0; border-radius: 0; }
-.edform input:focus, .edform select:focus { border-bottom-color: var(--blush); background: #fff8f9; }
+.edform input:focus, .edform select:focus { border-bottom-color: var(--blush); background: var(--tint-2); }
 .edform input::placeholder { color: #c6b3a6; }
 .edform .full { grid-column: 1 / -1; }
 .tagprev { display: flex; flex-wrap: wrap; gap: 2px; min-height: 9px; }
 
-.swrow { display: flex; gap: 2px; overflow-x: auto; padding: 1px; scrollbar-width: none; }
+.swrow { display: flex; gap: 3px; overflow-x: auto; padding: 3px 3px 3px; margin: -2px -3px; scrollbar-width: none; }
 .swrow::-webkit-scrollbar { display: none; }
 .sw { width: 13px; height: 13px; flex: none; border: 1px solid var(--ink); box-sizing: border-box; padding: 0; position: relative; }
 .sw img { width: 11px; height: 11px; }
@@ -103,7 +103,7 @@
 #edOutside img { position: absolute; }
 .stkpick { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 3px; width: 62px; }
 .stkpick button { width: 18px; height: 18px; border: 1px solid var(--paper-3); background: #fff; display: grid; place-items: center; font-size: 6px; color: #9a8579; }
-.stkpick button[aria-pressed="true"] { border-color: var(--blush-deep); background: #fff0f3; }
+.stkpick button[aria-pressed="true"] { border-color: var(--blush-deep); background: var(--tint-2); }
 
 /* step 2: decorate */
 .bank { box-sizing: border-box; width: 62px; background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 2px 0 rgba(60,40,40,.25); padding: 3px; display: flex; flex-direction: column; gap: 2px; }
@@ -127,7 +127,7 @@
 .tools { display: grid; grid-template-columns: repeat(5, 16px); gap: 2px; align-content: start; }
 .tool { height: 15px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 0 1px 0 var(--wood-dark); font-size: 7px; font-weight: 700; display: grid; place-items: center; }
 .tool:hover { background: #fff; transform: translateY(-1px); }
-.tool.del { background: #fde0e8; }
+.tool.del { background: var(--tint); }
 .tool.ok { background: #dcebc6; grid-column: span 3; font-size: 6px; }
 .wallhint { position: absolute; left: 0; right: 0; bottom: -10px; text-align: center; }
 
@@ -138,7 +138,7 @@
 #upModal .card2 { left: 90px; top: 44px; width: 300px; height: 180px; padding: 10px 12px; display: grid; grid-template-columns: 150px 1fr; grid-template-rows: auto 1fr auto; gap: 6px 10px; }
 #upModal h2 { grid-column: 1 / -1; }
 .drop { border: 1px dashed var(--ink); background: var(--paper-2) repeating-linear-gradient(45deg, transparent 0 4px, rgba(255,255,255,.5) 4px 8px); display: grid; place-items: center; text-align: center; position: relative; }
-.drop.over { background-color: #fde0e8; }
+.drop.over { background-color: var(--tint); }
 .drop img { image-rendering: pixelated; }
 .upr { display: flex; flex-direction: column; gap: 4px; }
 .upr textarea { flex: 1; resize: none; font-family: var(--font-talk); font-size: 7px; line-height: 9px; }
@@ -151,10 +151,10 @@
 .sprtab { font-size: 7px; font-weight: 600; padding: 3px 0; border: 1px solid var(--ink); background: var(--paper-2); }
 .sprtab[aria-selected="true"] { background: var(--ink-deep); color: var(--paper); }
 .sprpanel { background: #fff; border: 1px solid var(--paper-3); padding: 4px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; }
-.opts { display: flex; flex-wrap: wrap; gap: 3px; }
-.opt { border: 1px solid var(--paper-3); background: var(--paper); padding: 1px; line-height: 0; }
+.opts { display: flex; flex-wrap: wrap; gap: 2px; }
+.opt { border: 1px solid var(--paper-3); background: var(--paper); padding: 0; line-height: 0; }
 .opt img { image-rendering: pixelated; }
-.opt[aria-pressed="true"] { border-color: var(--blush-deep); background: #fff0f3; box-shadow: 0 0 0 1px #fde0e8; }
+.opt[aria-pressed="true"] { border-color: var(--blush-deep); background: var(--tint-2); box-shadow: 0 0 0 1px var(--tint); }
 .sprprev { background: var(--paper-2) repeating-conic-gradient(#efe2c9 0 25%, transparent 0 50%) 0 0 / 12px 12px; border: 1px solid var(--paper-3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
 .sprprev img { width: 96px; height: 96px; }
 .colorin { width: 18px; height: 13px; padding: 0; border: 1px solid var(--ink); background: none; cursor: pointer; }
@@ -167,7 +167,7 @@
 .qopts { display: flex; flex-direction: column; gap: 2px; flex: 1; min-height: 0; }
 .qopt { text-align: left; font-family: var(--font-talk); font-size: 7px; padding: 2px 6px; border: 1px solid var(--paper-3); background: #fff; color: var(--dialog-text); display: flex; gap: 5px; align-items: center; }
 .qopt::before { content: ""; width: 5px; height: 5px; border: 1px solid var(--ink); border-radius: 50%; flex: none; background: #fff; }
-.qopt[aria-pressed="true"] { border-color: var(--blush-deep); background: #fff0f3; }
+.qopt[aria-pressed="true"] { border-color: var(--blush-deep); background: var(--tint-2); }
 .qopt[aria-pressed="true"]::before { background: var(--blush); box-shadow: inset 0 0 0 1px #fff; }
 .qfoot { display: flex; justify-content: space-between; align-items: center; }
 .qdone { text-align: center; display: flex; flex-direction: column; gap: 6px; align-items: center; flex: 1; justify-content: center; }
@@ -179,7 +179,7 @@
 .qcard { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 2px 0 rgba(40,25,30,.3); padding: 4px 5px; display: flex; flex-direction: column; gap: 2px; animation: popIn .25s both; text-align: left; overflow: hidden; }
 .qcard .d { font-size: 5px; letter-spacing: .4px; text-transform: uppercase; color: var(--wood-dark); }
 .qcard .q { font-family: var(--font-talk); font-size: 6.5px; line-height: 8px; color: var(--dialog-text); flex: 1; }
-.qcard .a { align-self: flex-start; font-size: 6px; font-weight: 600; padding: 1px 4px; background: #fde0e8; border: 1px solid var(--blush-deep); color: var(--ink-deep); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
+.qcard .a { align-self: flex-start; font-size: 6px; font-weight: 600; padding: 1px 4px; background: var(--tint); border: 1px solid var(--blush-deep); color: var(--ink-deep); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
 .qcard .m { font-size: 5px; color: var(--sage-deep); }
 .qcard.today { background: #fffdf5; border-color: var(--blush-deep); }
 .mtitle { position: absolute; left: 0; right: 0; top: 12px; text-align: center; font-size: 12px; font-weight: 700; color: var(--paper); text-shadow: 1px 1px 0 var(--ink), -1px -1px 0 var(--ink), 1px -1px 0 var(--ink), -1px 1px 0 var(--ink); }
@@ -190,14 +190,14 @@
 @keyframes wiggle { 50% { transform: rotate(-6deg) translateY(-1px); } }
 #stackDoor { left: 152px; top: 44px; width: 176px; height: 152px; animation: popIn .28s cubic-bezier(.2,.9,.3,1.3) both; }
 #stackDoor > img { position: absolute; inset: 0; }
-.slip { position: absolute; width: 44px; height: 28px; background: var(--paper); border: 1px solid var(--ink); box-sizing: border-box;
+.slip { position: absolute; width: 40px; height: 22px; border-bottom: 2px solid #2a2440; background: var(--paper); border: 1px solid var(--ink); box-sizing: border-box;
   background-image: repeating-linear-gradient(180deg, transparent 0 5px, #d6e4ef 5px 6px); box-shadow: 0 1px 0 rgba(0,0,0,.2); transition: transform .3s; }
 .slip b { position: absolute; left: 3px; bottom: 2px; font-size: 5px; color: var(--blush-deep); background: var(--paper); padding: 0 1px; }
 #stackDoor:hover .slip.top { transform: translateY(-3px) rotate(-4deg); }
 #stackHint { left: 0; right: 0; top: 204px; text-align: center; }
 #stackBtns { left: 410px; top: 44px; display: flex; flex-direction: column; gap: 6px; width: 58px; }
 #oneNote { left: 112px; top: 26px; width: 256px; height: 200px; box-sizing: border-box; background-color: var(--paper);
-  background-image: linear-gradient(90deg, transparent 21px, #f2b9c4 21px, #f2b9c4 22px, transparent 22px), repeating-linear-gradient(180deg, transparent 0 13px, #d6e4ef 13px 14px);
+  background-image: linear-gradient(90deg, transparent 21px, #e2a48f 21px, #e2a48f 22px, transparent 22px), repeating-linear-gradient(180deg, transparent 0 13px, #d6e4ef 13px 14px);
   background-position: 0 0, 0 40px; border: 1px solid var(--ink); box-shadow: 0 3px 0 rgba(40,25,30,.35); padding: 10px 12px 8px 30px; animation: unfold .35s cubic-bezier(.2,.9,.3,1.1) both; transform-origin: 50% 0; }
 @keyframes unfold { from { transform: scaleY(.15) rotate(-3deg); opacity: .4; } }
 #oneNote .from { display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
@@ -210,9 +210,41 @@
 .ncard .h { display: flex; gap: 3px; align-items: center; font-size: 6.5px; font-weight: 700; color: var(--ink); }
 .ncard p { margin: 0; font-family: var(--font-talk); font-size: 6px; line-height: 8px; color: var(--dialog-text); flex: 1; overflow: hidden; }
 .ncard.unread { border-color: var(--blush-deep); }
-.mail.unread { border-color: var(--blush); background: #fff8fa; }
+.mail.unread { border-color: var(--blush); background: var(--tint-2); }
 .ncard.empty2 { background: rgba(255,250,240,.12); border: 1px dashed rgba(255,250,240,.35); box-shadow: none; }
 .ncard:not(.empty2):hover { transform: translateY(-1px); background-color: #fff; }
+
+/* ---------- v2: Mittens, messages ---------- */
+#mittens { position: absolute; z-index: 4; line-height: 0; cursor: pointer; }
+#mittens img { image-rendering: pixelated; filter: drop-shadow(0 1px 0 rgba(40,25,20,.35)); }
+#mittens.flip img { transform: scaleX(-1); }
+#mittens .meow { position: absolute; left: -8px; top: -11px; font-size: 6px; font-weight: 700; color: var(--ink-deep); background: var(--paper); border: 1px solid var(--ink); padding: 0 2px; line-height: 7px; opacity: 0; transition: opacity .1s; white-space: nowrap; }
+#mittens.talking .meow { opacity: 1; }
+#stage.viewing #mittens { visibility: hidden; }
+#dmBox { left: 90px; top: 26px; width: 300px; height: 214px; box-sizing: border-box; background: var(--paper); border: 1px solid var(--ink);
+  box-shadow: 0 3px 0 rgba(40,25,30,.35); display: flex; flex-direction: column; animation: popIn .2s both; }
+.dmhead { display: flex; align-items: center; gap: 5px; padding: 6px 8px; border-bottom: 1px solid var(--paper-3); }
+.dmhead > b { flex: 1; font-size: 10px; color: var(--ink); }
+.dmhead .mid { flex: 1; min-width: 0; }
+.dmhead .mid b { display: block; font-size: 8px; color: var(--ink); }
+.dmhead .mid span { display: block; font-family: var(--font-talk); font-size: 6px; color: #9a8579; }
+.av { border-radius: 50%; flex: none; }
+.dmrows { flex: 1; overflow-y: auto; }
+.dmrow { width: 100%; display: flex; align-items: center; gap: 6px; padding: 5px 8px; text-align: left; border-bottom: 1px solid #efe3cc; }
+.dmrow:hover { background: var(--tint-2); }
+.dmrow .mid { flex: 1; min-width: 0; }
+.dmrow .mid b { display: block; font-size: 7.5px; color: var(--ink); }
+.dmrow .mid span { display: block; font-family: var(--font-talk); font-size: 6.5px; color: #8a7a70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmrow.unread .mid b, .dmrow.unread .mid span { color: var(--ink-deep); font-weight: 700; }
+.dmrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blush); flex: none; }
+.dmfeed { flex: 1; overflow-y: auto; padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; }
+.notecard { align-self: center; max-width: 85%; background: #fffdf5; border: 1px dashed var(--paper-3); padding: 3px 6px; font-family: var(--font-talk); font-size: 6.5px; line-height: 8.5px; color: var(--dialog-text); text-align: center; margin-bottom: 3px; }
+.notecard span { display: block; font-family: var(--font-ui); font-size: 5px; letter-spacing: .4px; text-transform: uppercase; color: var(--blush-deep); margin-bottom: 1px; }
+.bub { max-width: 72%; font-family: var(--font-talk); font-size: 7px; line-height: 9px; padding: 3px 6px; border-radius: 7px; }
+.bub.them { align-self: flex-start; background: #ebe2d2; color: var(--dialog-text); border-bottom-left-radius: 2px; }
+.bub.me { align-self: flex-end; background: #3d5aa8; color: #fff; border-bottom-right-radius: 2px; }
+.bub.typing { color: #9a8579; letter-spacing: 1px; }
+.dmbar { display: flex; gap: 4px; padding: 5px 8px; border-top: 1px solid var(--paper-3); }
 </style>
 
 <script>
@@ -235,7 +267,7 @@ const EXAMPLE = { name: 'Claire Su', pronouns: 'she/her', major: 'EECS', year: '
   artist: 'NewJeans', fun: 'i interned at Amazon in Austin and ate way too much brisket' };
 const profile = { name: '', pronouns: '', major: '', year: '’28', mbti: '?', interests: '', classes: '', food: '', study: '', hobbies: '', artist: '', fun: '',
   skin: 'blue', paper: 'floral', doorSticker: '', email: '', live: false };
-const sprite = { bg: '#fff1b8', skin: '#efc7a2', hair: '#2a2026', hairStyle: 'bun', eyes: 'dot', mouth: 'smile', blush: true, shirt: '#fffaf0' };
+const sprite = { bg: '#e9dcc0', skin: '#efc7a2', hair: '#2a2026', hairStyle: 'long', eyes: 'dot', mouth: 'smile', blush: false, shirt: '#5a75bd' };
 
 /* ================================================================
    tiny helpers
@@ -260,17 +292,9 @@ function ellipse(cx, cy, rx, ry) { const m = new Set(); for (let y = Math.floor(
 const filt = (m, f) => new Set([...m].filter(k => { const [x, y] = k.split(',').map(Number); return f(x, y); }));
 const uni = (...ms) => { const o = new Set(); ms.forEach(m => m.forEach(k => o.add(k))); return o; };
 const inter = (a, b) => filt(a, (x, y) => b.has(key(x, y)));
-const HAIRS = {
-  bob: () => filt(ellipse(11.5, 11, 7.2, 7), (x, y) => (y <= 10 || x <= 5 || x >= 18) && y < 17),
-  long: () => filt(ellipse(11.5, 12, 7.4, 8.5), (x, y) => y <= 9 || x <= 5 || x >= 18),
-  short: () => filt(ellipse(11.5, 10, 6.6, 5), (x, y) => y <= 9),
-  bun: () => uni(filt(ellipse(11.5, 10.5, 6.6, 5.5), (x, y) => y <= 9), disc(11.5, 3.5, 2.6)),
-  curly: () => filt(uni(...[[6, 8], [9, 5.5], [13, 5], [17, 7.5], [18, 11], [5, 11.5], [11.5, 5]].map(([x, y]) => disc(x, y, 2.8))), (x, y) => y <= 12),
-  spiky: () => { const m = filt(ellipse(11.5, 10, 6.6, 5), (x, y) => y <= 9); [7, 10, 13, 16].forEach(sx => [[sx, 3], [sx, 4], [sx - 1, 4]].forEach(([x, y]) => m.add(key(x, y)))); return m; },
-  pigtails: () => uni(filt(ellipse(11.5, 10, 6.6, 5), (x, y) => y <= 9), disc(4, 11, 2.4), disc(19, 11, 2.4)),
-  buzz: () => filt(ellipse(11.5, 10.5, 6.2, 5), (x, y) => y <= 8),
-  none: () => new Set(),
-};
+// hair styles as pixel rows: f = in front of the head, b = behind it (long hair, ponytails),
+// part = a darker parting line, curls = lighter flecks, tie = a hair tie in the accent red
+const HAIRS = {"crop":{"label":"crop","f":{"4":[[9,14]],"5":[[7,16]],"6":[[6,17]],"7":[[5,18]],"8":[[5,18]],"9":[[5,7],[9,11],[14,18]],"10":[[5,6],[17,18]],"11":[[5,5],[18,18]]}},"sidepart":{"label":"side part","f":{"3":[[10,15]],"4":[[8,17]],"5":[[6,18]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,6],[10,18]],"10":[[5,6],[14,18]],"11":[[5,5],[17,18]]},"part":[[9,4],[9,5],[9,6],[8,7]]},"buzz":{"label":"buzz","f":{"6":[[8,15]],"7":[[6,17]],"8":[[6,17]],"9":[[6,6],[17,17]]},"dark":true},"curly":{"label":"curly","f":{"3":[[8,10],[13,15]],"4":[[6,17]],"5":[[5,18]],"6":[[4,19]],"7":[[4,19]],"8":[[4,19]],"9":[[4,7],[9,10],[13,14],[16,19]],"10":[[4,6],[17,19]],"11":[[5,5],[18,18]]},"curls":[[8,5],[12,4],[15,6],[6,7],[10,7],[17,8],[13,8]]},"fringe":{"label":"fringe","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,18]],"10":[[5,18]],"11":[[5,8],[10,13],[15,18]],"12":[[5,5],[18,18]]}},"afro":{"label":"afro","f":{"1":[[8,15]],"2":[[6,17]],"3":[[5,18]],"4":[[4,19]],"5":[[3,20]],"6":[[3,20]],"7":[[3,20]],"8":[[3,20]],"9":[[3,6],[17,20]],"10":[[3,6],[17,20]],"11":[[3,5],[18,20]],"12":[[4,5],[18,19]]},"curls":[[7,3],[11,2],[15,3],[5,6],[18,6],[9,5],[14,5]]},"long":{"label":"long","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,9],[14,18]],"10":[[5,7],[16,18]],"11":[[5,6],[17,18]],"12":[[5,6],[17,18]],"13":[[5,5],[18,18]],"14":[[5,5],[18,18]],"15":[[5,5],[18,18]]},"b":{"9":[[4,19]],"10":[[4,19]],"11":[[4,19]],"12":[[4,19]],"13":[[4,19]],"14":[[4,19]],"15":[[4,19]],"16":[[4,19]],"17":[[4,19]],"18":[[4,19]],"19":[[3,20]],"20":[[3,20]],"21":[[3,7],[16,20]],"22":[[4,6],[17,19]]},"part":[[11,5],[11,6],[11,7],[11,8]]},"bob":{"label":"bob","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,8],[12,18]],"10":[[5,7],[16,18]],"11":[[4,6],[17,19]],"12":[[4,6],[17,19]],"13":[[4,5],[18,19]],"14":[[4,5],[18,19]],"15":[[4,6],[17,19]],"16":[[4,7],[16,19]]},"b":{"9":[[4,19]],"10":[[4,19]],"11":[[4,19]],"12":[[4,19]],"13":[[4,19]],"14":[[4,19]],"15":[[4,19]],"16":[[4,19]]},"part":[[10,5],[10,6],[10,7],[10,8]]},"ponytail":{"label":"ponytail","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,7],[16,18]],"10":[[5,5],[18,18]]},"b":{"6":[[18,20]],"7":[[19,21]],"8":[[19,21]],"9":[[19,21]],"10":[[19,21]],"11":[[19,21]],"12":[[19,21]],"13":[[19,21]],"14":[[19,20]],"15":[[19,20]],"16":[[18,20]],"17":[[18,19]]},"tie":[[19,6],[20,6]]},"pigtails":{"label":"pigtails","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,8],[11,12],[15,18]],"10":[[5,6],[17,18]]},"b":{"10":[[2,5],[18,21]],"11":[[1,5],[18,22]],"12":[[1,5],[18,22]],"13":[[1,5],[18,22]],"14":[[1,4],[19,22]],"15":[[2,4],[19,21]],"16":[[2,3],[20,21]]},"tie":[[5,10],[5,11],[18,10],[18,11]]},"bun":{"label":"bun","f":{"0":[[10,13]],"1":[[9,14]],"2":[[9,14]],"3":[[10,13]],"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,6],[17,18]],"10":[[5,5],[18,18]]},"tie":[[10,4],[11,4],[12,4],[13,4]]},"wavy":{"label":"wavy","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,10],[15,18]],"10":[[5,7],[16,18]],"11":[[4,6],[17,19]],"12":[[5,6],[17,18]],"13":[[4,5],[18,19]],"14":[[5,6],[17,18]],"15":[[4,5],[18,19]]},"b":{"9":[[4,19]],"10":[[3,20]],"11":[[3,20]],"12":[[4,19]],"13":[[3,20]],"14":[[3,20]],"15":[[4,19]],"16":[[3,20]],"17":[[3,20]],"18":[[4,19]],"19":[[3,20]],"20":[[3,8],[15,20]],"21":[[4,7],[16,19]]}},"none":{"label":"none","f":{}}};
 const EYES = {
   dot: [[9, 13, 'd'], [9, 14, 'd'], [14, 13, 'd'], [14, 14, 'd']],
   round: [[8, 13, 'd'], [9, 13, 'w'], [8, 14, 'd'], [9, 14, 'd'], [14, 13, 'd'], [15, 13, 'w'], [14, 14, 'd'], [15, 14, 'd']],
@@ -289,21 +313,39 @@ const MOUTHS = {
   flat: [[10, 17, 'd2'], [11, 17, 'd2'], [12, 17, 'd2'], [13, 17, 'd2']],
 };
 const PAL = { d: '#4f362e', d2: '#8a5a4c', w: '#ffffff', g: '#6e4a3c', s: '#e9a849', S: '#fff1b8', m: '#c46f6f', M: '#8a3f4a' };
+const hexA = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const tone = (h, f) => 'rgb(' + hexA(h).map(v => Math.max(0, Math.min(255, Math.round(v * f)))).join(',') + ')';
+function rowsMask(rows = {}) { const m = new Set(); Object.entries(rows).forEach(([y, segs]) => segs.forEach(([a, b]) => { for (let x = a; x <= b; x++) m.add(key(x, +y)); })); return m; }
 function renderSprite(sp, crop) {
   const [c, x] = canvas(24, 24);
-  const put = (m, col) => { x.fillStyle = col; m.forEach(k => { const [px, py] = k.split(',').map(Number); if (px >= 0 && py >= 0 && px < 24 && py < 24) x.fillRect(px, py, 1, 1); }); };
   const circ = disc(11.5, 11.5, 11);
+  const put = (m, col) => { x.fillStyle = col; m.forEach(k => { const [px, py] = k.split(',').map(Number); if (circ.has(k)) x.fillRect(px, py, 1, 1); }); };
   put(circ, sp.bg);
-  const head = ellipse(11.5, 13, 6, 6.5);
+  put(filt(ellipse(11.5, 25.5, 9, 5.5), (xx, y) => y < 24), sp.shirt);
   const neck = new Set(); for (let xx = 9; xx < 15; xx++) for (let y = 18; y < 24; y++) neck.add(key(xx, y));
-  const shirt = filt(ellipse(11.5, 26, 9, 6), (xx, y) => y < 24);
-  put(inter(shirt, circ), sp.shirt); put(inter(neck, circ), sp.skin); put(head, sp.skin);
-  put(inter(HAIRS[sp.hairStyle](), circ), sp.hair);
+  put(neck, tone(sp.skin, .9));
+  const H = HAIRS[sp.hairStyle] || HAIRS.none;
+  put(rowsMask(H.b), tone(sp.hair, .78));
+  // a slightly squarer head than before
+  const head = rowsMask({ 7: [[8, 15]], 8: [[7, 16]], 9: [[6, 17]], 10: [[6, 17]], 11: [[6, 17]], 12: [[6, 17]], 13: [[6, 17]], 14: [[6, 17]], 15: [[6, 17]], 16: [[6, 17]], 17: [[6, 17]], 18: [[7, 16]], 19: [[8, 15]] });
+  put(head, sp.skin); put(new Set([key(5, 12), key(5, 13), key(18, 12), key(18, 13)]), tone(sp.skin, .92));
+  const front = rowsMask(H.f);
+  put(front, sp.hair);
+  const edge = new Set([...front].filter(k => { const [px, py] = k.split(',').map(Number); return !front.has(key(px, py + 1)); }));
+  put(edge, tone(sp.hair, .72));
+  if (front.size) {
+    const top = Math.min(...[...front].map(k => +k.split(',')[1]));
+    const row = [...front].map(k => k.split(',').map(Number)).filter(([, py]) => py === top + 1).map(([px]) => px).sort((a, b) => a - b);
+    put(new Set(row.slice(1, 4).map(px => key(px, top + 1))), tone(sp.hair, 1.45));
+  }
+  put(new Set((H.part || []).map(([px, py]) => key(px, py))), tone(sp.hair, .65));
+  put(new Set((H.curls || []).map(([px, py]) => key(px, py))), tone(sp.hair, 1.4));
+  put(new Set((H.tie || []).map(([px, py]) => key(px, py))), '#c94a3a');
   EYES[sp.eyes].forEach(([px, py, k]) => put(new Set([key(px, py)]), PAL[k]));
-  if (sp.blush) put(new Set([key(7, 16), key(16, 16)]), '#f4b8c7');
+  if (sp.blush) put(new Set([key(7, 16), key(16, 16)]), '#e8a08a');
   MOUTHS[sp.mouth].forEach(([px, py, k]) => put(new Set([key(px, py)]), PAL[k]));
   const ring = new Set(); circ.forEach(k => { const [px, py] = k.split(',').map(Number); [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = key(px + dx, py + dy); if (!circ.has(n)) ring.add(n); }); });
-  put(ring, '#6e4a3c');
+  x.fillStyle = '#3b2a24'; ring.forEach(k => { const [px, py] = k.split(',').map(Number); if (px >= 0 && py >= 0 && px < 24 && py < 24) x.fillRect(px, py, 1, 1); });
   if (!crop) return c.toDataURL();
   const [cx, cxx] = canvas(crop[2], crop[3]); cxx.drawImage(c, crop[0], crop[1], crop[2], crop[3], 0, 0, crop[2], crop[3]); return cx.toDataURL();
 }
@@ -320,7 +362,7 @@ function openLogin() {
   const L = el('div', { id: 'login', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
   const card = el('div', { className: 'card2' });
   L.append(card); pushLayer(L);
-  const brand = () => el('div', { className: 'brand' }, [img('sticker_star', 15, 15), el('b', { textContent: 'homeroom' })]);
+  const brand = () => el('div', { className: 'brand' }, [img('logo_mark', 12, 16), img('logo_word', 96, 19, { alt: 'homeroom' })]);
 
   const stepEmail = () => {
     card.innerHTML = '';
@@ -329,7 +371,7 @@ function openLogin() {
     const go = btn('send me a magic link ✉', 'bigbtn');
     const submit = () => {
       const v = input.value.trim().toLowerCase();
-      if (!/^[^@\s]+@berkeley\.edu$/.test(v)) { err.textContent = 'use your @berkeley.edu email so we know you’re a bear ✿'; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); input.focus(); return; }
+      if (!/^[^@\s]+@berkeley\.edu$/.test(v)) { err.textContent = 'use your @berkeley.edu email so we know you’re a bear '; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); input.focus(); return; }
       profile.email = v; stepInbox();
     };
     go.addEventListener('click', submit); input.addEventListener('keydown', e => e.key === 'Enter' && submit());
@@ -343,7 +385,7 @@ function openLogin() {
     card.innerHTML = '';
     const open = btn('open homeroom →', 'bigbtn pink', stepInvite);
     card.append(brand(), el('div', { className: 'sub', textContent: `check your inbox! we sent a link to ${profile.email}` }),
-      el('div', { className: 'mailcard' }, [el('b', { textContent: 'homeroom ✿  your locker is waiting' }), el('p', { textContent: 'tap below to finish signing in. this link expires in 15 minutes.' }), open]),
+      el('div', { className: 'mailcard' }, [el('b', { textContent: 'homeroom  your locker is waiting' }), el('p', { textContent: 'tap below to finish signing in. this link expires in 15 minutes.' }), open]),
       el('div', { className: 'row' }, [btn('use a different email', 'link', stepEmail)]));
   };
   const stepInvite = () => {
@@ -352,7 +394,7 @@ function openLogin() {
     const err = el('div', { className: 'err' });
     const send = btn('send invite', 'chipbtn', () => {
       if (!/^[^@\s]+@berkeley\.edu$/.test(input.value.trim())) { err.textContent = 'needs to be a @berkeley.edu email'; return; }
-      err.style.color = 'var(--sage-deep)'; err.textContent = `invite sent to ${input.value.trim()} ✿`; input.value = '';
+      err.style.color = 'var(--sage-deep)'; err.textContent = `invite sent to ${input.value.trim()}`; input.value = '';
     });
     card.append(brand(), el('div', { className: 'sub', textContent: 'you’re in! bring a friend along? (optional)' }),
       el('div', { className: 'row' }, [input, send]), err,
@@ -366,11 +408,11 @@ function openLogin() {
    2–4. locker editor
    ================================================================ */
 const TITLES = { polaroid_sunset: 'sunset polaroid', polaroid_cat: 'cat photo', polaroid_beach: 'beach day', polaroid_ramen: 'ramen night', polaroid_mountains: 'mountain hike', polaroid_friends: 'friends',
-  sticker_star: 'gold star', sticker_heart: 'heart sticker', sticker_flower: 'flower sticker', sticker_bear: 'bear sticker',
+  sticker_star: 'gold star', sticker_heart: 'heart sticker', sticker_bolt: 'lightning bolt', sticker_controller: 'controller', sticker_pizza: 'pizza', sticker_note: 'music note', sticker_pennant: 'pennant',
   plant: 'plant', books: 'books', boba_milk: 'milk tea', boba_matcha: 'matcha latte', headphones: 'headphones', bunny: 'bunny plush', onigiri: 'onigiri', camera: 'camera',
   volleyball: 'volleyball', sketchbook: 'sketchbook', mirror: 'mirror', whiteboard: 'whiteboard', schedule: 'schedule', sticky: 'sticky note', bunting: 'bunting' };
 const PHOTO_BANK = ['polaroid_sunset', 'polaroid_friends', 'polaroid_cat', 'polaroid_beach', 'polaroid_ramen', 'polaroid_mountains'];
-const STICKER_BANK = ['sticker_star', 'sticker_heart', 'sticker_flower', 'sticker_bear'];
+const STICKER_BANK = ['sticker_star', 'sticker_bolt', 'sticker_controller', 'sticker_pizza', 'sticker_note', 'sticker_pennant', 'sticker_heart'];
 const OBJECTS = ['plant', 'books', 'boba_milk', 'boba_matcha', 'headphones', 'bunny', 'onigiri', 'camera', 'volleyball', 'sketchbook', 'mirror', 'whiteboard', 'schedule', 'sticky', 'bunting'];
 const PHOTO_SIZES = [[20, 24, 16, 15], [28, 33, 24, 22], [36, 42, 32, 29]]; // frame w,h + photo w,h
 const OPEN = { x0: 7, y0: 7, x1: 182, y1: 158 };
@@ -426,7 +468,7 @@ function framePhoto(image, [W, H, pw, ph]) {
   const r = (x0, y0, x1, y1, col) => { x.fillStyle = col; x.fillRect(x0, y0, x1 - x0 + 1, y1 - y0 + 1); };
   r(0, 1, W - 1, H - 1, '#6e4a3c'); r(1, 2, W - 2, H - 2, '#fffaf0'); r(1, H - 2, W - 2, H - 2, '#f3e6cf'); r(W - 2, 2, W - 2, H - 2, '#f3e6cf');
   x.drawImage(pixelate(image, pw, ph), 2, 3); r(2, 3 + ph, W - 3, 3 + ph, '#e2cfae');
-  const t0 = Math.round(W / 2) - 4; for (let i = 0; i < 8; i++) { r(t0 + i, 0, t0 + i, 2, '#f4b8c7'); if (i % 2) r(t0 + i, 1, t0 + i, 1, '#fbd9e1'); }
+  const t0 = Math.round(W / 2) - 4; for (let i = 0; i < 8; i++) { r(t0 + i, 0, t0 + i, 2, '#d3bb85'); if (i % 2) r(t0 + i, 1, t0 + i, 1, '#e6d3a3'); }
   return c;
 }
 function stickerize(image) {
@@ -469,7 +511,7 @@ function closeEditor() { if (ED) { popLayer(ED); ED = null; } }
 function renderEditor() {
   ED.innerHTML = '';
   ED.append(img('hallway', 480, 270, { className: 'ebg' }));
-  ED.append(el('div', { id: 'edLogo', className: 'abs' }, [img('sticker_star', 15, 15), el('b', { textContent: 'homeroom' })]));
+  ED.append(el('div', { id: 'edLogo', className: 'abs' }, [img('logo_mark', 12, 16), img('logo_word', 96, 19, { alt: 'homeroom' })]));
   ED.append(el('div', { id: 'edTitle', className: 'abs', textContent: edStep === 3 ? 'Ready to go live?' : 'Make your locker :)' }));
   const names = ['about you', 'decorate', 'go live'];
   const steps = el('div', { id: 'edSteps', className: 'abs' });
@@ -496,7 +538,7 @@ function syncMe() {
   ME.name = p.name || 'You';
   ME.line = [p.major, p.year].filter(Boolean).join(' · ') || 'this is your locker';
   ME.skin = p.skin;
-  ME.stickers = p.doorSticker ? [[p.doorSticker, 6, 38]] : [];
+  ME.stickers = [];
   const tags = [];
   if (p.major) tags.push([p.major.slice(0, 14), '#5a75bd']);
   if (p.mbti && p.mbti !== '?') tags.push([p.mbti, '#c46f8b']);
@@ -506,9 +548,9 @@ function syncMe() {
   const f = [['likes', p.interests], ['eats', p.food], ['studies', p.study], ['listens', p.artist], ['also', p.fun]].filter(([, v]) => v);
   ME.facts = f.length ? f.slice(0, 5) : [['likes', 'add yours with the pencil button'], ['eats', '?'], ['studies', 'Doe Library'], ['also', 'this is what your neighbors see']];
   while (ME.facts.length < 3) ME.facts.push(['', '']);
-  ME.hello = `hi, i'm ${firstName()}! hover over the stuff in my locker to get to know me ✿`;
+  ME.hello = `hi, i'm ${firstName()}! hover over the stuff in my locker to get to know me`;
   A.interior_you = A[`interior_x_${p.skin}_${p.paper}`];
-  ME.items = items.map(it => [it.key || it.base, Math.round(it.cx - (it.W || sz(it.base)[0]) / 2), Math.round(it.cy - (it.H || sz(it.base)[1]) / 2), it.title || 'something', it.desc || 'no description yet ✿']);
+  ME.items = items.map(it => [it.key || it.base, Math.round(it.cx - (it.W || sz(it.base)[0]) / 2), Math.round(it.cy - (it.H || sz(it.base)[1]) / 2), it.title || 'something', it.desc || 'no description yet', it.full || undefined]);
 }
 
 /* ---------- step 1: about you ---------- */
@@ -539,19 +581,13 @@ function stepAbout(door, right, bar) {
   door.append(card);
   refreshTags();
 
-  // right: what your locker looks like from the hallway + a door sticker
+  // right: what your locker looks like from the hallway (name tag included)
   const outside = el('div', { id: 'edOutside' });
-  const drawOutside = () => { outside.innerHTML = ''; outside.append(img('tile_' + profile.skin, 64, 64, { style: 'left:0;top:0' })); if (profile.doorSticker) { const s = img(profile.doorSticker, ...sz(profile.doorSticker)); s.style.left = '6px'; s.style.top = '38px'; outside.append(s); } };
-  drawOutside();
-  const pick = el('div', { className: 'stkpick' });
-  ['', ...STICKER_BANK].forEach(k => {
-    const b = el('button', { type: 'button' }, [k ? img(k, ...sz(k)) : document.createTextNode('none')]); b.setAttribute('aria-pressed', profile.doorSticker === k); b.setAttribute('aria-label', k ? TITLES[k] : 'no sticker');
-    b.addEventListener('click', () => { profile.doorSticker = k; pick.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); drawOutside(); });
-    pick.append(b);
-  });
-  right.append(el('div', { className: 'lbl', textContent: 'from the hall', style: 'position:absolute;top:-6px;left:0' }), outside,
-    el('div', { style: 'position:absolute;top:72px;left:0;width:62px' }, [el('div', { className: 'lbl', textContent: 'door sticker' }), pick]),
-    el('div', { style: 'position:absolute;top:128px;left:0;width:62px' }, [btn('✨ fill example', 'chipbtn', () => { Object.assign(profile, EXAMPLE); renderEditor(); })]));
+  const drawOutside = () => { syncMe(); outside.innerHTML = ''; outside.append(img('tile_' + profile.skin, 64, 64, { style: 'left:0;top:0' }), nameTag(ME)); };
+  drawOutside(); name.addEventListener('input', drawOutside);
+  right.append(el('div', { className: 'lbl', textContent: 'from the hall', style: 'position:absolute;top:-7px;left:0' }), outside,
+    el('div', { className: 'hint', textContent: 'your first name goes on the name tag', style: 'position:absolute;top:72px;left:0;width:62px' }),
+    el('div', { style: 'position:absolute;top:128px;left:0;width:62px' }, [btn('fill example', 'chipbtn', () => { Object.assign(profile, EXAMPLE); renderEditor(); })]));
 
   // bottom: theme picker
   const interiorRow = el('div', { className: 'swrow' });
@@ -566,7 +602,7 @@ function stepAbout(door, right, bar) {
     b.addEventListener('click', () => { profile.skin = sk; renderEditor(); });
     extRow.append(b);
   });
-  const next = btn('next →', 'navbtn go', () => { if (!profile.name.trim()) { toast('add your name first ✿'); $('#editor .namein').focus(); return; } syncMe(); edStep = 2; renderEditor(); });
+  const next = btn('next →', 'navbtn go', () => { if (!profile.name.trim()) { toast('add your name first '); $('#editor .namein').focus(); return; } syncMe(); edStep = 2; renderEditor(); });
   bar.append(el('div', { className: 'lbl dark', textContent: 'theme', style: 'writing-mode:vertical-rl;transform:rotate(180deg)' }),
     el('div', { className: 'grp', style: 'flex:1' }, [el('div', { className: 'lbl', textContent: 'interior wallpaper' }), interiorRow]),
     el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'exterior' }), extRow]), next);
@@ -599,7 +635,7 @@ function renderBar(bar = $('#edBar')) {
 function renderInspector(bar) {
   const it = sel;
   const t = el('input', { className: 'fin', value: it.title, placeholder: 'title', maxLength: 24 });
-  const d = el('textarea', { className: 'fin', value: it.desc, placeholder: 'tell your neighbors the story behind it ✿', maxLength: 160 });
+  const d = el('textarea', { className: 'fin', value: it.desc, placeholder: 'tell your neighbors the story behind it ', maxLength: 160 });
   t.addEventListener('input', () => it.title = t.value); d.addEventListener('input', () => it.desc = d.value);
   const tool = (txt, label, fn, cls = '') => { const b = btn(txt, 'tool ' + cls, fn); b.title = label; b.setAttribute('aria-label', label); return b; };
   const isUpPhoto = it.upload && it.kind === 'photo';
@@ -659,7 +695,7 @@ function startMove(e, it, node) {
   const move = ev => { const [x, y] = lockerPoint(ev); if (Math.abs(x - sx) + Math.abs(y - sy) > 2) moved = true; it.cx = x + ox; it.cy = y + oy; node.style.left = Math.round(it.cx - w / 2) + 'px'; node.style.top = Math.round(it.cy - h / 2) + 'px'; node.style.opacity = outside(it) ? .4 : 1; };
   const up = () => {
     node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up);
-    if (moved && outside(it)) { items = items.filter(x => x !== it); if (sel === it) select(null); drawPlaced(); toast('removed ✿'); return; }
+    if (moved && outside(it)) { items = items.filter(x => x !== it); if (sel === it) select(null); drawPlaced(); toast('removed '); return; }
     clamp(it); snap(it); drawPlaced(); select(it);
   };
   node.addEventListener('pointermove', move); node.addEventListener('pointerup', up); node.addEventListener('pointercancel', up);
@@ -693,7 +729,7 @@ function draggable(k, kind) {
 async function addItem(k, kind, x, y) {
   const up = uploads[k];
   const it = { id: ++uid, kind, base: up ? null : k, upload: up ? up.src : null, size: 0, scale: 1, rot: kind === 'photo' ? [-6, 4, -3, 5][uid % 4] : 0, flip: false, cx: x, cy: y,
-    title: up ? up.title : (TITLES[k] || ''), desc: up ? up.desc : '' };
+    title: up ? up.title : (TITLES[k] || ''), desc: up ? up.desc : '', full: up ? up.full : null };
   if (it.base) { const [w, h] = sz(k); it.W = w; it.H = h; }
   await bake(it); clamp(it); snap(it); items.push(it); drawPlaced(); select(it);
 }
@@ -707,16 +743,17 @@ function openUpload(kind) {
   const file = el('input', { type: 'file', accept: 'image/*', hidden: true });
   const drop = el('button', { className: 'drop', type: 'button' }, [el('div', { className: 'sub', textContent: `drop a ${kind === 'photo' ? 'photo' : 'sticker image'} here\nor click to browse`, style: 'white-space:pre-line' })]);
   const title = el('input', { className: 'fin', placeholder: 'title', maxLength: 24 });
-  const desc = el('textarea', { className: 'fin', placeholder: kind === 'photo' ? 'where was this? who’s in it? why it matters ✿' : 'what’s this sticker about?', maxLength: 160 });
+  const desc = el('textarea', { className: 'fin', placeholder: kind === 'photo' ? 'where was this? who’s in it? why it matters ' : 'what’s this sticker about?', maxLength: 160 });
   const err = el('div', { className: 'err' });
-  let srcCanvasOut = null;
+  let srcCanvasOut = null, fullOut = null;
   const show = f => {
     if (!f || !f.type.startsWith('image/')) { err.textContent = 'that doesn’t look like an image'; return; }
     const r = new FileReader(); r.onload = async () => {
       const im = await loadImg(r.result);
       srcCanvasOut = kind === 'photo' ? im : stickerize(im);
+      if (kind === 'photo') { const sc = Math.min(1, 520 / Math.max(im.naturalWidth, im.naturalHeight)); const [fc, fx] = canvas(Math.round(im.naturalWidth * sc), Math.round(im.naturalHeight * sc)); fx.imageSmoothingEnabled = true; fx.imageSmoothingQuality = 'high'; fx.drawImage(im, 0, 0, fc.width, fc.height); fullOut = fc.toDataURL('image/jpeg', .86); }
       const prev = kind === 'photo' ? framePhoto(im, PHOTO_SIZES[1]) : srcCanvasOut;
-      drop.innerHTML = ''; const pi = el('img', { src: prev.toDataURL(), width: prev.width * 3, height: prev.height * 3, alt: 'preview' }); drop.append(pi, el('div', { className: 'hint', textContent: 'pixel-ified ✿ click to change', style: 'position:absolute;bottom:3px;left:0;right:0' }));
+      drop.innerHTML = ''; const pi = el('img', { src: prev.toDataURL(), width: prev.width * 3, height: prev.height * 3, alt: 'preview' }); drop.append(pi, el('div', { className: 'hint', textContent: 'pixel-ified click to change', style: 'position:absolute;bottom:3px;left:0;right:0' }));
       if (!title.value) title.value = f.name.replace(/\.[^.]+$/, '').slice(0, 24).replace(/[_-]+/g, ' ');
     }; r.readAsDataURL(f);
   };
@@ -730,7 +767,7 @@ function openUpload(kind) {
     const k = 'up_' + (++uid);
     const thumb = kind === 'photo' ? framePhoto(srcCanvasOut, PHOTO_SIZES[0]) : srcCanvasOut;
     A[k] = thumb.toDataURL(); SIZES[k] = [thumb.width, thumb.height];
-    uploads[k] = { src: srcCanvasOut, title: title.value.trim() || (kind === 'photo' ? 'my photo' : 'my sticker'), desc: desc.value.trim() };
+    uploads[k] = { src: srcCanvasOut, full: fullOut, title: title.value.trim() || (kind === 'photo' ? 'my photo' : 'my sticker'), desc: desc.value.trim() };
     (kind === 'photo' ? customPhotos : customStickers).unshift(k);
     popLayer(L); renderEditor();
     await addItem(k, kind, 95, kind === 'photo' ? 60 : 70);
@@ -746,17 +783,16 @@ function stepLive(door, right, bar) {
   syncMe();
   door.append(profileCard(ME));
   const tile = el('div', { style: 'position:relative;width:64px;height:64px' }, [img('tile_' + profile.skin, 64, 64, { style: 'position:absolute;left:0;top:0' })]);
-  ME.stickers.forEach(([n, x, y]) => { const s = img(n, ...sz(n)); s.style.cssText = `position:absolute;left:${x}px;top:${y}px`; tile.append(s); });
-  tile.append(el('span', { className: 'youplate', textContent: 'YOU' }));
+  tile.append(nameTag(ME));
   const live = el('div', { id: 'goLive', className: 'abs' }, [el('div', { className: 'lbl', textContent: 'in the hallway' }), tile,
-    el('div', { className: 'hint', textContent: 'your neighbors see your door, then peek inside ✿' })]);
+    el('div', { className: 'hint', textContent: 'your neighbors see your door, then peek inside ' })]);
   ED.append(live);
   const first = firstName();
-  const goBtn = btn(profile.live ? 'save changes ✓' : 'make it live ✿', 'bigbtn pink', goLive);
+  const goBtn = btn(profile.live ? 'save changes ✓' : 'make it live ', 'bigbtn pink', goLive);
   bar.append(btn('← back', 'navbtn', () => { edStep = 2; renderEditor(); }),
     el('div', { className: 'grp', style: 'flex:1' }, [
-      el('div', { style: 'font-size:9px;font-weight:700;color:var(--ink)', textContent: `looking good, ${first}! ✿` }),
-      el('div', { className: 'hint', textContent: profile.live ? 'your changes show up for today’s neighbors right away.' : 'every morning at 7am you get 8 new locker neighbors, matched on that day’s theme. they can peek in and leave you a note — and you’re one of their 8 too.' })]),
+      el('div', { style: 'font-size:9px;font-weight:700;color:var(--ink)', textContent: `looking good, ${first}!` }),
+      el('div', { className: 'hint', textContent: profile.live ? 'your changes show up for today’s neighbors right away.' : 'every night at 12:00am PT the hallway refreshes with 8 new locker neighbors, matched on that day’s theme. they can peek in and leave you a note, and you’re one of their 8 too.' })]),
     goBtn);
 }
 function goLive() {
@@ -764,18 +800,18 @@ function goLive() {
   closeEditor(); renderGrid(); updateBadges();
   applySprite();
   if (first) {
-    sayHome(`welcome to the hallway, ${firstName()}! these are today’s locker neighbors ✿ but first — the daily quiz!`);
+    sayHome(`welcome to the hallway, ${firstName()}! these are today’s locker neighbors but first — the daily quiz!`);
     setTimeout(openQuiz, reduce ? 0 : 900);
-  } else { toast('locker saved ✿'); sayHome(HOME_HELLO); }
+  } else { toast('locker saved '); sayHome(HOME_HELLO); }
 }
 
 /* ================================================================
    sprite maker modal
    ================================================================ */
-const SW = { bg: ['#fff1b8', '#fde0e8', '#d4f1e2', '#c4d9f6', '#e5dcf7', '#e9f2dc', '#fdf1c9', '#f3e6cf'],
+const SW = { bg: ['#e9dcc0', '#c4d9f6', '#d4f1e2', '#f3d9c4', '#e5dcf7', '#d9e3c6', '#fdf1c9', '#c9ccd6'],
   skin: ['#f6d7bd', '#efc7a2', '#d9a47c', '#b07a52', '#8a5a3c'],
-  hair: ['#2a2026', '#4a2e3a', '#3b2a24', '#c98a4a', '#e9c46a', '#d9653b', '#8c76c0', '#ef8fa6'],
-  shirt: ['#fffaf0', '#97b3e8', '#f4b8c7', '#a9cd72', '#f7d26e', '#c6b8ea', '#6e4a3c', '#5fb2c9'] };
+  hair: ['#2a2026', '#4a2e3a', '#3b2a24', '#7a4a2a', '#c98a4a', '#e9c46a', '#a8432c', '#7a7f8c'],
+  shirt: ['#5a75bd', '#3b4a63', '#64924f', '#a8432c', '#e9b83f', '#fffaf0', '#6e4a3c', '#2e2a36'] };
 function openSpriteMaker() {
   const L = el('div', { id: 'spriteModal', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
   const before = Object.assign({}, sprite);
@@ -801,11 +837,11 @@ function openSpriteMaker() {
       Object.keys(EYES).forEach(e => eyes.append(opt(renderSprite(Object.assign({}, sprite, { eyes: e }), [6, 10, 12, 8]), 24, 16, () => { sprite.eyes = e; update(); }, sprite.eyes === e, e + ' eyes')));
       const mouths = el('div', { className: 'opts' });
       Object.keys(MOUTHS).forEach(m => mouths.append(opt(renderSprite(Object.assign({}, sprite, { mouth: m }), [8, 14, 8, 6]), 24, 18, () => { sprite.mouth = m; update(); }, sprite.mouth === m, m + ' mouth')));
-      const blush = btn(sprite.blush ? 'blush: on ✿' : 'blush: off', 'chipbtn', () => { sprite.blush = !sprite.blush; update(); });
+      const blush = btn(sprite.blush ? 'blush: on ' : 'blush: off', 'chipbtn', () => { sprite.blush = !sprite.blush; update(); });
       panel.append(sec('eyes'), eyes, sec('mouth'), mouths, sec('skin'), swatches('skin'), el('div', {}, [blush]));
     } else if (tab === 'hair') {
       const st = el('div', { className: 'opts' });
-      Object.keys(HAIRS).forEach(hs => st.append(opt(renderSprite(Object.assign({}, sprite, { hairStyle: hs })), 24, 24, () => { sprite.hairStyle = hs; update(); }, sprite.hairStyle === hs, hs)));
+      Object.keys(HAIRS).forEach(hs => st.append(opt(renderSprite(Object.assign({}, sprite, { hairStyle: hs })), 24, 24, () => { sprite.hairStyle = hs; update(); }, sprite.hairStyle === hs, HAIRS[hs].label)));
       panel.append(sec('styles'), st, sec('color'), swatches('hair'));
     } else if (tab === 'shirt') panel.append(sec('shirt color'), swatches('shirt'));
     else panel.append(sec('background'), swatches('bg'));
@@ -868,9 +904,9 @@ function openQuiz() {
     card.innerHTML = '';
     const same = 40 + (quizAnswer.length * 7) % 90;
     card.append(el('h2', { textContent: 'daily quiz!' }), el('div', { className: 'qdone' }, [
-      el('div', { className: 'big', textContent: 'locked in ✿' }),
+      el('div', { className: 'big', textContent: 'locked in ' }),
       el('div', { className: 'stat', textContent: `you said: ${quizAnswer}` }),
-      el('div', { className: 'sub', textContent: `${same} people said something similar so far. tomorrow at 7am your hallway refreshes with 8 of them.` }),
+      el('div', { className: 'sub', textContent: `${same} people said something similar so far. at midnight PT your hallway refreshes with 8 of them.` }),
       el('div', { className: 'sub', textContent: 'today’s neighbors? you were matched on yesterday’s quiz — favorite study spot: Doe Library.' }),
       btn('see today’s neighbors →', 'bigbtn pink', () => { popLayer(L); sayHome(HOME_HELLO); })]));
   };
@@ -881,7 +917,7 @@ function openPastQuizzes() {
   L._esc = () => popLayer(L);
   const g = el('div', { className: 'grid9' });
   const today = el('button', { className: 'qcard today', type: 'button' }, [el('span', { className: 'd', textContent: 'today' }), el('span', { className: 'q', textContent: TODAY_Q.q }),
-    quizAnswer ? el('span', { className: 'a', textContent: quizAnswer }) : el('span', { className: 'a', textContent: 'answer it →' }), el('span', { className: 'm', textContent: 'matches tomorrow at 7am' })]);
+    quizAnswer ? el('span', { className: 'a', textContent: quizAnswer }) : el('span', { className: 'a', textContent: 'answer it →' }), el('span', { className: 'm', textContent: 'matches at midnight PT' })]);
   today.addEventListener('click', () => { popLayer(L); openQuiz(); });
   g.append(today);
   PAST_QS.forEach(([d, q, a, m], i) => { const c = el('div', { className: 'qcard' }, [el('span', { className: 'd', textContent: d }), el('span', { className: 'q', textContent: q }), el('span', { className: 'a', textContent: a }), el('span', { className: 'm', textContent: 'matched with ' + m })]); c.style.animationDelay = i * 30 + 'ms'; g.append(c); });
@@ -890,21 +926,71 @@ function openPastQuizzes() {
 }
 
 /* ================================================================
-   notes slipped into your locker
+   everyone's sprites come from the same renderer, so hair and faces match
    ================================================================ */
-const NOTES = [
-  { from: RECEIVED.from, text: RECEIVED.text, when: RECEIVED.when, read: false },
-  { from: PEOPLE.find(p => p.id === 'sofia'), text: 'your sprite is so cute omg. do you play stardew? i need a farm co-op partner for the weekend', when: 'this morning', read: false },
-  { from: PEOPLE.find(p => p.id === 'kai'), text: 'fellow North Reading Room regular! i’m the one with the bird book by the window. come say hi, i’ll show you the hawk', when: '9:12 am', read: false },
-  { from: PEOPLE.find(p => p.id === 'mei'), text: 'ok your locker made me smile. portrait swap? i take one of you on film, you draw one of me ✿', when: '8:40 am', read: false },
+const AV = {
+  mei: { hairStyle: 'bob', hair: '#2a2026', skin: '#f6d7bd', bg: '#c4d9f6', shirt: '#fffaf0', eyes: 'dot', mouth: 'smile', blush: true },
+  haruto: { hairStyle: 'sidepart', hair: '#1f2238', skin: '#efc7a2', bg: '#d4f1e2', shirt: '#64924f', eyes: 'dot', mouth: 'grin', blush: false },
+  priya: { hairStyle: 'long', hair: '#2a1a18', skin: '#b07a52', bg: '#fdf1c9', shirt: '#a8432c', eyes: 'lashes', mouth: 'smile', blush: false },
+  diego: { hairStyle: 'crop', hair: '#3b2a24', skin: '#d9a47c', bg: '#c9ccd6', shirt: '#3b4a63', eyes: 'dot', mouth: 'flat', blush: false },
+  amara: { hairStyle: 'afro', hair: '#1d1414', skin: '#8a5a3c', bg: '#e5dcf7', shirt: '#e9b83f', eyes: 'happy', mouth: 'grin', blush: false },
+  sofia: { hairStyle: 'bun', hair: '#3a2a30', skin: '#efc7a2', bg: '#e9dcc0', shirt: '#7a5aa0', eyes: 'glasses', mouth: 'smile', blush: false },
+  kai: { hairStyle: 'fringe', hair: '#c98a4a', skin: '#d9a47c', bg: '#d9e3c6', shirt: '#64924f', eyes: 'dot', mouth: 'smile', blush: false },
+  lena: { hairStyle: 'ponytail', hair: '#4a2e3a', skin: '#f6d7bd', bg: '#f3d9c4', shirt: '#2e2a36', eyes: 'lashes', mouth: 'smile', blush: true },
+  jordan: { hairStyle: 'buzz', hair: '#2a2026', skin: '#8a5a3c', bg: '#c4d9f6', shirt: '#a8432c', eyes: 'dot', mouth: 'grin', blush: false },
+  marcus: { hairStyle: 'curly', hair: '#3b2a24', skin: '#f6d7bd', bg: '#d9e3c6', shirt: '#5a75bd', eyes: 'glasses', mouth: 'smile', blush: false },
+};
+Object.entries(AV).forEach(([id, sp]) => A['avatar_' + id] = renderSprite(sp));
+
+// yesterday's neighbors: not in today's hallway, but their notes (and lockers) are still reachable
+const YESTERDAY = [
+  { id: 'jordan', name: 'Jordan Ellis', line: 'data science · ’27', skin: 'mint', stickers: [],
+    pills: [['data sci', '#4a8573'], ['ISTP', '#7a5aa0'], ['pickup ball', '#c97a3c']],
+    facts: [['likes', 'pickup basketball, fantasy football, spicy noodles'], ['eats', 'Tako Sushi'], ['studies', 'Moffitt, 4th floor'], ['also', 'down to run a 2v2 at the RSF any time']],
+    hello: "yo, Jordan. not much in here, it's mostly snacks",
+    items: [['schedule', 36, 30, 'class schedule', 'DATA 100 + STAT 134 this sem. free after 4 most days.'], ['sticker_controller', 80, 36, 'controller sticker', 'from the esports club. i am mid at valorant and at peace with it.'],
+      ['volleyball', 44, 85, 'basketball', 'ok it\'s a volleyball. the basketball didn\'t fit.'], ['onigiri', 100, 86, 'snack stash', 'emergency carbs. take one if you need it.'], ['headphones', 120, 135, 'headphones', 'podcasts at 1.5x on the walk up to Evans.']] },
+  { id: 'marcus', name: 'Marcus Bell', line: 'mechanical engineering · ’28', skin: 'butter', stickers: [],
+    pills: [['mech e', '#5a75bd'], ['INTJ', '#7a5aa0'], ['climbing', '#64924f']],
+    facts: [['likes', 'bouldering, 3D printing, old Pixar movies'], ['eats', 'Top Dog'], ['studies', 'Jacobs Hall'], ['also', 'i can print you a keychain']],
+    hello: "hey, Marcus. careful, some of this is still printing",
+    items: [['whiteboard', 34, 32, 'whiteboard', 'design review notes for our robot arm. it can almost pick up a cup.'], ['sticker_bolt', 82, 36, 'lightning bolt', 'from Pioneers in Engineering. robotics comp is in april.'],
+      ['camera', 44, 84, 'camera', 'for documenting builds. and my cat. mostly my cat.'], ['books', 104, 82, 'books', 'Shigley\'s. heaviest book i own.'], ['plant', 128, 132, 'plant', 'a desk plant my mom made me take. still alive.']] },
 ];
-// a note is "viewed" once you unfold it (or open its DM). viewed notes leave your locker + the notes grid
-// and live in your DMs only. every note is a DM thread from the start.
-const unviewed = () => NOTES.filter(n => !n.read);
-function unreadNotes() { return profile.live && unviewed().length > 0; }
-function updateBadges() { const n = profile.live ? unviewed().length : 0; const b = $('#mailBadge'); b.hidden = !n; b.textContent = n; }
-function markViewed(n) { n.read = true; updateBadges(); }
+A.interior_jordan = A.interior_x_mint_graph; A.interior_marcus = A.interior_x_butter_plaid;
+
+/* ================================================================
+   notes, missed notes, messages
+   ================================================================ */
+// today's notes: physically in your locker until you open them
+const TODAY = [
+  { from: RECEIVED.from, text: RECEIVED.text, when: '8:12 am', read: false },
+  { from: PEOPLE.find(p => p.id === 'sofia'), text: 'your sprite is so good. do you play stardew? i need a farm co-op partner for the weekend', when: '9:40 am', read: false },
+  { from: PEOPLE.find(p => p.id === 'kai'), text: 'fellow North Reading Room regular! i’m the one with the bird book by the window. come say hi, i’ll show you the hawk', when: '11:02 am', read: false },
+];
+// missed: left before the last refresh, never opened. these are the only notes that go to the mailbox
+const MISSED = [
+  { from: YESTERDAY[0], text: 'saw you also said Moffitt is overrated lol. pickup at the RSF thursday? we need a 4th', when: 'yesterday · 6:15 pm', accepted: false },
+  { from: YESTERDAY[1], text: 'your locker setup is clean. i 3D print stuff, want a little nametag keychain for it?', when: 'yesterday · 10:48 pm', accepted: false },
+];
+// messages: one thread per accepted note
+const DMS = [
+  { who: PEOPLE.find(p => p.id === 'diego'), note: 'your sketchbook page of Sather Gate is unreal. tips for drawing buildings?', unread: true,
+    msgs: [['me', 'your sketchbook page of Sather Gate is unreal. tips for drawing buildings?'], ['them', 'haha thank you!! honestly just start with the boxy shapes'], ['them', 'i do a sketch walk on sundays if you wanna come']] },
+];
+const unviewed = () => TODAY.filter(n => !n.read);
+function unreadNotes() { return profile.live ? unviewed().length : 0; }
+function updateBadges() {
+  const m = profile.live ? MISSED.filter(n => !n.accepted).length : 0, d = profile.live ? DMS.filter(t => t.unread).length : 0;
+  const mb = $('#mailBadge'), db = $('#dmBadge'); mb.hidden = !m; mb.textContent = m; db.hidden = !d; db.textContent = d;
+}
 function backToHall() { renderGrid(); updateBadges(); }
+function acceptNote(n) {
+  n.accepted = true; n.read = true;
+  let t = DMS.find(x => x.who === n.from);
+  if (!t) { t = { who: n.from, note: n.text, unread: false, msgs: [['them', n.text]] }; DMS.unshift(t); }
+  backToHall(); openDMs(t);
+}
 
 function openNoteStack() {
   closeMail(); if (viewer) closeLocker();
@@ -914,41 +1000,42 @@ function openNoteStack() {
   L._esc = () => popLayer(L);
   L.querySelector('.fl-dim').addEventListener('click', L._esc);
   const doorEl = el('button', { id: 'stackDoor', className: 'abs', type: 'button' }, [img('doorfront_' + ME.skin, 176, 152)]);
-  doorEl.setAttribute('aria-label', 'Unfold the top note');
-  // a little stack of unviewed notes poking out of the top vent
+  doorEl.setAttribute('aria-label', 'Pull out the top note');
+  // the notes are pushed into the top vent slots: only their top edges stick out
   list.forEach((n, i) => {
-    const s = el('div', { className: 'slip' + (i === 0 ? ' top' : '') }, [el('b', { textContent: n.from.name.split(' ')[0] })]);
-    s.style.left = 60 + i * 9 + 'px'; s.style.top = 6 - i * 3 + 'px'; s.style.transform = `rotate(${[-8, 5, -3, 9][i % 4]}deg)`; s.style.zIndex = list.length - i;
-    doorEl.append(s);
+    const sl = el('div', { className: 'slip' + (i === 0 ? ' top' : '') }, [el('b', { textContent: n.from.name.split(' ')[0] })]);
+    sl.style.left = 46 + i * 26 + 'px'; sl.style.top = (-4 - (i % 2) * 2) + 'px'; sl.style.transform = `rotate(${[-6, 4, -2, 7][i % 4]}deg)`;
+    doorEl.append(sl);
   });
+  doorEl.append(el('span', { className: 'badge', textContent: list.length, style: 'right:-4px;top:-4px;min-width:10px;height:10px;line-height:10px;font-size:7px' }));
   doorEl.addEventListener('click', () => { popLayer(L); openOneNote(list[0]); });
   L._next = () => { popLayer(L); openOneNote(list[0]); };
   const side = el('div', { id: 'stackBtns', className: 'abs' }, [
-    sbtnF('icon_mail', 14, 11, `unfold (${list.length} new)`, 'tall', () => { popLayer(L); openOneNote(list[0]); }),
+    sbtnF('icon_mail', 14, 11, `read (${list.length} new)`, 'tall', () => { popLayer(L); openOneNote(list[0]); }),
     sbtnF(null, 0, 0, 'see all new notes', '', () => { popLayer(L); openAllNotes(); }),
     sbtnF(null, 0, 0, 'open my locker →', 'small', () => { popLayer(L); openLocker(ME); }),
   ]);
-  L.append(doorEl, el('div', { id: 'stackHint', className: 'abs mtitle', style: 'top:204px;font-size:9px', textContent: `${list.length} new note${list.length > 1 ? 's' : ''} slipped into your locker ✉  press → to unfold` }), side);
+  L.append(doorEl, el('div', { id: 'stackHint', className: 'abs mtitle', style: 'top:204px;font-size:9px', textContent: `${list.length} new note${list.length > 1 ? 's' : ''} in your locker. press → to pull one out` }), side);
   pushLayer(L);
 }
 function sbtnF(icon, w, h, label, cls, on) { const b = sbtn(icon, w, h, label, cls); b.addEventListener('click', on); return b; }
 
 function openOneNote(n) {
-  markViewed(n);
+  n.read = true;
   const left = unviewed();
   const L = el('div', { id: 'oneLayer', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
   const close = () => { popLayer(L); backToHall(); };
   L._esc = close;
   const paper = el('div', { id: 'oneNote', className: 'abs' }, [
-    el('span', { className: 'count2', textContent: left.length ? `${left.length} more new` : 'all caught up ✿' }),
-    el('div', { className: 'from' }, [img('avatar_' + n.from.id, 24, 24), el('div', {}, [el('b', { textContent: `note from ${n.from.name}` }), el('span', { textContent: `${n.when} · saved to your DMs` })])]),
+    el('span', { className: 'count2', textContent: left.length ? `${left.length} more new` : 'all caught up' }),
+    el('div', { className: 'from' }, [img('avatar_' + n.from.id, 24, 24), el('div', {}, [el('b', { textContent: `note from ${n.from.name}` }), el('span', { textContent: `${n.when} · today’s neighbor` })])]),
     el('div', { className: 'body', textContent: n.text })]);
+  const next = () => { popLayer(L); if (left.length) openOneNote(left[0]); else backToHall(); };
   const side = el('div', { id: 'stackBtns', className: 'abs' }, [
-    sbtnF('icon_mail', 14, 11, 'reply in DMs', 'tall', () => { close(); state.dmWith = n; state.dmOpen = true; mailTab = 'received'; openMail(); }),
+    sbtnF('icon_chat', 14, 9, 'accept → message', 'tall', () => { popLayer(L); acceptNote(n); }),
     sbtnF(null, 0, 0, 'peek at their locker', '', () => { close(); openLocker(n.from); }),
-    left.length ? sbtnF(null, 0, 0, 'next note →', '', () => { popLayer(L); openOneNote(left[0]); }) : sbtnF(null, 0, 0, 'no more new notes', 'dimmed', () => {}),
-    left.length ? sbtnF(null, 0, 0, 'see all new notes', 'small', () => { popLayer(L); openAllNotes(); }) : sbtnF(null, 0, 0, 'open DMs', 'small', () => { close(); state.dmOpen = false; mailTab = 'received'; openMail(); }),
-    sbtnF(null, 0, 0, '← hallway', 'small', close),
+    sbtnF(null, 0, 0, left.length ? 'not now → next' : 'not now', '', next),
+    left.length ? sbtnF(null, 0, 0, 'see all new notes', 'small', () => { popLayer(L); openAllNotes(); }) : sbtnF(null, 0, 0, '← hallway', 'small', close),
   ]);
   if (left.length) L._next = () => { popLayer(L); openOneNote(left[0]); };
   L.append(paper, side); pushLayer(L);
@@ -964,16 +1051,115 @@ function openAllNotes() {
     if (!n) { g.append(el('div', { className: 'ncard empty2' })); continue; }
     const c = el('button', { className: 'ncard unread', type: 'button' }, [
       el('div', { className: 'h' }, [img('avatar_' + n.from.id, 24, 24, { style: 'width:12px;height:12px' }), el('span', { textContent: 'note from ' + n.from.name.split(' ')[0] })]),
-      el('p', { textContent: 'tap to unfold ✉' }), el('span', { className: 'chip', textContent: 'open', style: 'align-self:flex-start;font-size:5.5px;padding:1px 4px' })]);
+      el('p', { textContent: `left at ${n.when}. open it to read` }), el('span', { className: 'chip', textContent: 'open', style: 'align-self:flex-start;font-size:5.5px;padding:1px 4px' })]);
     c.style.animationDelay = i * 30 + 'ms';
     c.addEventListener('click', () => { popLayer(L); openOneNote(n); });
     g.append(c);
   }
-  const dmBtn = btn('viewed notes live in your DMs →', 'chip', () => { close(); state.dmOpen = false; mailTab = 'received'; openMail(); });
-  L.append(el('div', { className: 'mtitle', textContent: list.length ? `new notes (${list.length})` : 'all caught up ✿' }), g,
-    el('div', { className: 'mclose' }, [btn('close', 'chip', close)]), el('div', { className: 'abs', style: 'left:0;right:0;top:243px;text-align:center' }, [dmBtn]));
+  L.append(el('div', { className: 'mtitle', textContent: list.length ? `new notes (${list.length})` : 'all caught up' }), g,
+    el('div', { className: 'mclose' }, [btn('close', 'chip', close)]),
+    el('div', { className: 'abs', style: 'left:0;right:0;top:243px;text-align:center' }, [btn('open messages →', 'chip', () => { close(); openDMs(); })]));
   pushLayer(L);
 }
+
+/* ---------- messages: a list of threads, then a chat ---------- */
+const REPLIES = ['haha yes', 'omg okay when are you free?', 'lowkey this made my day', 'down! thursday works for me', 'wait that’s so funny', 'let’s do it'];
+function openDMs(thread) {
+  closeMail();
+  const old = $('#dmLayer'); if (old) popLayer(old);
+  const L = el('div', { id: 'dmLayer', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
+  const close = () => { popLayer(L); updateBadges(); };
+  L._esc = close; L.querySelector('.fl-dim').addEventListener('click', close);
+  const box = el('div', { id: 'dmBox', className: 'abs' }); L.append(box); pushLayer(L);
+  const list = () => {
+    box.innerHTML = '';
+    const head = el('div', { className: 'dmhead' }, [el('b', { textContent: 'messages' }), btn('close', 'chip', close)]);
+    const rows = el('div', { className: 'dmrows' });
+    if (!DMS.length) rows.append(el('p', { className: 'empty', textContent: 'no messages yet.\naccept a note to start one.' }));
+    DMS.forEach(t => {
+      const last = t.msgs[t.msgs.length - 1];
+      const r = el('button', { className: 'dmrow' + (t.unread ? ' unread' : ''), type: 'button' }, [
+        img('avatar_' + t.who.id, 24, 24, { className: 'av' }),
+        el('div', { className: 'mid' }, [el('b', { textContent: t.who.name }), el('span', { textContent: (last[0] === 'me' ? 'you: ' : '') + last[1] })]),
+        t.unread ? el('i', { className: 'dot' }) : el('i')]);
+      r.addEventListener('click', () => chat(t));
+      rows.append(r);
+    });
+    box.append(head, rows);
+  };
+  const chat = t => {
+    t.unread = false; updateBadges();
+    box.innerHTML = '';
+    const back = btn('←', 'chip', list); back.setAttribute('aria-label', 'Back to messages');
+    const head = el('div', { className: 'dmhead' }, [back, img('avatar_' + t.who.id, 24, 24, { className: 'av' }),
+      el('div', { className: 'mid' }, [el('b', { textContent: t.who.name }), el('span', { textContent: t.who.line })]),
+      btn('locker', 'chip', () => { close(); openLocker(t.who); })]);
+    const feed = el('div', { className: 'dmfeed' });
+    const paint = () => {
+      feed.innerHTML = '';
+      feed.append(el('div', { className: 'notecard' }, [el('span', { textContent: 'started from a note' }), document.createTextNode(t.note)]));
+      t.msgs.slice(t.msgs[0] && t.msgs[0][1] === t.note ? 1 : 0).forEach(([who, txt]) => feed.append(el('div', { className: 'bub ' + who, textContent: txt })));
+      if (t.typing) feed.append(el('div', { className: 'bub them typing', textContent: '• • •' }));
+      feed.scrollTop = feed.scrollHeight;
+    };
+    const form = el('form', { className: 'dmbar' });
+    const input = el('input', { className: 'fin', id: 'dmText', placeholder: `message ${t.who.name.split(' ')[0]}...`, maxLength: 200, autocomplete: 'off' });
+    form.append(input, el('button', { className: 'chip go', textContent: 'send', type: 'submit' }));
+    form.addEventListener('submit', e => {
+      e.preventDefault(); const v = input.value.trim(); if (!v) return;
+      t.msgs.push(['me', v]); input.value = ''; paint();
+      if (!t.typing) { t.typing = true; setTimeout(paint, 600); setTimeout(() => { t.typing = false; t.msgs.push(['them', REPLIES[t.msgs.length % REPLIES.length]]); if ($('#dmLayer')) paint(); }, 2200); }
+    });
+    box.append(head, feed, form); paint(); input.focus();
+  };
+  thread ? chat(thread) : list();
+}
+
+/* ================================================================
+   midnight PT countdown
+   ================================================================ */
+function secsToMidnightPT() {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  const now = (+parts.hour % 24) * 3600 + (+parts.minute) * 60 + (+parts.second);
+  return 86400 - now;
+}
+function tickCountdown() {
+  const s = secsToMidnightPT(), pad = n => String(n).padStart(2, '0');
+  $('#cdTime').textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`;
+}
+tickCountdown(); setInterval(tickCountdown, 1000);
+
+/* ================================================================
+   Mittens: sits on the floor, flicks his tail, wanders a little, meows when he talks
+   ================================================================ */
+const MIT_TIPS = ['meow. new neighbors every night at midnight.', 'mrrp. leave a note. worst case, they say hi back.', 'meow! hover anything in a locker to hear the story behind it.', 'mrow. the clipboard up top has all your past quizzes.', 'meow. i\'ve been the hall cat since 2019. i know everyone.'];
+const mit = el('button', { id: 'mittens', className: 'abs', type: 'button' }, [el('img', { alt: '', width: 26, height: 24 }), el('span', { className: 'meow', textContent: 'meow!' })]);
+mit.setAttribute('aria-label', 'Mittens the hall cat');
+$('#stage').insertBefore(mit, $('#homeTab'));
+$('#mitFace').src = A.mittens_face;
+const M = { x: 410, dir: -1, mode: 'sit', t: 0, target: 410, meowUntil: 0 };
+function mitFrame() {
+  const im = mit.querySelector('img');
+  let f;
+  if (M.mode === 'walk') { f = (M.t >> 1) % 2 ? 'mittens_walk1' : 'mittens_walk0'; im.width = 28; im.height = 20; }
+  else { f = Date.now() < M.meowUntil ? 'mittens_meow' : (M.t % 40 === 0 ? 'mittens_blink' : (M.t % 24 < 6 ? 'mittens_tail' : 'mittens_sit')); im.width = 26; im.height = 24; }
+  if (im.dataset.f !== f) { im.src = A[f]; im.dataset.f = f; }
+  mit.style.left = Math.round(M.x) + 'px'; mit.style.top = (M.mode === 'walk' ? 240 : 236) + 'px';
+  mit.classList.toggle('flip', M.dir > 0);
+  mit.classList.toggle('talking', Date.now() < M.meowUntil);
+}
+setInterval(() => {
+  M.t++;
+  if (M.mode === 'sit' && !reduce && M.t % 70 === 0 && Math.random() < .7) { M.target = 394 + Math.random() * 54; M.mode = 'walk'; M.dir = M.target > M.x ? 1 : -1; }
+  if (M.mode === 'walk') { M.x += M.dir * 1.5; if ((M.dir > 0 && M.x >= M.target) || (M.dir < 0 && M.x <= M.target)) { M.mode = 'sit'; M.dir = -1; } }
+  mitFrame();
+}, 140);
+function mitMeow(ms = 1100) { M.meowUntil = Date.now() + ms; mitFrame(); const b = $('#mitBadge'); b.classList.remove('talk'); void b.offsetWidth; b.classList.add('talk'); }
+mit.addEventListener('click', () => { sayHome(MIT_TIPS[Math.floor(Math.random() * MIT_TIPS.length)]); });
+// whenever Mittens starts a new line in the dialogue box, he meows
+let lastLine = '';
+new MutationObserver(() => { const t = $('#homeTxt').textContent; if (t.length <= 2 && t !== lastLine) mitMeow(); lastLine = t; }).observe($('#homeTxt'), { childList: true, characterData: true, subtree: true });
+mitFrame();
 
 addEventListener('keydown', e => { const top = layers[layers.length - 1]; if (e.key === 'ArrowRight' && top && top._next && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) top._next(); });
 
@@ -983,6 +1169,7 @@ addEventListener('keydown', e => { const top = layers[layers.length - 1]; if (e.
 applySprite();
 renderGrid(); updateBadges();
 if (location.hash === '#hallway') {
+  Object.assign(sprite, { hairStyle: 'long', hair: '#2a2026', skin: '#efc7a2', bg: '#e9dcc0', shirt: '#5a75bd' }); applySprite();
   // skip onboarding: jump straight to the hallway with the example profile
   Object.assign(profile, EXAMPLE); startItems(); profile.live = true; syncMe(); renderGrid(); updateBadges();
   setTimeout(openQuiz, 600);

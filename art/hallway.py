@@ -28,7 +28,7 @@ P0 = h("#c46f8b"); P1 = h("#e595ab"); P2 = h("#f4b8c7"); P3 = h("#fbd9e1"); P4 =
 T0 = h("#5e3f32"); T1 = h("#7f5640"); T2 = h("#9c6e50")
 # misc
 CU0 = h("#fffaf0"); CU1 = h("#f3e6cf"); CU2 = h("#e2cfae"); CUO = h("#c4a37f")
-RB0 = h("#e58c9f"); RB1 = h("#f6b6c3")
+RB0 = h("#8a5a3c"); RB1 = h("#b07a52")
 ST0 = h("#80869e"); ST1 = h("#a9afc4"); ST2 = h("#d5d9e5")
 TC0 = h("#a85a45"); TC1 = h("#cf7a5a"); TC2 = h("#e8a07a"); TC3 = h("#f4c19c")
 CAT0 = h("#b9783f"); CAT1 = h("#e8a65c"); CAT2 = h("#f7cf8f"); CAT3 = h("#fff1d8")
@@ -122,7 +122,7 @@ for i in range(160):
     if inb(x + 1, y + 1): op[x + 1, y + 1] = G1
 for i in range(60):
     x = rng.randrange(W); y = rng.randrange(146, 168)
-    op[x, y] = rng.choice([P3, CL0, h("#f7d26e"), P2])
+    op[x, y] = rng.choice([CL0, h("#f7d26e"), CL1, G4])
 
 def canopy(blobs, cols, olc, im, speck=None):
     """layered blob shading: dark base, mid, light, highlight — classic pixel-art foliage"""
@@ -187,29 +187,11 @@ def tree_trunk(cx, ytop, ybot, w, forks, im):
     for (sy, tx, ty) in forks:
         thick_line(cx, sy, tx, ty, 3, 2, im)
 
-# ---- left window landscape: big cherry tree + a green tree behind ----
-tree_trunk(98, 92, 156, 4, [(114, 90, 100), (112, 106, 100)], out)
-canopy([(98, 88, 13), (86, 94, 10), (110, 94, 10), (98, 78, 9)], (G0, G1, G2, G3), G0, out, speck=G4)
-tree_trunk(50, 86, 158, 6, [(114, 36, 97), (112, 65, 97), (106, 50, 92)], out)
-canopy([(50, 76, 17), (32, 84, 12), (68, 84, 12), (20, 93, 8), (80, 93, 8), (40, 65, 11), (62, 65, 11),
-        (50, 89, 11), (37, 96, 7), (63, 96, 7)], (P0, P1, P2, P3), P0, out, speck=P4)
-# ---- right window landscape: round green tree (yellow-green like ref) + cherry ----
-tree_trunk(388, 88, 158, 6, [(118, 374, 101), (116, 402, 101)], out)
-canopy([(388, 82, 17), (372, 92, 12), (404, 92, 12), (380, 68, 11), (398, 68, 11), (388, 97, 10)],
-       (G1, G2, G3, G4), G0, out, speck=h("#e6f0a8"))
-tree_trunk(444, 92, 158, 5, [(120, 432, 104), (118, 456, 104)], out)
-canopy([(444, 86, 15), (430, 96, 10), (458, 96, 10), (448, 74, 10), (436, 76, 8), (444, 100, 8)],
-       (P0, P1, P2, P3), P0, out, speck=P4)
-# fallen petals on the grass under the cherries
-for _ in range(70):
-    x = rng.choice([rng.randrange(20, 90), rng.randrange(424, 470)])
-    y = rng.randrange(150, 166)
-    op[x, y] = rng.choice([P2, P3, P4])
-
 # =====================================================================
 # ROOM
 # =====================================================================
-FLOOR_Y = 220
+FLOOR_Y = 206
+RAIL = FLOOR_Y - 42
 # ceiling
 rect(0, 0, W - 1, 9, CE0)
 hline(0, W - 1, 9, CE1)
@@ -221,8 +203,17 @@ for x in range(0, W, 2): px[x, 16] = WL2
 
 # wall texture — very sparse plaster flecks
 for _ in range(500):
-    x = rng.randrange(W); y = rng.randrange(17, 172)
+    x = rng.randrange(W); y = rng.randrange(17, RAIL - 6)
     px[x, y] = WL0 if rng.random() < 0.6 else WL2
+
+# blocky wall texture: soft 16px courses with a 1px shade line, offset every row like stacked blocks
+for row, y0 in enumerate(range(17, RAIL - 1, 16)):
+    for x in range(W):
+        blend(x, y0, WL2, 0.35)
+    off = 0 if row % 2 == 0 else 16
+    for x in range(off, W, 32):
+        for y in range(y0, min(RAIL - 2, y0 + 16)):
+            blend(x, y, WL2, 0.30)
 
 # ---------------- windows ----------------
 def window(x0, y0, x1, y1, open_gap=None):
@@ -235,7 +226,7 @@ def window(x0, y0, x1, y1, open_gap=None):
     # reveal the landscape
     for y in range(gy0, gy1 + 1):
         for x in range(gx0, gx1 + 1):
-            px[x, y] = op[x, min(H - 1, max(0, y - 12))]
+            px[x, y] = op[x, min(H - 1, max(0, y - 2))]
     # inner frame shadow
     rect(gx0 - 1, gy0 - 1, gx1 + 1, gy0 - 1, OL)
     vline(gx0 - 1, gy0, gy1 + 1, OL); vline(gx1 + 1, gy0, gy1 + 1, OL); hline(gx0, gx1, gy1 + 1, OL)
@@ -276,8 +267,8 @@ def window(x0, y0, x1, y1, open_gap=None):
                     blend(x, y, CL0, 0.45)
     return mx, ty, gx0, gx1, gy0, gy1
 
-LWIN = (12, 66, 124, 170)
-RWIN = (356, 66, 468, 170)
+LWIN = (12, 56, 124, 156)
+RWIN = (356, 56, 468, 156)
 lw = window(*LWIN, open_gap=22)
 rw = window(*RWIN)
 
@@ -334,7 +325,7 @@ def pot(cx, base, wdt=6, hgt=5):
     vline(x0 + 1, base - hgt + 2, base - 1, TC2); vline(x0 + wdt - 2, base - hgt + 2, base - 1, TC0)
     return base - hgt
 
-SILL_TOP = 170
+SILL_TOP = 156
 t = pot(28, SILL_TOP, 7, 5)
 m = set(); [m.update(disc(*b)) for b in ((28, t - 3, 3), (25, t - 2, 2.2), (31, t - 2, 2.2))]
 for (x, y) in m: px[x, y] = G2 if y < t - 2 else G1
@@ -343,19 +334,19 @@ for (x, y) in m:
 outline(m, G0)
 t = pot(40, SILL_TOP, 5, 4)
 for (x, y, c) in ((40, t - 1, G1), (40, t - 2, G1), (40, t - 3, G1), (39, t - 3, G2), (41, t - 4, G2),
-                  (39, t - 5, P1), (40, t - 5, P2), (41, t - 6, P3), (38, t - 6, P2), (40, t - 6, P1), (40, t - 7, P2)):
+                  (39, t - 5, G2), (40, t - 5, G3), (41, t - 6, G3), (38, t - 6, G1), (40, t - 6, G2), (40, t - 7, G3)):
     p(x, y, c)
 # right sill: cactus + jar of blossom sprigs
 t = pot(452, SILL_TOP, 6, 4)
 rect(450, t - 8, 453, t - 1, G0); rect(451, t - 7, 452, t - 1, G2); vline(451, t - 7, t - 2, G3)
-p(449, t - 5, G0); p(449, t - 4, G1); p(454, t - 6, G0); p(454, t - 5, G1); p(451, t - 9, P2); p(452, t - 9, P1)
+p(449, t - 5, G0); p(449, t - 4, G1); p(454, t - 6, G0); p(454, t - 5, G1)
 rect(438, SILL_TOP - 6, 442, SILL_TOP, OL); rect(439, SILL_TOP - 5, 441, SILL_TOP - 1, h("#cfe8ec")); p(439, SILL_TOP - 5, CL0)
-for (x, y, c) in ((440, SILL_TOP - 7, T1), (439, SILL_TOP - 8, T1), (441, SILL_TOP - 9, T1), (438, SILL_TOP - 10, P2),
-                  (439, SILL_TOP - 10, P3), (441, SILL_TOP - 11, P2), (442, SILL_TOP - 10, P1), (440, SILL_TOP - 12, P3)):
+for (x, y, c) in ((440, SILL_TOP - 7, G1), (439, SILL_TOP - 8, G1), (441, SILL_TOP - 9, G1), (438, SILL_TOP - 10, G2),
+                  (439, SILL_TOP - 10, G3), (441, SILL_TOP - 11, G2), (442, SILL_TOP - 10, G1), (440, SILL_TOP - 12, G3)):
     p(x, y, c)
 
 # ---------------- wainscot ----------------
-RAIL = 178
+# (RAIL defined with FLOOR_Y)
 hline(0, W - 1, RAIL - 1, OL)
 hline(0, W - 1, RAIL, W5); hline(0, W - 1, RAIL + 1, W4); hline(0, W - 1, RAIL + 2, W2); hline(0, W - 1, RAIL + 3, OL)
 rect(0, RAIL + 4, W - 1, FLOOR_Y - 7, W3)
@@ -464,11 +455,11 @@ def chair(cx, fy, book=None):
         rect(cx - 6, fy - 22, cx + 3, fy - 20, OL)
         hline(cx - 5, cx + 2, fy - 21, book); p(cx + 2, fy - 21, CU0)
 
-chair(42, 238, book=P1)
-chair(94, 238, book=h("#97b3e8"))
+chair(42, 226, book=h("#b5523b"))
+chair(94, 226, book=h("#5a75bd"))
 
 # ---------------- bench + sleepy cat under the right window ----------------
-bx0, bx1, by = 372, 452, 236
+bx0, bx1, by = 372, 452, 224
 for x in range(bx0 - 4, bx1 + 5):
     for y in (by, by + 1):
         d = (x - (bx0 + bx1) / 2) / ((bx1 - bx0) / 2 + 4)
@@ -481,7 +472,7 @@ for lx in (bx0 + 4, bx1 - 7):
     rect(lx + 1, by - 11, lx + 2, by - 1, W2); vline(lx + 1, by - 11, by - 1, W3)
 rect(bx0 + 7, by - 7, bx1 - 7, by - 6, OL); hline(bx0 + 8, bx1 - 8, by - 7, W2)   # stretcher
 # stack of books
-for i, c in enumerate((h("#97b3e8"), P1, G2)):
+for i, c in enumerate((h("#5a75bd"), h("#b5523b"), G1)):
     y = by - 20 - i * 3
     rect(bx0 + 8 + i, y - 1, bx0 + 22 - i, y + 1, OL)
     hline(bx0 + 9 + i, bx0 + 21 - i, y, c); p(bx0 + 21 - i, y, CU0)
@@ -489,46 +480,15 @@ for i, c in enumerate((h("#97b3e8"), P1, G2)):
 rect(bx0 + 30, by - 23, bx0 + 35, by - 19, OL); rect(bx0 + 31, by - 22, bx0 + 34, by - 20, CU0)
 hline(bx0 + 31, bx0 + 34, by - 22, h("#c98a5a")); p(bx0 + 36, by - 21, OL); p(bx0 + 36, by - 20, OL)
 p(bx0 + 32, by - 25, CU1); p(bx0 + 33, by - 27, CU1)
-# cat loaf (ginger, eyes closed)
-cx, cy = bx1 - 18, by - 19
-cat = set()
-for (x, y) in disc(cx, cy - 4, 6.5):
-    if y <= cy: cat.add((x, y))
-for (x, y) in disc(cx + 7, cy - 6, 4.2):
-    if y <= cy: cat.add((x, y))
-for e in ((cx + 4, cy - 10), (cx + 5, cy - 11), (cx + 5, cy - 10), (cx + 9, cy - 10), (cx + 9, cy - 11), (cx + 8, cy - 10)):
-    cat.add(e)
-for (x, y) in cat:
-    px[x, y] = CAT1
-    if y <= cy - 7: px[x, y] = CAT2
-for (x, y) in cat:
-    if y >= cy - 1: px[x, y] = CAT0
-# stripes
-for sx in (cx - 4, cx - 1, cx + 2):
-    p(sx, cy - 9, CAT0); p(sx, cy - 8, CAT0)
-# muzzle + closed eyes + blush
-p(cx + 7, cy - 4, CAT3); p(cx + 8, cy - 4, CAT3); p(cx + 6, cy - 4, CAT3)
-p(cx + 5, cy - 6, OLD); p(cx + 6, cy - 6, OLD); p(cx + 9, cy - 6, OLD); p(cx + 10, cy - 6, OLD)
-p(cx + 4, cy - 5, RB1); p(cx + 11, cy - 5, RB1)
-p(cx + 5, cy - 11, RB1); p(cx + 9, cy - 11, RB1)
-outline(cat, OL)
-# tail curled in front
-for (x, y) in ((cx - 6, cy - 1), (cx - 5, cy), (cx - 4, cy), (cx - 3, cy), (cx - 2, cy)):
-    p(x, y, CAT0)
-# zzz
-for (x, y) in ((cx + 13, cy - 14), (cx + 14, cy - 14), (cx + 13, cy - 12), (cx + 14, cy - 13)):
-    p(x, y, h("#9aa6c8"))
-
-
 
 # ---------------- locker bank shell (tiles drop into the 3x3 slots) ----------------
 LB0 = h("#34385e"); LB1 = h("#44589a"); LB2 = h("#5a75bd"); LB3 = h("#7593d4"); LB4 = h("#97b3e8"); LB5 = h("#c4d9f6")
-GX0, GY0, GX1, GY1 = 144, 42, 335, 233
+GX0, GY0, GX1, GY1 = 144, 30, 335, 221
 # floor shadow
 for x in range(GX0 - 8, GX1 + 9):
-    for y in (240, 241, 242):
+    for y in (228, 229, 230):
         d = (x - (GX0 + GX1) / 2) / ((GX1 - GX0) / 2 + 8)
-        if d * d < 1 and not (y == 242 and d * d > 0.8): blend(x, y, h("#6a4e36"), 0.30 if y < 242 else 0.15)
+        if d * d < 1 and not (y == 230 and d * d > 0.8): blend(x, y, h("#6a4e36"), 0.30 if y < 230 else 0.15)
 # side panels
 for sx0 in (GX0 - 4, GX1 + 1):
     rect(sx0, GY0 - 1, sx0 + 3, GY1, LB0)
@@ -540,21 +500,21 @@ for r in range(3):
     for c in range(3):
         rect(GX0 + c * 64 + 2, GY0 + r * 64 + 2, GX0 + c * 64 + 61, GY0 + r * 64 + 61, LB1)
 # top cap with visible top surface
-rect(GX0 - 6, 34, GX1 + 6, 41, LB0)
-hline(GX0 - 5, GX1 + 5, 35, LB5)
-hline(GX0 - 5, GX1 + 5, 36, LB4); hline(GX0 - 5, GX1 + 5, 37, LB4)
-hline(GX0 - 5, GX1 + 5, 38, LB3); hline(GX0 - 5, GX1 + 5, 39, LB2); hline(GX0 - 5, GX1 + 5, 40, LB1)
-hline(GX0 - 3, GX0 + 6, 35, CU0); p(GX1 - 3, 35, CU0); p(GX1 - 2, 35, CU0)
-p(GX0 - 6, 34, WL2); p(GX1 + 6, 34, WL2)
+rect(GX0 - 6, 22, GX1 + 6, 29, LB0)
+hline(GX0 - 5, GX1 + 5, 23, LB5)
+hline(GX0 - 5, GX1 + 5, 24, LB4); hline(GX0 - 5, GX1 + 5, 25, LB4)
+hline(GX0 - 5, GX1 + 5, 26, LB3); hline(GX0 - 5, GX1 + 5, 27, LB2); hline(GX0 - 5, GX1 + 5, 28, LB1)
+hline(GX0 - 3, GX0 + 6, 23, CU0); p(GX1 - 3, 23, CU0); p(GX1 - 2, 23, CU0)
+p(GX0 - 6, 22, WL2); p(GX1 + 6, 22, WL2)
 # base plinth
-rect(GX0 - 5, GY1 + 1, GX1 + 5, 239, LB0)
+rect(GX0 - 5, GY1 + 1, GX1 + 5, 227, LB0)
 hline(GX0 - 4, GX1 + 4, GY1 + 2, LB3)
-rect(GX0 - 4, GY1 + 3, GX1 + 4, 238, LB2)
-rect(GX0 - 1, GY1 + 4, GX1 + 1, 238, LB1)
-hline(GX0 - 1, GX1 + 1, 238, LB0)
+rect(GX0 - 4, GY1 + 3, GX1 + 4, 226, LB2)
+rect(GX0 - 1, GY1 + 4, GX1 + 1, 226, LB1)
+hline(GX0 - 1, GX1 + 1, 226, LB0)
 
 # ---------------- potted floor plant (right corner) ----------------
-px0, pbase = 462, 240
+px0, pbase = 462, 228
 for x in range(px0 - 9, px0 + 10):
     for y in (pbase, pbase + 1):
         d = (x - px0) / 9.0
@@ -579,27 +539,6 @@ rect(px0 - 9, pbase - 14, px0 + 8, pbase - 11, OL); hline(px0 - 8, px0 + 7, pbas
 vline(px0 - 7, pbase - 10, pbase - 1, TC2); vline(px0 + 6, pbase - 10, pbase - 1, TC0)
 hline(px0 - 6, px0 + 5, pbase - 1, TC0)
 p(px0 - 4, pbase - 7, TC2); p(px0 - 3, pbase - 7, TC3)
-
-# ---------------- drifting petals ----------------
-def petal(x, y, flip):
-    cols = (P2, P3) if flip else (P3, P1)
-    p(x, y, cols[0]); p(x + 1, y, cols[1]); p(x + (0 if flip else 1), y + 1, cols[0])
-pet_pts = []
-for i in range(26):          # stream from the open left window
-    t = i / 26
-    x = int(108 + t * 120 + rng.randrange(-10, 10))
-    y = int(110 + 60 * math.sin(t * 2.5) * 0.6 + t * 70 + rng.randrange(-14, 14))
-    pet_pts.append((x, y))
-for i in range(12):
-    pet_pts.append((rng.randrange(340, 476), rng.randrange(84, 210)))
-for (x, y) in pet_pts:
-    if 0 <= x < W - 1 and 17 <= y < H - 1:
-        petal(x, y, rng.random() < 0.5)
-# fallen petals on the floor
-for _ in range(34):
-    x = rng.choice([rng.randrange(10, 150), rng.randrange(330, 470), rng.randrange(150, 330)])
-    y = rng.randrange(FLOOR_Y + 3, H - 1)
-    p(x, y, rng.choice([P2, P3, P1]))
 
 # ---------------- save ----------------
 name = sys.argv[1]
