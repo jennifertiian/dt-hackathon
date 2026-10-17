@@ -443,6 +443,7 @@ function openLocker(p) {
     it.style.left = x + 'px'; it.style.top = y + 'px';
     const show = () => { items.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); it.classList.add('sel'); tab.textContent = label; say(desc); };
     it.addEventListener('mouseenter', show); it.addEventListener('focus', show); it.addEventListener('click', show);
+    if (p.you && isMusicAsset(n) && lockerSong) it.addEventListener('click', () => openSongPlayer(lockerSong));
     items.append(it);
   });
 
@@ -466,7 +467,6 @@ function openLocker(p) {
   backBtn.addEventListener('click', closeLocker);
   side.append(backBtn);
 
-  attachLockerSong(p, wrap);
   viewer.append(dim, wrap, side, tab, dlg);
   $('#stage').append(viewer); $('#stage').classList.add('viewing');
   say(p.hello); tab.textContent = p.you ? 'you' : p.name.split(' ')[0];

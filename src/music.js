@@ -1,3 +1,23 @@
+const MUSIC_OBJECT = 'music_cassette';
+const CASSETTE_SVG = `<svg viewBox="0 0 88 56" width="28" height="18" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <path fill="#786787" d="M6 5h76v3h4v44h-4v4H6v-4H2V8h4z"/>
+  <path fill="#504456" d="M4 0h76v4h4v44h-4v4H4v-4H0V4h4z"/>
+  <path fill="#b9abc9" d="M4 4h76v44H4z"/>
+  <path fill="#dfd1e3" d="M4 4h76v4H8v36H4z"/>
+  <path fill="#9583ab" d="M76 8h4v40H8v-4h68z"/>
+  <path fill="#504456" d="M10 10h64v27H10z"/>
+  <path fill="#fff3dc" d="M12 12h60v9H12z"/>
+  <path fill="#d99caa" d="M12 21h60v3H12z"/>
+  <path fill="#756482" d="M12 24h60v11H12z"/>
+  <path fill="#d9c9d9" d="M17 24h12v2h2v6h-2v3H17v-3h-2v-6h2zm38 0h12v2h2v6h-2v3H55v-3h-2v-6h2z"/>
+  <path fill="#504456" d="M21 27h4v5h-4zm38 0h4v5h-4zm-24 0h14v5H35z"/>
+  <path fill="#a9cd72" d="M37 28h10v3H37z"/>
+  <path fill="#504456" d="M27 39h30v3h3v6H24v-6h3z"/>
+  <path fill="#d9c9d9" d="M29 41h26v3h3v4H26v-4h3z"/>
+  <path fill="#504456" d="M8 41h3v3H8zm63 0h3v3h-3z"/>
+</svg>`;
+A[MUSIC_OBJECT] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(CASSETTE_SVG);
+SIZES[MUSIC_OBJECT] = [28, 18];
 const SONG_STORAGE = 'homeroom.locker-song.v1';
 let lockerSong = readLockerSong();
 let musicLayer = null;
@@ -8,8 +28,36 @@ function readLockerSong() {
   try {
     const saved = JSON.parse(localStorage.getItem(SONG_STORAGE));
     if (!saved || !/^[A-Za-z0-9]{22}$/.test(saved.id) || typeof saved.title !== 'string' || typeof saved.artist !== 'string') return null;
-    return { ...saved, url: `https://open.spotify.com/track/${saved.id}`, caption: typeof saved.caption === 'string' ? saved.caption.slice(0, 120) : '' };
+    return { ...saved, url: `https://open.spotify.com/track/${saved.id}`, caption: typeof saved.caption === 'string' ? saved.caption.slice(0, 120) : '', placement: musicPlacement(saved.placement) };
   } catch { return null; }
+}
+
+function musicPlacement(value = {}) {
+  return {
+    cx: Number.isFinite(value?.cx) ? Math.max(11, Math.min(178, value.cx)) : 95,
+    cy: Number.isFinite(value?.cy) ? Math.max(11, Math.min(154, value.cy)) : 141,
+    scale: value?.scale === 2 ? 2 : 1,
+    rot: Number.isFinite(value?.rot) ? value.rot % 360 : 0,
+    flip: value?.flip === true,
+  };
+}
+
+function isMusicAsset(key) { return key === MUSIC_OBJECT || bakedFrom[key]?.base === MUSIC_OBJECT; }
+
+function createMusicItem(song, placement = song.placement) {
+  return { id: ++uid, kind: 'object', base: MUSIC_OBJECT, ...musicPlacement(placement), title: song.title, desc: song.caption || '' };
+}
+
+function writeLockerSong(song) {
+  if (song) localStorage.setItem(SONG_STORAGE, JSON.stringify(song));
+  else localStorage.removeItem(SONG_STORAGE);
+  lockerSong = song;
+}
+
+function persistMusicItem(it) {
+  if (it.base !== MUSIC_OBJECT || !lockerSong) return;
+  try { writeLockerSong({ ...lockerSong, caption: it.desc, placement: musicPlacement(it) }); syncMe(); }
+  catch { toast("couldn't save your song's changes; please allow site storage"); }
 }
 
 function spotifyFrame(song) {
@@ -75,23 +123,7 @@ function musicHeading(title, subtitle, closeLabel = 'Close music editor') {
 function songCassette(song, listen) {
   const art = el('span', { className: 'mixtape-art' });
   art.setAttribute('aria-hidden', 'true');
-  art.innerHTML = `<svg viewBox="0 0 88 56" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-    <path fill="#786787" d="M6 5h76v3h4v44h-4v4H6v-4H2V8h4z"/>
-    <path fill="#504456" d="M4 0h76v4h4v44h-4v4H4v-4H0V4h4z"/>
-    <path fill="#b9abc9" d="M4 4h76v44H4z"/>
-    <path fill="#dfd1e3" d="M4 4h76v4H8v36H4z"/>
-    <path fill="#9583ab" d="M76 8h4v40H8v-4h68z"/>
-    <path fill="#504456" d="M10 10h64v27H10z"/>
-    <path fill="#fff3dc" d="M12 12h60v9H12z"/>
-    <path fill="#d99caa" d="M12 21h60v3H12z"/>
-    <path fill="#756482" d="M12 24h60v11H12z"/>
-    <path fill="#d9c9d9" d="M17 24h12v2h2v6h-2v3H17v-3h-2v-6h2zm38 0h12v2h2v6h-2v3H55v-3h-2v-6h2z"/>
-    <path fill="#504456" d="M21 27h4v5h-4zm38 0h4v5h-4zm-24 0h14v5H35z"/>
-    <path fill="#a9cd72" d="M37 28h10v3H37z"/>
-    <path fill="#504456" d="M27 39h30v3h3v6H24v-6h3z"/>
-    <path fill="#d9c9d9" d="M29 41h26v3h3v4H26v-4h3z"/>
-    <path fill="#504456" d="M8 41h3v3H8zm63 0h3v3h-3z"/>
-  </svg>`;
+  art.innerHTML = CASSETTE_SVG;
   const button = el('button', { className: 'song-cassette', type: 'button' }, [art,
     el('span', { className: 'song-cassette-title', textContent: song.title }),
     el('span', { className: 'song-cassette-artist', textContent: song.artist }),
@@ -109,7 +141,8 @@ function openSongPlayer(song) {
   dialog.querySelector('button').focus();
 }
 
-function openMusicEditor() {
+function openMusicEditor(placement) {
+  const existing = items?.find(it => it.base === MUSIC_OBJECT);
   let draft = lockerSong ? { ...lockerSong } : null;
   let tracks = [];
   const dialog = openMusicLayer('Edit your locker soundtrack');
@@ -149,17 +182,21 @@ function openMusicEditor() {
 
   const creditLink = el('a', { href: 'https://glasser.ai/', target: '_blank', rel: 'noopener noreferrer', textContent: 'Glasser' });
   const credit = el('div', { className: 'music-credit' }, ['Song discovery by ', creditLink, el('br'), 'Playback by Spotify']);
-  const save = musicButton('Pin song to locker', () => {
+  const save = musicButton('Pin song to locker', async () => {
     const song = draft ? { ...draft, caption: caption.value.trim() } : null;
+    const it = song ? createMusicItem(song, existing ? musicPlacement(existing) : placement || song.placement) : null;
+    if (it) { await bake(it); if (!existing) { clamp(it); snap(it); } song.placement = musicPlacement(it); }
     try {
-      if (song) localStorage.setItem(SONG_STORAGE, JSON.stringify(song));
-      else localStorage.removeItem(SONG_STORAGE);
+      writeLockerSong(song);
     } catch {
       status.textContent = "Your browser couldn't save this. Please allow site storage and try again.";
       status.classList.add('error');
       return;
     }
-    lockerSong = song;
+    items = (items || []).filter(item => item.base !== MUSIC_OBJECT);
+    if (it) items.push(it);
+    sel = it;
+    syncMe();
     closeMusicEditor();
     if (ED) renderEditor();
     else openLocker(PEOPLE.find(person => person.you));
@@ -233,11 +270,4 @@ function openMusicEditor() {
   updatePreview();
   renderResults();
   input.focus();
-}
-
-function attachLockerSong(person, wrap) {
-  if (!person.you || !lockerSong) return;
-  const shelf = el('div', { className: 'locker-song' });
-  shelf.append(el('span', { className: 'locker-song-label', textContent: lockerSong.caption || 'currently on repeat ♫' }), songCassette(lockerSong, () => openSongPlayer(lockerSong)));
-  wrap.append(shelf);
 }

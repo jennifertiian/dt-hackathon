@@ -1,5 +1,5 @@
 /* A paper sleeve for a real Spotify player. */
-.soundtrack-btn { width: 62px; height: 18px; }
+.music-item-label { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .music-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgba(38,28,40,.72); color: var(--ink-deep); }
 .music-window { width: min(900px, 100%); max-height: calc(100dvh - 48px); overflow: auto; box-sizing: border-box; background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 #4f362e, inset 0 0 0 3px var(--paper-3); font-family: var(--font-talk); padding: 26px 28px 20px; position: relative; color-scheme: light; }
 .music-window button, .music-window input, .music-window textarea { font: inherit; }
@@ -65,13 +65,6 @@
 .music-credit { font-size: 11px; color: #8a6a5c; line-height: 1.7; }
 .music-credit a { color: inherit; text-underline-offset: 3px; }
 .music-footer-actions { display: flex; gap: 9px; align-items: center; }
-.locker-song { position: absolute; left: 32px; top: 110px; width: 122px; height: 49px; z-index: 2; }
-.locker-song .song-cassette { height: 49px; gap: 1px; }
-.locker-song .mixtape-art { width: 48px; height: 30px; }
-.locker-song .song-cassette-title { font-size: 7px; line-height: 8px; padding: 0 3px; border-width: 1px; }
-.locker-song .song-cassette-artist { font-size: 5.5px; line-height: 7px; }
-.locker-song .song-cassette-action { display: none; }
-.locker-song-label { position: absolute; bottom: calc(100% + 2px); left: 0; right: 0; padding: 1px 3px; border: 1px solid var(--paper-3); background: var(--paper); font-family: var(--font-talk); font-size: 5.5px; line-height: 7px; color: var(--ink-deep); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .music-player-window { width: min(430px, 100%); }
 .music-player-window .music-heading { margin-bottom: 18px; }
 .music-player-window .music-heading h2 { font-size: 26px; }

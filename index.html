@@ -225,7 +225,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
 }
 /* A paper sleeve for a real Spotify player. */
-.soundtrack-btn { width: 62px; height: 18px; }
+.music-item-label { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .music-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgba(38,28,40,.72); color: var(--ink-deep); }
 .music-window { width: min(900px, 100%); max-height: calc(100dvh - 48px); overflow: auto; box-sizing: border-box; background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 #4f362e, inset 0 0 0 3px var(--paper-3); font-family: var(--font-talk); padding: 26px 28px 20px; position: relative; color-scheme: light; }
 .music-window button, .music-window input, .music-window textarea { font: inherit; }
@@ -291,13 +291,6 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 .music-credit { font-size: 11px; color: #8a6a5c; line-height: 1.7; }
 .music-credit a { color: inherit; text-underline-offset: 3px; }
 .music-footer-actions { display: flex; gap: 9px; align-items: center; }
-.locker-song { position: absolute; left: 32px; top: 110px; width: 122px; height: 49px; z-index: 2; }
-.locker-song .song-cassette { height: 49px; gap: 1px; }
-.locker-song .mixtape-art { width: 48px; height: 30px; }
-.locker-song .song-cassette-title { font-size: 7px; line-height: 8px; padding: 0 3px; border-width: 1px; }
-.locker-song .song-cassette-artist { font-size: 5.5px; line-height: 7px; }
-.locker-song .song-cassette-action { display: none; }
-.locker-song-label { position: absolute; bottom: calc(100% + 2px); left: 0; right: 0; padding: 1px 3px; border: 1px solid var(--paper-3); background: var(--paper); font-family: var(--font-talk); font-size: 5.5px; line-height: 7px; color: var(--ink-deep); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .music-player-window { width: min(430px, 100%); }
 .music-player-window .music-heading { margin-bottom: 18px; }
 .music-player-window .music-heading h2 { font-size: 26px; }
@@ -540,6 +533,7 @@ function openLocker(p) {
     it.style.left = x + 'px'; it.style.top = y + 'px';
     const show = () => { items.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); it.classList.add('sel'); tab.textContent = label; say(desc); };
     it.addEventListener('mouseenter', show); it.addEventListener('focus', show); it.addEventListener('click', show);
+    if (p.you && isMusicAsset(n) && lockerSong) it.addEventListener('click', () => openSongPlayer(lockerSong));
     items.append(it);
   });
 
@@ -563,7 +557,6 @@ function openLocker(p) {
   backBtn.addEventListener('click', closeLocker);
   side.append(backBtn);
 
-  attachLockerSong(p, wrap);
   viewer.append(dim, wrap, side, tab, dlg);
   $('#stage').append(viewer); $('#stage').classList.add('viewing');
   say(p.hello); tab.textContent = p.you ? 'you' : p.name.split(' ')[0];
@@ -745,6 +738,26 @@ function renderDM(body) {
   body.append(form); body.scrollTop = body.scrollHeight;
 }
 
+const MUSIC_OBJECT = 'music_cassette';
+const CASSETTE_SVG = `<svg viewBox="0 0 88 56" width="28" height="18" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <path fill="#786787" d="M6 5h76v3h4v44h-4v4H6v-4H2V8h4z"/>
+  <path fill="#504456" d="M4 0h76v4h4v44h-4v4H4v-4H0V4h4z"/>
+  <path fill="#b9abc9" d="M4 4h76v44H4z"/>
+  <path fill="#dfd1e3" d="M4 4h76v4H8v36H4z"/>
+  <path fill="#9583ab" d="M76 8h4v40H8v-4h68z"/>
+  <path fill="#504456" d="M10 10h64v27H10z"/>
+  <path fill="#fff3dc" d="M12 12h60v9H12z"/>
+  <path fill="#d99caa" d="M12 21h60v3H12z"/>
+  <path fill="#756482" d="M12 24h60v11H12z"/>
+  <path fill="#d9c9d9" d="M17 24h12v2h2v6h-2v3H17v-3h-2v-6h2zm38 0h12v2h2v6h-2v3H55v-3h-2v-6h2z"/>
+  <path fill="#504456" d="M21 27h4v5h-4zm38 0h4v5h-4zm-24 0h14v5H35z"/>
+  <path fill="#a9cd72" d="M37 28h10v3H37z"/>
+  <path fill="#504456" d="M27 39h30v3h3v6H24v-6h3z"/>
+  <path fill="#d9c9d9" d="M29 41h26v3h3v4H26v-4h3z"/>
+  <path fill="#504456" d="M8 41h3v3H8zm63 0h3v3h-3z"/>
+</svg>`;
+A[MUSIC_OBJECT] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(CASSETTE_SVG);
+SIZES[MUSIC_OBJECT] = [28, 18];
 const SONG_STORAGE = 'homeroom.locker-song.v1';
 let lockerSong = readLockerSong();
 let musicLayer = null;
@@ -755,8 +768,36 @@ function readLockerSong() {
   try {
     const saved = JSON.parse(localStorage.getItem(SONG_STORAGE));
     if (!saved || !/^[A-Za-z0-9]{22}$/.test(saved.id) || typeof saved.title !== 'string' || typeof saved.artist !== 'string') return null;
-    return { ...saved, url: `https://open.spotify.com/track/${saved.id}`, caption: typeof saved.caption === 'string' ? saved.caption.slice(0, 120) : '' };
+    return { ...saved, url: `https://open.spotify.com/track/${saved.id}`, caption: typeof saved.caption === 'string' ? saved.caption.slice(0, 120) : '', placement: musicPlacement(saved.placement) };
   } catch { return null; }
+}
+
+function musicPlacement(value = {}) {
+  return {
+    cx: Number.isFinite(value?.cx) ? Math.max(11, Math.min(178, value.cx)) : 95,
+    cy: Number.isFinite(value?.cy) ? Math.max(11, Math.min(154, value.cy)) : 141,
+    scale: value?.scale === 2 ? 2 : 1,
+    rot: Number.isFinite(value?.rot) ? value.rot % 360 : 0,
+    flip: value?.flip === true,
+  };
+}
+
+function isMusicAsset(key) { return key === MUSIC_OBJECT || bakedFrom[key]?.base === MUSIC_OBJECT; }
+
+function createMusicItem(song, placement = song.placement) {
+  return { id: ++uid, kind: 'object', base: MUSIC_OBJECT, ...musicPlacement(placement), title: song.title, desc: song.caption || '' };
+}
+
+function writeLockerSong(song) {
+  if (song) localStorage.setItem(SONG_STORAGE, JSON.stringify(song));
+  else localStorage.removeItem(SONG_STORAGE);
+  lockerSong = song;
+}
+
+function persistMusicItem(it) {
+  if (it.base !== MUSIC_OBJECT || !lockerSong) return;
+  try { writeLockerSong({ ...lockerSong, caption: it.desc, placement: musicPlacement(it) }); syncMe(); }
+  catch { toast("couldn't save your song's changes; please allow site storage"); }
 }
 
 function spotifyFrame(song) {
@@ -822,23 +863,7 @@ function musicHeading(title, subtitle, closeLabel = 'Close music editor') {
 function songCassette(song, listen) {
   const art = el('span', { className: 'mixtape-art' });
   art.setAttribute('aria-hidden', 'true');
-  art.innerHTML = `<svg viewBox="0 0 88 56" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-    <path fill="#786787" d="M6 5h76v3h4v44h-4v4H6v-4H2V8h4z"/>
-    <path fill="#504456" d="M4 0h76v4h4v44h-4v4H4v-4H0V4h4z"/>
-    <path fill="#b9abc9" d="M4 4h76v44H4z"/>
-    <path fill="#dfd1e3" d="M4 4h76v4H8v36H4z"/>
-    <path fill="#9583ab" d="M76 8h4v40H8v-4h68z"/>
-    <path fill="#504456" d="M10 10h64v27H10z"/>
-    <path fill="#fff3dc" d="M12 12h60v9H12z"/>
-    <path fill="#d99caa" d="M12 21h60v3H12z"/>
-    <path fill="#756482" d="M12 24h60v11H12z"/>
-    <path fill="#d9c9d9" d="M17 24h12v2h2v6h-2v3H17v-3h-2v-6h2zm38 0h12v2h2v6h-2v3H55v-3h-2v-6h2z"/>
-    <path fill="#504456" d="M21 27h4v5h-4zm38 0h4v5h-4zm-24 0h14v5H35z"/>
-    <path fill="#a9cd72" d="M37 28h10v3H37z"/>
-    <path fill="#504456" d="M27 39h30v3h3v6H24v-6h3z"/>
-    <path fill="#d9c9d9" d="M29 41h26v3h3v4H26v-4h3z"/>
-    <path fill="#504456" d="M8 41h3v3H8zm63 0h3v3h-3z"/>
-  </svg>`;
+  art.innerHTML = CASSETTE_SVG;
   const button = el('button', { className: 'song-cassette', type: 'button' }, [art,
     el('span', { className: 'song-cassette-title', textContent: song.title }),
     el('span', { className: 'song-cassette-artist', textContent: song.artist }),
@@ -856,7 +881,8 @@ function openSongPlayer(song) {
   dialog.querySelector('button').focus();
 }
 
-function openMusicEditor() {
+function openMusicEditor(placement) {
+  const existing = items?.find(it => it.base === MUSIC_OBJECT);
   let draft = lockerSong ? { ...lockerSong } : null;
   let tracks = [];
   const dialog = openMusicLayer('Edit your locker soundtrack');
@@ -896,17 +922,21 @@ function openMusicEditor() {
 
   const creditLink = el('a', { href: 'https://glasser.ai/', target: '_blank', rel: 'noopener noreferrer', textContent: 'Glasser' });
   const credit = el('div', { className: 'music-credit' }, ['Song discovery by ', creditLink, el('br'), 'Playback by Spotify']);
-  const save = musicButton('Pin song to locker', () => {
+  const save = musicButton('Pin song to locker', async () => {
     const song = draft ? { ...draft, caption: caption.value.trim() } : null;
+    const it = song ? createMusicItem(song, existing ? musicPlacement(existing) : placement || song.placement) : null;
+    if (it) { await bake(it); if (!existing) { clamp(it); snap(it); } song.placement = musicPlacement(it); }
     try {
-      if (song) localStorage.setItem(SONG_STORAGE, JSON.stringify(song));
-      else localStorage.removeItem(SONG_STORAGE);
+      writeLockerSong(song);
     } catch {
       status.textContent = "Your browser couldn't save this. Please allow site storage and try again.";
       status.classList.add('error');
       return;
     }
-    lockerSong = song;
+    items = (items || []).filter(item => item.base !== MUSIC_OBJECT);
+    if (it) items.push(it);
+    sel = it;
+    syncMe();
     closeMusicEditor();
     if (ED) renderEditor();
     else openLocker(PEOPLE.find(person => person.you));
@@ -980,13 +1010,6 @@ function openMusicEditor() {
   updatePreview();
   renderResults();
   input.focus();
-}
-
-function attachLockerSong(person, wrap) {
-  if (!person.you || !lockerSong) return;
-  const shelf = el('div', { className: 'locker-song' });
-  shelf.append(el('span', { className: 'locker-song-label', textContent: lockerSong.caption || 'currently on repeat ♫' }), songCassette(lockerSong, () => openSongPlayer(lockerSong)));
-  wrap.append(shelf);
 }
 
 
@@ -1386,24 +1409,25 @@ function openLogin() {
    ================================================================ */
 const TITLES = { polaroid_sunset: 'sunset polaroid', polaroid_cat: 'cat photo', polaroid_beach: 'beach day', polaroid_ramen: 'ramen night', polaroid_mountains: 'mountain hike', polaroid_friends: 'friends',
   sticker_star: 'gold star', sticker_heart: 'heart sticker', sticker_flower: 'flower sticker', sticker_bear: 'bear sticker',
-  plant: 'plant', books: 'books', boba_milk: 'milk tea', boba_matcha: 'matcha latte', headphones: 'headphones', bunny: 'bunny plush', onigiri: 'onigiri', camera: 'camera',
+  music_cassette: 'music cassette', plant: 'plant', books: 'books', boba_milk: 'milk tea', boba_matcha: 'matcha latte', headphones: 'headphones', bunny: 'bunny plush', onigiri: 'onigiri', camera: 'camera',
   volleyball: 'volleyball', sketchbook: 'sketchbook', mirror: 'mirror', whiteboard: 'whiteboard', schedule: 'schedule', sticky: 'sticky note', bunting: 'bunting' };
 const PHOTO_BANK = ['polaroid_sunset', 'polaroid_friends', 'polaroid_cat', 'polaroid_beach', 'polaroid_ramen', 'polaroid_mountains'];
 const STICKER_BANK = ['sticker_star', 'sticker_heart', 'sticker_flower', 'sticker_bear'];
-const OBJECTS = ['plant', 'books', 'boba_milk', 'boba_matcha', 'headphones', 'bunny', 'onigiri', 'camera', 'volleyball', 'sketchbook', 'mirror', 'whiteboard', 'schedule', 'sticky', 'bunting'];
+const OBJECTS = [MUSIC_OBJECT, 'plant', 'books', 'boba_milk', 'boba_matcha', 'headphones', 'bunny', 'onigiri', 'camera', 'volleyball', 'sketchbook', 'mirror', 'whiteboard', 'schedule', 'sticky', 'bunting'];
 const PHOTO_SIZES = [[20, 24, 16, 15], [28, 33, 24, 22], [36, 42, 32, 29]]; // frame w,h + photo w,h
 const OPEN = { x0: 7, y0: 7, x1: 182, y1: 158 };
 let items = null, uid = 0;
 const customPhotos = [], customStickers = [];
 
-function startItems() {
+async function startItems() {
   // start from whatever is in your locker right now (the starter bunting / sticky note / plant)
-  items = ME.items.map(([k, x, y, t, d]) => {
+  items = ME.items.filter(([k]) => !isMusicAsset(k)).map(([k, x, y, t, d]) => {
     const base = k.startsWith('ux_') ? (bakedFrom[k] || null) : null;
     if (base) return Object.assign({}, base, { id: ++uid });
     const [w, h] = sz(k);
     return { id: ++uid, kind: k.startsWith('polaroid') ? 'photo' : k.startsWith('sticker') ? 'sticker' : 'object', base: k, scale: 1, rot: 0, flip: false, cx: x + w / 2, cy: y + h / 2, title: t, desc: d };
   });
+  if (lockerSong) { const it = createMusicItem(lockerSong); await bake(it); items.push(it); }
 }
 const bakedFrom = {};
 
@@ -1476,7 +1500,7 @@ async function openEditor(step = 1) {
   if (ED) popLayer(ED);
   closeMail();
   edStep = step; sel = null;
-  if (!items) startItems();
+  if (!items) await startItems();
   await Promise.all([...PHOTO_BANK, ...STICKER_BANK, ...OBJECTS].map(asset));
   ED = el('div', { id: 'editor', className: 'fl' });
   ED._esc = () => { if (sel) { select(null); return; } if (profile.live) closeEditor(); };
@@ -1503,7 +1527,6 @@ function renderEditor() {
   const bar = el('div', { id: 'edBar', className: 'abs' });
   ED.append(door, locker, right, bar);
   drawPlaced();
-  attachLockerSong(ME, locker);
 
   if (edStep === 1) stepAbout(door, right, bar);
   if (edStep === 2) stepDecorate(door, right, bar);
@@ -1604,8 +1627,7 @@ function stepDecorate(door, right, bar) {
     b.append(el('div', { className: 'lbl dark', textContent: title }), g, btn('upload', 'chipbtn', () => openUpload(kind)));
     return b;
   };
-  right.append(bank('photos', [...PHOTO_BANK, ...customPhotos], 'photo', 80), el('div', { style: 'height:4px' }), bank('stickers', [...STICKER_BANK, ...customStickers], 'sticker', 60),
-    el('div', { style: 'height:4px' }), btn(lockerSong ? '♫ edit song' : '♫ add song', 'chipbtn soundtrack-btn', openMusicEditor));
+  right.append(bank('photos', [...PHOTO_BANK, ...customPhotos], 'photo', 92), el('div', { style: 'height:4px' }), bank('stickers', [...STICKER_BANK, ...customStickers], 'sticker', 70));
   renderBar(bar);
 }
 function renderBar(bar = $('#edBar')) {
@@ -1619,12 +1641,16 @@ function renderBar(bar = $('#edBar')) {
 }
 function renderInspector(bar) {
   const it = sel;
+  const music = it.base === MUSIC_OBJECT;
   const t = el('input', { className: 'fin', value: it.title, placeholder: 'title', maxLength: 24 });
   const d = el('textarea', { className: 'fin', value: it.desc, placeholder: 'tell your neighbors the story behind it ✿', maxLength: 160 });
-  t.addEventListener('input', () => it.title = t.value); d.addEventListener('input', () => it.desc = d.value);
+  t.readOnly = music;
+  t.addEventListener('input', () => it.title = t.value);
+  if (music) d.maxLength = 120;
+  d.addEventListener('input', () => { it.desc = d.value; persistMusicItem(it); });
   const tool = (txt, label, fn, cls = '') => { const b = btn(txt, 'tool ' + cls, fn); b.title = label; b.setAttribute('aria-label', label); return b; };
   const isUpPhoto = it.upload && it.kind === 'photo';
-  const re = async () => { await bake(it); drawPlaced(); };
+  const re = async () => { await bake(it); persistMusicItem(it); drawPlaced(); };
   const tools = el('div', { className: 'tools' }, [
     tool('−', 'smaller', () => { if (isUpPhoto) it.size = Math.max(0, (it.size || 0) - 1); else it.scale = 1; re(); }),
     tool('+', 'bigger', () => { if (isUpPhoto) it.size = Math.min(2, (it.size || 0) + 1); else it.scale = 2; re(); }),
@@ -1632,14 +1658,27 @@ function renderInspector(bar) {
     tool('↻', 'rotate right', () => { it.rot = (it.rot + 15) % 360; re(); }),
     tool('⇋', 'flip', () => { it.flip = !it.flip; re(); }),
     tool('⟲', 'reset', () => { it.rot = 0; it.flip = false; it.scale = 1; it.size = 0; re(); }),
-    tool('🗑', 'remove', () => { items = items.filter(x => x !== it); select(null); drawPlaced(); }, 'del'),
+    tool('🗑', 'remove', () => removeItem(it), 'del'),
     tool('✓ done', 'done', () => select(null), 'ok'),
   ]);
   bar.append(el('div', { className: 'insp' }, [
-    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'title' }), t, el('div', { className: 'hint', textContent: 'neighbors see this on hover' })]),
-    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'description' }), d]),
+    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: music ? 'song' : 'title' }), t,
+      music ? btn('♫ change song', 'chipbtn', () => openMusicEditor()) : el('div', { className: 'hint', textContent: 'neighbors see this on hover' })]),
+    el('div', { className: 'grp' }, [music ? el('div', { className: 'music-item-label' }, [el('span', { className: 'lbl', textContent: 'a little story' }), btn('▶ listen', 'chipbtn', () => openSongPlayer(lockerSong))]) : el('div', { className: 'lbl', textContent: 'description' }), d]),
     el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'resize · rotate · flip' }), tools])]));
   if (!it.title || it.title === TITLES[it.base]) setTimeout(() => d.focus(), 30);
+}
+
+function removeItem(it) {
+  if (it.base === MUSIC_OBJECT) {
+    try { writeLockerSong(null); }
+    catch { toast("couldn't remove your song; please allow site storage"); return false; }
+  }
+  items = items.filter(item => item !== it);
+  if (it.base === MUSIC_OBJECT) syncMe();
+  if (sel === it) select(null);
+  drawPlaced();
+  return true;
 }
 function select(it) {
   sel = it;
@@ -1653,10 +1692,15 @@ function drawPlaced() {
   items.forEach(it => {
     const k = it.key || it.base; const [w, h] = it.key ? [it.W, it.H] : sz(it.base);
     const n = el('div', { className: 'placed' + (it === sel ? ' sel' : '') }, [img(k, w, h)]);
+    n.setAttribute('aria-label', it.base === MUSIC_OBJECT ? `Edit song: ${it.title}` : it.title);
     n._it = it; n.style.left = Math.round(it.cx - w / 2) + 'px'; n.style.top = Math.round(it.cy - h / 2) + 'px';
     if (edStep === 2) {
       n.append(el('span', { className: 'editdot' }, [img('icon_pencil', 6, 6)]));
       n.addEventListener('pointerdown', e => startMove(e, it, n));
+      if (it.base === MUSIC_OBJECT) {
+        n.tabIndex = 0; n.setAttribute('role', 'button');
+        n.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(it); } });
+      }
     } else n.style.cursor = 'default';
     layer.append(n);
   });
@@ -1680,8 +1724,9 @@ function startMove(e, it, node) {
   const move = ev => { const [x, y] = lockerPoint(ev); if (Math.abs(x - sx) + Math.abs(y - sy) > 2) moved = true; it.cx = x + ox; it.cy = y + oy; node.style.left = Math.round(it.cx - w / 2) + 'px'; node.style.top = Math.round(it.cy - h / 2) + 'px'; node.style.opacity = outside(it) ? .4 : 1; };
   const up = () => {
     node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up);
-    if (moved && outside(it)) { items = items.filter(x => x !== it); if (sel === it) select(null); drawPlaced(); toast('removed ✿'); return; }
-    clamp(it); snap(it); drawPlaced(); select(it);
+    if (moved && outside(it)) { if (removeItem(it)) toast('removed ✿'); return; }
+    if (moved) { clamp(it); snap(it); persistMusicItem(it); }
+    drawPlaced(); select(it);
   };
   node.addEventListener('pointermove', move); node.addEventListener('pointerup', up); node.addEventListener('pointercancel', up);
 }
@@ -1692,6 +1737,7 @@ function draggable(k, kind) {
   const [w, h] = sz(k) || [20, 24];
   const d = el('button', { className: 'drag', type: 'button' }, [img(k, w, h)]);
   d.setAttribute('aria-label', 'Add ' + (TITLES[k] || kind) + ' to your locker'); d.title = TITLES[k] || kind;
+  d.addEventListener('click', e => { if (e.detail === 0) addItem(k, kind, 95, kind === 'object' ? 120 : 65); });
   d.addEventListener('pointerdown', e => {
     e.preventDefault();
     const stage = $('#stage').getBoundingClientRect(); const s = stage.width / 480;
@@ -1712,6 +1758,7 @@ function draggable(k, kind) {
   return d;
 }
 async function addItem(k, kind, x, y) {
+  if (k === MUSIC_OBJECT) { openMusicEditor({ cx: x, cy: y }); return; }
   const up = uploads[k];
   const it = { id: ++uid, kind, base: up ? null : k, upload: up ? up.src : null, size: 0, scale: 1, rot: kind === 'photo' ? [-6, 4, -3, 5][uid % 4] : 0, flip: false, cx: x, cy: y,
     title: up ? up.title : (TITLES[k] || ''), desc: up ? up.desc : '' };
@@ -2005,8 +2052,8 @@ applySprite();
 renderGrid(); updateBadges();
 if (location.hash === '#hallway') {
   // skip onboarding: jump straight to the hallway with the example profile
-  Object.assign(profile, EXAMPLE); startItems(); profile.live = true; syncMe(); renderGrid(); updateBadges();
-  setTimeout(openQuiz, 600);
+  Object.assign(profile, EXAMPLE);
+  startItems().then(() => { profile.live = true; syncMe(); renderGrid(); updateBadges(); setTimeout(openQuiz, 600); });
 } else openLogin();
 </script>
 
