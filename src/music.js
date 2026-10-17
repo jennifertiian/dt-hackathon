@@ -117,20 +117,9 @@ function musicHeading(title, subtitle, closeLabel = 'Close music editor') {
   close.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true" focusable="false" shape-rendering="crispEdges"><path fill="currentColor" d="M1 1h2v2H1z M3 3h2v2H3z M5 5h2v2H5z M7 7h2v2H7z M9 9h2v2H9z M9 1h2v2H9z M7 3h2v2H7z M3 7h2v2H3z M1 9h2v2H1z"/></svg>';
   close.setAttribute('aria-label', closeLabel);
   close.addEventListener('click', closeMusicEditor);
-  return el('header', { className: 'music-heading' }, [el('div', {}, [el('h2', { textContent: title }), el('p', { textContent: subtitle })]), close]);
-}
-
-function songCassette(song, listen) {
-  const art = el('span', { className: 'mixtape-art' });
-  art.setAttribute('aria-hidden', 'true');
-  art.innerHTML = CASSETTE_SVG;
-  const button = el('button', { className: 'song-cassette', type: 'button' }, [art,
-    el('span', { className: 'song-cassette-title', textContent: song.title }),
-    el('span', { className: 'song-cassette-artist', textContent: song.artist }),
-    el('span', { className: 'song-cassette-action', textContent: '♫ listen on Spotify' })]);
-  button.setAttribute('aria-label', `Listen to ${song.title} by ${song.artist} on Spotify`);
-  button.addEventListener('click', listen);
-  return button;
+  const copy = el('div', {}, [el('h2', { textContent: title })]);
+  if (subtitle) copy.append(el('p', { textContent: subtitle }));
+  return el('header', { className: 'music-heading' }, [copy, close]);
 }
 
 function openSongPlayer(song) {
@@ -145,22 +134,8 @@ function openMusicEditor(placement) {
   const existing = items?.find(it => it.base === MUSIC_OBJECT);
   let draft = lockerSong ? { ...lockerSong } : null;
   let tracks = [];
-  const dialog = openMusicLayer('Edit your locker soundtrack');
-  dialog.append(musicHeading('Give your locker a soundtrack', 'A song, a little story, a little more you.'));
-
-  const columns = el('div', { className: 'music-columns' });
-  const preview = el('div', { className: 'music-preview' });
-  preview.append(el('span', { className: 'music-label', textContent: 'Your locker' }));
-  const scene = el('div', { className: 'music-scene' });
-  scene.style.backgroundImage = `url('${A.interior_you}')`;
-  const player = el('div', { className: 'music-preview-player' });
-  scene.append(player);
-  const selectedName = el('p', { className: 'music-selected-name' });
-  const remove = el('button', { className: 'music-remove', type: 'button', textContent: 'Remove song' });
-  remove.addEventListener('click', () => { draft = null; updatePreview(); renderResults(); });
-  const captionLabel = el('label', { className: 'music-label music-caption-label', htmlFor: 'songCaption', textContent: 'A little story (optional)' });
-  const caption = el('textarea', { className: 'music-caption', id: 'songCaption', maxLength: 120, rows: 2, placeholder: 'My walk-home song after a long day...', value: draft?.caption || '' });
-  preview.append(scene, selectedName, remove, captionLabel, caption);
+  const dialog = openMusicLayer('Select a song');
+  dialog.append(musicHeading('Select a song'));
 
   const search = el('div', { className: 'music-search' });
   const label = el('label', { className: 'music-label', htmlFor: 'songSearch', textContent: 'Find your song' });
@@ -168,24 +143,23 @@ function openMusicEditor(placement) {
   const input = el('input', { id: 'songSearch', className: 'music-search-input', type: 'search', placeholder: 'Song title or artist...', maxLength: 120, autocomplete: 'off', required: true, minLength: 2 });
   const submit = el('button', { className: 'music-button', type: 'submit', textContent: 'Search' });
   form.append(input, submit);
-  const hints = el('div', { className: 'music-hints' }, [el('span', { textContent: 'Try' })]);
-  ['Laufey From The Start', 'Clairo', 'Stardew Valley'].forEach(query => {
-    const hint = el('button', { className: 'music-hint', type: 'button', textContent: query === 'Laufey From The Start' ? 'Laufey' : query });
-    hint.addEventListener('click', () => { input.value = query; form.requestSubmit(); });
-    hints.append(hint);
-  });
-  const status = el('p', { className: 'music-search-status', textContent: 'Find something you could listen to on repeat.' });
+  const status = el('p', { className: 'music-search-status', textContent: draft ? 'Search to choose a different song.' : 'Search for a song or artist.' });
   status.setAttribute('role', 'status');
   const results = el('div', { className: 'music-results' });
-  search.append(label, form, hints, status, results);
-  columns.append(preview, search);
+  search.append(label, form, status, results);
+  const selection = el('div', { className: 'music-selection' });
+  const captionLabel = el('label', { className: 'music-label music-caption-label', htmlFor: 'songCaption', textContent: 'A little story (optional)' });
+  const caption = el('textarea', { className: 'music-caption', id: 'songCaption', maxLength: 120, rows: 2, placeholder: 'What does this song mean to you?', value: draft?.caption || '' });
 
   const creditLink = el('a', { href: 'https://glasser.ai/', target: '_blank', rel: 'noopener noreferrer', textContent: 'Glasser' });
-  const credit = el('div', { className: 'music-credit' }, ['Song discovery by ', creditLink, el('br'), 'Playback by Spotify']);
-  const save = musicButton('Pin song to locker', async () => {
-    const song = draft ? { ...draft, caption: caption.value.trim() } : null;
-    const it = song ? createMusicItem(song, existing ? musicPlacement(existing) : placement || song.placement) : null;
-    if (it) { await bake(it); if (!existing) { clamp(it); snap(it); } song.placement = musicPlacement(it); }
+  const credit = el('div', { className: 'music-credit' }, ['Search by ', creditLink]);
+  const save = musicButton(existing ? 'Save song' : 'Add song', async () => {
+    if (!draft) return;
+    const song = { ...draft, caption: caption.value.trim() };
+    const it = createMusicItem(song, existing ? musicPlacement(existing) : placement || song.placement);
+    await bake(it);
+    if (!existing) { clamp(it); snap(it); }
+    song.placement = musicPlacement(it);
     try {
       writeLockerSong(song);
     } catch {
@@ -194,42 +168,34 @@ function openMusicEditor(placement) {
       return;
     }
     items = (items || []).filter(item => item.base !== MUSIC_OBJECT);
-    if (it) items.push(it);
+    items.push(it);
     sel = it;
     syncMe();
     closeMusicEditor();
     if (ED) renderEditor();
     else openLocker(PEOPLE.find(person => person.you));
-    toast(song ? 'your locker has a soundtrack ♫' : 'song removed from your locker');
+    toast(existing ? 'song updated ♫' : 'song added ♫');
   }, true);
   const footer = el('footer', { className: 'music-footer' }, [credit, el('div', { className: 'music-footer-actions' }, [musicButton('Cancel', closeMusicEditor), save])]);
-  dialog.append(columns, footer);
+  dialog.append(search, selection, captionLabel, caption, footer);
 
-  function updatePreview() {
-    player.replaceChildren();
-    if (draft) player.append(songCassette(draft, () => openSongPlayer({ ...draft, caption: caption.value.trim() })));
-    else player.append(el('div', { className: 'music-placeholder' }, [el('span', { className: 'cassette', ariaHidden: 'true' }), el('p', { textContent: 'A little space for\nsomething on repeat.' })]));
-    selectedName.replaceChildren();
-    if (draft) selectedName.append(el('a', { href: draft.url, target: '_blank', rel: 'noopener noreferrer', textContent: `${draft.title} · ${draft.artist} on Spotify ↗` }));
-    else selectedName.textContent = 'Choose a song to see it in your locker.';
-    remove.hidden = !draft;
-    save.disabled = !draft && !lockerSong;
-    save.textContent = draft ? 'Pin song to locker' : 'Save locker';
+  function updateSelection() {
+    selection.replaceChildren();
+    selection.hidden = !draft;
+    if (draft) selection.append(el('span', { className: 'music-label', textContent: 'Selected song' }), el('b', { textContent: draft.title }), el('span', { textContent: draft.artist }));
+    save.disabled = !draft;
   }
 
   function renderResults() {
     results.replaceChildren();
-    if (!tracks.length) {
-      results.append(el('div', { className: 'music-search-empty' }, [el('span', { className: 'cassette', ariaHidden: 'true' }), el('p', { textContent: 'An old favorite. A new obsession.\nWhat sounds like you?' })]));
-      return;
-    }
+    results.hidden = !tracks.length;
     for (const track of tracks) {
       const selected = draft?.id === track.id;
       const art = track.artwork ? el('img', { className: 'music-art', src: track.artwork, alt: '', loading: 'lazy', referrerPolicy: 'no-referrer' }) : el('span', { className: 'music-art' });
       const row = el('button', { className: 'music-result', type: 'button' }, [art, el('span', { className: 'music-result-copy' }, [el('b', { textContent: track.title }), el('span', { textContent: track.artist })]), el('span', { className: 'music-result-action', textContent: selected ? '✓' : '+' })]);
-      row.setAttribute('aria-label', `${selected ? 'Selected' : 'Add'} ${track.title} by ${track.artist}`);
+      row.setAttribute('aria-label', `${selected ? 'Selected' : 'Select'} ${track.title} by ${track.artist}`);
       row.setAttribute('aria-pressed', String(selected));
-      row.addEventListener('click', () => { draft = { ...track }; updatePreview(); renderResults(); });
+      row.addEventListener('click', () => { draft = { ...track }; updateSelection(); renderResults(); });
       results.append(row);
     }
   }
@@ -242,10 +208,9 @@ function openMusicEditor(placement) {
     const controller = new AbortController();
     musicSearchController = controller;
     submit.disabled = true;
-    hints.querySelectorAll('button').forEach(button => button.disabled = true);
     submit.textContent = 'Searching...';
     status.classList.remove('error');
-    status.textContent = 'Looking through the record shelf...';
+    status.textContent = 'Searching Spotify...';
     results.setAttribute('aria-busy', 'true');
     try {
       const response = await fetch('/api/spotify/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }), signal: controller.signal });
@@ -253,7 +218,7 @@ function openMusicEditor(placement) {
       if (!response.ok) throw new Error(data.error || "Couldn't search right now. Please try again.");
       if (controller.signal.aborted) return;
       tracks = data.tracks;
-      status.textContent = tracks.length ? `${tracks.length} songs found. Pick one for your locker.` : 'No songs found. Try another title or artist.';
+      status.textContent = tracks.length ? `${tracks.length} songs found. Select one below.` : 'No songs found. Try another title or artist.';
       renderResults();
     } catch (error) {
       if (controller.signal.aborted) return;
@@ -262,12 +227,11 @@ function openMusicEditor(placement) {
     } finally {
       submit.disabled = false;
       submit.textContent = 'Search';
-      hints.querySelectorAll('button').forEach(button => button.disabled = false);
       results.removeAttribute('aria-busy');
     }
   });
 
-  updatePreview();
+  updateSelection();
   renderResults();
   input.focus();
 }
