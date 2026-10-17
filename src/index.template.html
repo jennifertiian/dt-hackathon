@@ -217,6 +217,7 @@ button:focus-visible { outline: 1px dashed var(--blush-deep); outline-offset: 1p
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
 }
+__MUSIC_STYLES__
 </style>
 
 <div id="fit">
@@ -465,6 +466,7 @@ function openLocker(p) {
   backBtn.addEventListener('click', closeLocker);
   side.append(backBtn);
 
+  attachLockerSong(p, wrap);
   viewer.append(dim, wrap, side, tab, dlg);
   $('#stage').append(viewer); $('#stage').classList.add('viewing');
   say(p.hello); tab.textContent = p.you ? 'you' : p.name.split(' ')[0];
@@ -646,6 +648,8 @@ function renderDM(body) {
   body.append(form); body.scrollTop = body.scrollHeight;
 }
 
+__MUSIC_SCRIPT__
+
 /* ---------- top buttons ---------- */
 $('#btnMail').addEventListener('click', openMail);
 $('#btnProfile').addEventListener('click', () => openLocker(PEOPLE.find(p => p.you)));
@@ -654,6 +658,7 @@ $('#btnQuiz').addEventListener('click', () => { closeMail(); if (viewer) closeLo
 $('#icQuiz').src = A.icon_quiz;
 addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  if (musicLayer) { closeMusicEditor(); return; }
   if (typeof flowEscape === 'function' && flowEscape()) return;
   if (noteLayer) closeNote(); else if (mailLayer) closeMail(); else if (viewer) closeLocker();
 });

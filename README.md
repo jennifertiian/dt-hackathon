@@ -8,7 +8,15 @@ Built for DiversaTech's *Build Something AI Cannot Do Alone @ Cal* hackathon.
 
 ## Try the prototype
 
-Open `index.html` in a browser. It's a single self-contained file (all pixel art is baked in), so no install or server is needed. It plays best on a laptop-sized screen.
+Open `index.html` in a browser for the self-contained prototype, or run the local demo with [Bun](https://bun.sh) to enable Spotify song search:
+
+```sh
+GLASSER_API_KEY_FILE='/path/to/glasser api.txt' bun server.ts
+```
+
+Open [localhost:4173](http://localhost:4173/). No package installation is needed. Use `--port=4174` to choose another port. You can also inject `GLASSER_API_KEY` at runtime instead of using a file. Keep credential files outside this repository.
+
+The server reads the key privately and calls Glasser's ScrapeCreators Spotify search endpoint. Searches run on submit; identical queries share an in-flight request and a ten-minute memory cache. API searches spend the connected Glasser balance. It plays best on a laptop-sized screen.
 
 The prototype covers the first flow:
 
@@ -28,19 +36,24 @@ Opening the page now starts at sign-in. Add `#hallway` to the URL to skip straig
 1. **Sign in:** `@berkeley.edu` email only → mock magic-link inbox → optional friend invite.
 2. **Make your locker · about you:** the form sits on the inside of your locker door (name, pronouns, major, year, MBTI, likes, classes, food spot, study spot, hobbies, artist, fun fact). Major / MBTI / year / first hobby become door tags. Below that is the theme picker: 14 interior wallpapers × 5 exterior colors, plus a door sticker. "✨ fill example" fills everything in for a demo.
 3. **Sprite maker:** click your circle. Tabs for face (eyes, mouth, skin, blush), hair (9 styles + any color), shirt and background, plus a "surprise me" button. It's drawn at 24×24 in the same style as the other avatars.
-4. **Decorate:** drag photos, stickers and objects into your locker. Click a placed item to give it a title and description and to resize, rotate, flip or remove it. Drag an item out of the locker to remove it. Objects settle onto the shelf or the floor. **Upload** turns any photo into a pixel polaroid (3 sizes) or any image into a die-cut sticker.
+4. **Decorate:** drag photos, stickers and objects into your locker. Click a placed item to give it a title and description and to resize, rotate, flip or remove it. Drag an item out of the locker to remove it. Objects settle onto the shelf or the floor. **Upload** turns any photo into a pixel polaroid (3 sizes) or any image into a die-cut sticker. **♫ add song** opens Spotify search: select a result, add an optional caption, then choose **Pin song to locker** to return to decorating. Your song appears as a pixel-art cassette in the editor and your locker.
 5. **Go live:** your locker shows up in the hallway, and the **daily quiz** pops up (multiple choice or write your own). Today's answer decides tomorrow's neighbors.
 6. **Past quizzes** (clipboard button): a 3×3 grid of past questions and your answers.
 7. **Notes:** every note opens a DM by default. Unviewed notes poke out of your locker's vent. Click your locker (or press →) to unfold them one by one, or see all new ones in a grid. Once a note is viewed it leaves your locker and the notes grid and lives only in your DMs (mailbox → DMs).
 
 The pencil buttons (top bar, and "edit locker" inside your own locker) reopen the editor.
 
+The song and caption are saved in this browser's local storage independently of the other demo profile fields. Use **♫ edit song** to replace or remove the song; Cancel discards changes in the music dialog. Select the cassette to open Spotify's official player in a separate dialog. Closing the player returns to your locker or unsaved music draft. Spotify controls playback availability, including previews, login, and account or region restrictions; the demo does not download or serve audio.
+
 ## Repo layout
 
 ```
 index.html                 built prototype (generated, open this)
+server.ts                  local Bun server and private Glasser search endpoint
 src/index.template.html    page source: hallway layout, styles, interactions, example data
 src/flows.template.html    sign-in, locker editor, sprite maker, daily quiz, notes
+src/music.js               music editor, official embed, and local song storage
+src/music.css              paper editor and locker music shelf styles
 art/                       pixel-art generators (Python + Pillow)
   hallway.py               hallway background (480×270)
   assets.py                locker skins, big doors, interiors, items, avatars, icons
@@ -54,6 +67,7 @@ exports/                   full-size PNGs for slides and Figma
 ## Editing
 
 - **Change neighbors, items or descriptions:** edit the `PEOPLE` list in `src/index.template.html`, then run `python3 art/build.py`.
+- **Change the music editor:** edit `src/music.js` or `src/music.css`, then run `python3 art/build.py`. The generator embeds both files into `index.html`.
 - **Redraw the art:** from `art/`, run
   ```sh
   pip install pillow

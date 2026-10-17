@@ -484,6 +484,7 @@ function renderEditor() {
   const bar = el('div', { id: 'edBar', className: 'abs' });
   ED.append(door, locker, right, bar);
   drawPlaced();
+  attachLockerSong(ME, locker);
 
   if (edStep === 1) stepAbout(door, right, bar);
   if (edStep === 2) stepDecorate(door, right, bar);
@@ -584,7 +585,8 @@ function stepDecorate(door, right, bar) {
     b.append(el('div', { className: 'lbl dark', textContent: title }), g, btn('upload', 'chipbtn', () => openUpload(kind)));
     return b;
   };
-  right.append(bank('photos', [...PHOTO_BANK, ...customPhotos], 'photo', 92), el('div', { style: 'height:4px' }), bank('stickers', [...STICKER_BANK, ...customStickers], 'sticker', 70));
+  right.append(bank('photos', [...PHOTO_BANK, ...customPhotos], 'photo', 80), el('div', { style: 'height:4px' }), bank('stickers', [...STICKER_BANK, ...customStickers], 'sticker', 60),
+    el('div', { style: 'height:4px' }), btn(lockerSong ? '♫ edit song' : '♫ add song', 'chipbtn soundtrack-btn', openMusicEditor));
   renderBar(bar);
 }
 function renderBar(bar = $('#edBar')) {

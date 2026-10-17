@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 art/*_x4.png
+.env
+.env.*
+*.key
+*api.txt
