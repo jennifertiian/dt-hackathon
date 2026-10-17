@@ -1,12 +1,11 @@
 <!-- ================================================================
      Flows added on top of the hallway prototype:
-       1. login with a berkeley.edu email (+ optional invite)
+       1. login with a synthetic demo email (+ optional invite)
        2. "Make your locker :)" — about you + theme picker + sprite maker
        3. decorate — photo bank / sticker bank / objects, drag, resize, rotate, flip
        4. go live → hallway, daily quiz pops up
        5. past quizzes grid, notes poking out of your locker (stack, single, all)
-     Everything here only *reads/writes* the hallway's data (PEOPLE "you", A, SIZES)
-     and calls its functions (renderGrid, openLocker, openMail, profileCard, sayHome).
+     Shared records live in demo-model.js; this file adapts the locker editor and flows.
      ================================================================ -->
 <style>
 #toast { z-index: 90; } /* keep toasts above the flow layers */
@@ -39,9 +38,17 @@
 .link { font-size: 6.5px; font-weight: 600; color: var(--blush-deep); text-decoration: underline; text-underline-offset: 1px; }
 
 /* ---------- login ---------- */
-#login .card2 { left: 130px; top: 50px; width: 220px; height: 170px; padding: 12px 16px 10px; display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+#login { display: grid; place-items: center; }
+#login .card2 { position: relative; width: 220px; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 #login .brand { display: flex; align-items: center; justify-content: center; gap: 4px; }
 #login .brand b { font-size: 17px; font-weight: 700; color: var(--ink); text-shadow: 1px 1px 0 var(--paper), 2px 2px 0 var(--paper-3); }
+#login .login-section { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+#login .login-mock { border-top: 1px solid var(--paper-3); padding-top: 10px; }
+#login .login-section .bigbtn, #login .login-section .fin { box-sizing: border-box; width: 100%; height: 22px; flex: none; padding: 4px 8px; font-size: 8px; line-height: 12px; }
+#login .login-section .hint { margin: 0; font-size: 6px; line-height: 8px; text-align: center; }
+#login .login-section .lbl { line-height: 7px; }
+#login .err { min-height: 0; line-height: 8px; }
+#login .err:empty { display: none; }
 #login .mailcard { border: 1px dashed var(--paper-3); background: #fff; padding: 5px 6px; text-align: left; }
 #login .mailcard b { font-size: 7px; display: block; color: var(--ink); }
 #login .mailcard p { margin: 2px 0 4px; font-family: var(--font-talk); font-size: 6.5px; line-height: 8.5px; color: var(--dialog-text); }
@@ -245,6 +252,10 @@
 .bub.me { align-self: flex-end; background: #3d5aa8; color: #fff; border-bottom-right-radius: 2px; }
 .bub.typing { color: #9a8579; letter-spacing: 1px; }
 .dmbar { display: flex; gap: 4px; padding: 5px 8px; border-top: 1px solid var(--paper-3); }
+#pastModal .grid9 { max-height:205px; overflow-y:auto; }
+#allNotes { max-height:184px; overflow-y:auto; }
+#toast { max-width:430px; white-space:normal; text-align:center; }
+.card .facts { max-height:68px; overflow-y:auto; }
 </style>
 
 <script>
@@ -295,6 +306,9 @@ const inter = (a, b) => filt(a, (x, y) => b.has(key(x, y)));
 // hair styles as pixel rows: f = in front of the head, b = behind it (long hair, ponytails),
 // part = a darker parting line, curls = lighter flecks, tie = a hair tie in the accent red
 const HAIRS = {"crop":{"label":"crop","f":{"4":[[9,14]],"5":[[7,16]],"6":[[6,17]],"7":[[5,18]],"8":[[5,18]],"9":[[5,7],[9,11],[14,18]],"10":[[5,6],[17,18]],"11":[[5,5],[18,18]]}},"sidepart":{"label":"side part","f":{"3":[[10,15]],"4":[[8,17]],"5":[[6,18]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,6],[10,18]],"10":[[5,6],[14,18]],"11":[[5,5],[17,18]]},"part":[[9,4],[9,5],[9,6],[8,7]]},"buzz":{"label":"buzz","f":{"6":[[8,15]],"7":[[6,17]],"8":[[6,17]],"9":[[6,6],[17,17]]},"dark":true},"curly":{"label":"curly","f":{"3":[[8,10],[13,15]],"4":[[6,17]],"5":[[5,18]],"6":[[4,19]],"7":[[4,19]],"8":[[4,19]],"9":[[4,7],[9,10],[13,14],[16,19]],"10":[[4,6],[17,19]],"11":[[5,5],[18,18]]},"curls":[[8,5],[12,4],[15,6],[6,7],[10,7],[17,8],[13,8]]},"fringe":{"label":"fringe","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,18]],"10":[[5,18]],"11":[[5,8],[10,13],[15,18]],"12":[[5,5],[18,18]]}},"afro":{"label":"afro","f":{"1":[[8,15]],"2":[[6,17]],"3":[[5,18]],"4":[[4,19]],"5":[[3,20]],"6":[[3,20]],"7":[[3,20]],"8":[[3,20]],"9":[[3,6],[17,20]],"10":[[3,6],[17,20]],"11":[[3,5],[18,20]],"12":[[4,5],[18,19]]},"curls":[[7,3],[11,2],[15,3],[5,6],[18,6],[9,5],[14,5]]},"long":{"label":"long","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,9],[14,18]],"10":[[5,7],[16,18]],"11":[[5,6],[17,18]],"12":[[5,6],[17,18]],"13":[[5,5],[18,18]],"14":[[5,5],[18,18]],"15":[[5,5],[18,18]]},"b":{"9":[[4,19]],"10":[[4,19]],"11":[[4,19]],"12":[[4,19]],"13":[[4,19]],"14":[[4,19]],"15":[[4,19]],"16":[[4,19]],"17":[[4,19]],"18":[[4,19]],"19":[[3,20]],"20":[[3,20]],"21":[[3,7],[16,20]],"22":[[4,6],[17,19]]},"part":[[11,5],[11,6],[11,7],[11,8]]},"bob":{"label":"bob","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,8],[12,18]],"10":[[5,7],[16,18]],"11":[[4,6],[17,19]],"12":[[4,6],[17,19]],"13":[[4,5],[18,19]],"14":[[4,5],[18,19]],"15":[[4,6],[17,19]],"16":[[4,7],[16,19]]},"b":{"9":[[4,19]],"10":[[4,19]],"11":[[4,19]],"12":[[4,19]],"13":[[4,19]],"14":[[4,19]],"15":[[4,19]],"16":[[4,19]]},"part":[[10,5],[10,6],[10,7],[10,8]]},"ponytail":{"label":"ponytail","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,7],[16,18]],"10":[[5,5],[18,18]]},"b":{"6":[[18,20]],"7":[[19,21]],"8":[[19,21]],"9":[[19,21]],"10":[[19,21]],"11":[[19,21]],"12":[[19,21]],"13":[[19,21]],"14":[[19,20]],"15":[[19,20]],"16":[[18,20]],"17":[[18,19]]},"tie":[[19,6],[20,6]]},"pigtails":{"label":"pigtails","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,8],[11,12],[15,18]],"10":[[5,6],[17,18]]},"b":{"10":[[2,5],[18,21]],"11":[[1,5],[18,22]],"12":[[1,5],[18,22]],"13":[[1,5],[18,22]],"14":[[1,4],[19,22]],"15":[[2,4],[19,21]],"16":[[2,3],[20,21]]},"tie":[[5,10],[5,11],[18,10],[18,11]]},"bun":{"label":"bun","f":{"0":[[10,13]],"1":[[9,14]],"2":[[9,14]],"3":[[10,13]],"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,6],[17,18]],"10":[[5,5],[18,18]]},"tie":[[10,4],[11,4],[12,4],[13,4]]},"wavy":{"label":"wavy","f":{"4":[[8,15]],"5":[[6,17]],"6":[[5,18]],"7":[[5,18]],"8":[[5,18]],"9":[[5,10],[15,18]],"10":[[5,7],[16,18]],"11":[[4,6],[17,19]],"12":[[5,6],[17,18]],"13":[[4,5],[18,19]],"14":[[5,6],[17,18]],"15":[[4,5],[18,19]]},"b":{"9":[[4,19]],"10":[[3,20]],"11":[[3,20]],"12":[[4,19]],"13":[[3,20]],"14":[[3,20]],"15":[[4,19]],"16":[[3,20]],"17":[[3,20]],"18":[[4,19]],"19":[[3,20]],"20":[[3,8],[15,20]],"21":[[4,7],[16,19]]}},"none":{"label":"none","f":{}}};
+// Retain the two previously saved styles that the refreshed picker no longer defines.
+HAIRS.short = { label: 'short', legacy: () => filt(ellipse(11.5, 10, 6.6, 5), (x, y) => y <= 9) };
+HAIRS.spiky = { label: 'spiky', legacy: () => { const m = filt(ellipse(11.5, 10, 6.6, 5), (x, y) => y <= 9); [7, 10, 13, 16].forEach(sx => [[sx, 3], [sx, 4], [sx - 1, 4]].forEach(([x, y]) => m.add(key(x, y)))); return m; } };
 const EYES = {
   dot: [[9, 13, 'd'], [9, 14, 'd'], [14, 13, 'd'], [14, 14, 'd']],
   round: [[8, 13, 'd'], [9, 13, 'w'], [8, 14, 'd'], [9, 14, 'd'], [14, 13, 'd'], [15, 13, 'w'], [14, 14, 'd'], [15, 14, 'd']],
@@ -329,7 +343,7 @@ function renderSprite(sp, crop) {
   // a slightly squarer head than before
   const head = rowsMask({ 7: [[8, 15]], 8: [[7, 16]], 9: [[6, 17]], 10: [[6, 17]], 11: [[6, 17]], 12: [[6, 17]], 13: [[6, 17]], 14: [[6, 17]], 15: [[6, 17]], 16: [[6, 17]], 17: [[6, 17]], 18: [[7, 16]], 19: [[8, 15]] });
   put(head, sp.skin); put(new Set([key(5, 12), key(5, 13), key(18, 12), key(18, 13)]), tone(sp.skin, .92));
-  const front = rowsMask(H.f);
+  const front = H.legacy ? H.legacy() : rowsMask(H.f);
   put(front, sp.hair);
   const edge = new Set([...front].filter(k => { const [px, py] = k.split(',').map(Number); return !front.has(key(px, py + 1)); }));
   put(edge, tone(sp.hair, .72));
@@ -351,6 +365,7 @@ function renderSprite(sp, crop) {
 }
 function applySprite() {
   A.avatar_you = renderSprite(sprite);
+  A['avatar_' + ME.id] = A.avatar_you;
   $('#icAvatar').src = A.avatar_you;
   document.querySelectorAll('.youSprite').forEach(i => i.src = A.avatar_you);
 }
@@ -366,37 +381,40 @@ function openLogin() {
 
   const stepEmail = () => {
     card.innerHTML = '';
-    const input = el('input', { className: 'fin', type: 'email', placeholder: 'oski@berkeley.edu', value: profile.email, autocomplete: 'off' });
+    const google = btn('sign in with Google', 'bigbtn', () => { location.href = '/auth/google'; });
+    google.disabled = !useBackend || !backendConfig?.GoogleConfigured;
+    const input = el('input', { id: 'loginEmail', className: 'fin', type: 'email', placeholder: 'oski@berkeley.edu', value: profile.email, autocomplete: 'off', maxLength: 254 });
     const err = el('div', { className: 'err' });
-    const go = btn('send me a magic link ✉', 'bigbtn');
-    const submit = () => {
-      const v = input.value.trim().toLowerCase();
-      if (!/^[^@\s]+@berkeley\.edu$/.test(v)) { err.textContent = 'use your @berkeley.edu email so we know you’re a bear '; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); input.focus(); return; }
-      profile.email = v; stepInbox();
+    err.setAttribute('aria-live', 'polite');
+    const go = btn('enter mock mode →', 'bigbtn pink');
+    const submit = async () => {
+      const email = input.value.trim().toLowerCase();
+      if (email.length > 254 || !/^[^@\s]+@berkeley\.edu$/.test(email)) { err.textContent = 'use a made-up @berkeley.edu email'; input.focus(); return; }
+      profile.email = email; go.disabled = true;
+      try {
+        if (useBackend) await appModel.loginMock(email);
+        popLayer(L); await openEditor(1);
+      } catch (error) { err.textContent = error.message; go.disabled = false; }
     };
     go.addEventListener('click', submit); input.addEventListener('keydown', e => e.key === 'Enter' && submit());
-    card.append(brand(), el('div', { className: 'sub', textContent: 'find your people in a big school.\nevery morning: 8 new locker neighbors.' }),
-      el('div', { className: 'lbl dark', textContent: 'sign in with your berkeley email' }), input, err, el('div', { className: 'row' }, [go]),
-      el('div', { className: 'hint', textContent: 'only @berkeley.edu addresses can join homeroom', style: 'text-align:center' }));
-    card.querySelector('.sub').style.whiteSpace = 'pre-line';
+    card.append(brand(),
+      el('div', { className: 'login-section' }, [google,
+        el('p', { className: 'hint', textContent: 'sign in with your Berkeley email. your profile and history are saved.' })]),
+      el('div', { className: 'login-section login-mock' }, [
+        el('label', { className: 'lbl dark', htmlFor: 'loginEmail', textContent: 'complete mock mode' }), input, err, go,
+        el('p', { className: 'hint', textContent: 'use a made-up Berkeley email. nothing is saved after reload.' })]));
     setTimeout(() => input.focus(), 50);
-  };
-  const stepInbox = () => {
-    card.innerHTML = '';
-    const open = btn('open homeroom →', 'bigbtn pink', stepInvite);
-    card.append(brand(), el('div', { className: 'sub', textContent: `check your inbox! we sent a link to ${profile.email}` }),
-      el('div', { className: 'mailcard' }, [el('b', { textContent: 'homeroom  your locker is waiting' }), el('p', { textContent: 'tap below to finish signing in. this link expires in 15 minutes.' }), open]),
-      el('div', { className: 'row' }, [btn('use a different email', 'link', stepEmail)]));
   };
   const stepInvite = () => {
     card.innerHTML = '';
     const input = el('input', { className: 'fin', type: 'email', placeholder: 'friend@berkeley.edu', autocomplete: 'off' });
     const err = el('div', { className: 'err' });
-    const send = btn('send invite', 'chipbtn', () => {
+    const send = btn('record invite', 'chipbtn', async () => {
       if (!/^[^@\s]+@berkeley\.edu$/.test(input.value.trim())) { err.textContent = 'needs to be a @berkeley.edu email'; return; }
-      err.style.color = 'var(--sage-deep)'; err.textContent = `invite sent to ${input.value.trim()}`; input.value = '';
+      send.disabled = true;
+      try { await appModel.invite(input.value.trim().toLowerCase()); err.style.color = 'var(--sage-deep)'; err.textContent = 'invite recorded ✿ share the app link with them; no email is sent'; input.value = ''; } catch (error) { err.textContent = error.message; } finally { send.disabled = false; }
     });
-    card.append(brand(), el('div', { className: 'sub', textContent: 'you’re in! bring a friend along? (optional)' }),
+    card.append(brand(), el('div', { className: 'sub', textContent: 'you’re in! invite someone to join? (optional)' }),
       el('div', { className: 'row' }, [input, send]), err,
       el('div', { className: 'sub', textContent: 'next up: build your locker. it’s like a little profile your neighbors can peek into.' }),
       el('div', { className: 'row' }, [btn('make my locker →', 'bigbtn', () => { popLayer(L); openEditor(1); })]));
@@ -407,13 +425,14 @@ function openLogin() {
 /* ================================================================
    2–4. locker editor
    ================================================================ */
-const TITLES = { polaroid_sunset: 'sunset polaroid', polaroid_cat: 'cat photo', polaroid_beach: 'beach day', polaroid_ramen: 'ramen night', polaroid_mountains: 'mountain hike', polaroid_friends: 'friends',
+const TITLES = { music_cassette: 'music cassette', polaroid_sunset: 'sunset polaroid', polaroid_cat: 'cat photo', polaroid_beach: 'beach day', polaroid_ramen: 'ramen night', polaroid_mountains: 'mountain hike', polaroid_friends: 'friends',
   sticker_star: 'gold star', sticker_heart: 'heart sticker', sticker_bolt: 'lightning bolt', sticker_controller: 'controller', sticker_pizza: 'pizza', sticker_note: 'music note', sticker_pennant: 'pennant',
   plant: 'plant', books: 'books', boba_milk: 'milk tea', boba_matcha: 'matcha latte', headphones: 'headphones', bunny: 'bunny plush', onigiri: 'onigiri', camera: 'camera',
   volleyball: 'volleyball', sketchbook: 'sketchbook', mirror: 'mirror', whiteboard: 'whiteboard', schedule: 'schedule', sticky: 'sticky note', bunting: 'bunting' };
 const PHOTO_BANK = ['polaroid_sunset', 'polaroid_friends', 'polaroid_cat', 'polaroid_beach', 'polaroid_ramen', 'polaroid_mountains'];
-const STICKER_BANK = ['sticker_star', 'sticker_bolt', 'sticker_controller', 'sticker_pizza', 'sticker_note', 'sticker_pennant', 'sticker_heart'];
-const OBJECTS = ['plant', 'books', 'boba_milk', 'boba_matcha', 'headphones', 'bunny', 'onigiri', 'camera', 'volleyball', 'sketchbook', 'mirror', 'whiteboard', 'schedule', 'sticky', 'bunting'];
+const STICKER_BANK = ['sticker_star', 'sticker_bolt', 'sticker_controller', 'sticker_pizza', 'sticker_note', 'sticker_pennant', 'sticker_heart', 'sticker_flower', 'sticker_bear'];
+TITLES.sticker_flower = 'flower sticker'; TITLES.sticker_bear = 'bear sticker';
+const OBJECTS = [MUSIC_OBJECT, 'plant', 'books', 'boba_milk', 'boba_matcha', 'headphones', 'bunny', 'onigiri', 'camera', 'volleyball', 'sketchbook', 'mirror', 'whiteboard', 'schedule', 'sticky', 'bunting'];
 const PHOTO_SIZES = [[20, 24, 16, 15], [28, 33, 24, 22], [36, 42, 32, 29]]; // frame w,h + photo w,h
 const OPEN = { x0: 7, y0: 7, x1: 182, y1: 158 };
 let items = null, uid = 0;
@@ -425,7 +444,7 @@ function startItems() {
     const base = k.startsWith('ux_') ? (bakedFrom[k] || null) : null;
     if (base) return Object.assign({}, base, { id: ++uid });
     const [w, h] = sz(k);
-    return { id: ++uid, kind: k.startsWith('polaroid') ? 'photo' : k.startsWith('sticker') ? 'sticker' : 'object', base: k, scale: 1, rot: 0, flip: false, cx: x + w / 2, cy: y + h / 2, title: t, desc: d };
+    return { id: ++uid, kind: k.startsWith('polaroid') ? 'photo' : k.startsWith('sticker') ? 'sticker' : 'object', base: k, scale: 1, rot: 0, flip: false, cx: x + w / 2, cy: y + h / 2, title: t, desc: d, ...(k === MUSIC_OBJECT && ME.song ? { song: { id: ME.song.id, title: ME.song.title, artist: ME.song.artist } } : {}) };
   });
 }
 const bakedFrom = {};
@@ -441,6 +460,7 @@ async function srcCanvas(it) {
 }
 async function bake(it) {
   const src = await srcCanvas(it);
+  it.sourceWidth = src.width; it.sourceHeight = src.height;
   const s = it.upload && it.kind === 'photo' ? 1 : it.scale;
   const w = src.width * s, h = src.height * s, r = it.rot * Math.PI / 180;
   const W = Math.ceil(Math.abs(w * Math.cos(r)) + Math.abs(h * Math.sin(r))), H = Math.ceil(Math.abs(w * Math.sin(r)) + Math.abs(h * Math.cos(r)));
@@ -545,11 +565,12 @@ function syncMe() {
   if (p.year) tags.push([p.year === 'grad' ? 'grad' : 'class of ' + p.year, '#b98b3a']);
   const hob = (p.hobbies || p.interests).split(',')[0].trim(); if (hob) tags.push([hob.slice(0, 14), '#64924f']);
   ME.pills = tags.length ? tags : [['your major', '#5a75bd'], ['MBTI', '#c46f8b']];
-  const f = [['likes', p.interests], ['eats', p.food], ['studies', p.study], ['listens', p.artist], ['also', p.fun]].filter(([, v]) => v);
-  ME.facts = f.length ? f.slice(0, 5) : [['likes', 'add yours with the pencil button'], ['eats', '?'], ['studies', 'Doe Library'], ['also', 'this is what your neighbors see']];
+  const f = [['pronouns', p.pronouns], ['likes', p.interests], ['classes', p.classes], ['eats', p.food], ['studies', p.study], ['listens', p.artist], ['also', p.fun]].filter(([, v]) => v);
+  ME.facts = f.length ? f : [['likes', 'add yours with the pencil button'], ['eats', '?'], ['studies', 'Doe Library'], ['also', 'this is what your neighbors see']];
   while (ME.facts.length < 3) ME.facts.push(['', '']);
   ME.hello = `hi, i'm ${firstName()}! hover over the stuff in my locker to get to know me`;
   A.interior_you = A[`interior_x_${p.skin}_${p.paper}`];
+  ME.song = songForItem(items.find(it => it.base === MUSIC_OBJECT));
   ME.items = items.map(it => [it.key || it.base, Math.round(it.cx - (it.W || sz(it.base)[0]) / 2), Math.round(it.cy - (it.H || sz(it.base)[1]) / 2), it.title || 'something', it.desc || 'no description yet', it.full || undefined]);
 }
 
@@ -575,7 +596,7 @@ function stepAbout(door, right, bar) {
   field(FIELDS[0]);
   const sel2 = (k, label, opts) => { const s = el('select'); s.id = 'f_' + k; opts.forEach(o => s.append(el('option', { value: o, textContent: o, selected: profile[k] === o }))); s.addEventListener('change', () => { profile[k] = s.value; refreshTags(); }); form.append(el('label', { textContent: label, htmlFor: s.id }), s); };
   sel2('year', 'year', YEARS); sel2('mbti', 'MBTI', MBTIS);
-  FIELDS.slice(1).forEach(field);
+  FIELDS.slice(1).filter(([key]) => profile.live || ['interests', 'hobbies'].includes(key)).forEach(field);
   form.append(el('label', { className: 'full', textContent: 'these turn into tags on your door:' }), tagprev);
   card.append(form);
   door.append(card);
@@ -634,8 +655,11 @@ function renderBar(bar = $('#edBar')) {
 }
 function renderInspector(bar) {
   const it = sel;
-  const t = el('input', { className: 'fin', value: it.title, placeholder: 'title', maxLength: 24 });
+  const music = it.base === MUSIC_OBJECT;
+  const t = el('input', { className: 'fin', value: music ? it.song.title : it.title, placeholder: 'title', maxLength: 24 });
   const d = el('textarea', { className: 'fin', value: it.desc, placeholder: 'tell your neighbors the story behind it ', maxLength: 160 });
+  t.readOnly = music;
+  if (music) d.maxLength = 120;
   t.addEventListener('input', () => it.title = t.value); d.addEventListener('input', () => it.desc = d.value);
   const tool = (txt, label, fn, cls = '') => { const b = btn(txt, 'tool ' + cls, fn); b.title = label; b.setAttribute('aria-label', label); return b; };
   const isUpPhoto = it.upload && it.kind === 'photo';
@@ -651,8 +675,8 @@ function renderInspector(bar) {
     tool('✓ done', 'done', () => select(null), 'ok'),
   ]);
   bar.append(el('div', { className: 'insp' }, [
-    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'title' }), t, el('div', { className: 'hint', textContent: 'neighbors see this on hover' })]),
-    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'description' }), d]),
+    el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: music ? 'song' : 'title' }), t, music ? btn('♫ change song', 'chipbtn', () => openMusicEditor()) : el('div', { className: 'hint', textContent: 'neighbors see this on hover' })]),
+    el('div', { className: 'grp' }, [music ? el('div', { className: 'music-item-label' }, [el('span', { className: 'lbl', textContent: 'a little story' }), btn('▶ listen', 'chipbtn', () => openSongPlayer(songForItem(it)))]) : el('div', { className: 'lbl', textContent: 'description' }), d]),
     el('div', { className: 'grp' }, [el('div', { className: 'lbl', textContent: 'resize · rotate · flip' }), tools])]));
   if (!it.title || it.title === TITLES[it.base]) setTimeout(() => d.focus(), 30);
 }
@@ -672,6 +696,10 @@ function drawPlaced() {
     if (edStep === 2) {
       n.append(el('span', { className: 'editdot' }, [img('icon_pencil', 6, 6)]));
       n.addEventListener('pointerdown', e => startMove(e, it, n));
+      if (it.base === MUSIC_OBJECT) {
+        n.tabIndex = 0; n.setAttribute('role', 'button'); n.setAttribute('aria-label', 'Edit song: ' + it.song.title);
+        n.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(it); } });
+      }
     } else n.style.cursor = 'default';
     layer.append(n);
   });
@@ -707,12 +735,14 @@ function draggable(k, kind) {
   const [w, h] = sz(k) || [20, 24];
   const d = el('button', { className: 'drag', type: 'button' }, [img(k, w, h)]);
   d.setAttribute('aria-label', 'Add ' + (TITLES[k] || kind) + ' to your locker'); d.title = TITLES[k] || kind;
+  d.addEventListener('click', e => { if (e.detail === 0) addItem(k, kind, 95, kind === 'object' ? 120 : 65); });
   d.addEventListener('pointerdown', e => {
     e.preventDefault();
-    const stage = $('#stage').getBoundingClientRect(); const s = stage.width / 480;
+    const stage = $('#stage').getBoundingClientRect();
+    const scaleX = stage.width / 480, scaleY = stage.height / 270;
     const ghost = img(k, w, h, { className: 'ghost' }); ED.append(ghost);
     let moved = false; const sx = e.clientX, sy = e.clientY;
-    const place = ev => { ghost.style.left = (ev.clientX - stage.left) / s - w / 2 + 'px'; ghost.style.top = (ev.clientY - stage.top) / s - h / 2 + 'px'; };
+    const place = ev => { ghost.style.left = (ev.clientX - stage.left) / scaleX - w / 2 + 'px'; ghost.style.top = (ev.clientY - stage.top) / scaleY - h / 2 + 'px'; };
     place(e);
     const move = ev => { if (Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) > 3) moved = true; place(ev); };
     const up = async ev => {
@@ -727,9 +757,10 @@ function draggable(k, kind) {
   return d;
 }
 async function addItem(k, kind, x, y) {
+  if (k === MUSIC_OBJECT) { openMusicEditor({ cx: x, cy: y }); return; }
   const up = uploads[k];
   const it = { id: ++uid, kind, base: up ? null : k, upload: up ? up.src : null, size: 0, scale: 1, rot: kind === 'photo' ? [-6, 4, -3, 5][uid % 4] : 0, flip: false, cx: x, cy: y,
-    title: up ? up.title : (TITLES[k] || ''), desc: up ? up.desc : '', full: up ? up.full : null };
+    assetKey: k, title: up ? up.title : (TITLES[k] || ''), desc: up ? up.desc : '', full: up ? up.full : null };
   if (it.base) { const [w, h] = sz(k); it.W = w; it.H = h; }
   await bake(it); clamp(it); snap(it); items.push(it); drawPlaced(); select(it);
 }
@@ -764,10 +795,11 @@ function openUpload(kind) {
   drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); show(e.dataTransfer.files[0]); });
   const done = btn('done', 'bigbtn', async () => {
     if (!srcCanvasOut) { err.textContent = 'pick an image first'; return; }
-    const k = 'up_' + (++uid);
+    const k = 'up_' + Date.now().toString(36) + '_' + (++uid);
     const thumb = kind === 'photo' ? framePhoto(srcCanvasOut, PHOTO_SIZES[0]) : srcCanvasOut;
     A[k] = thumb.toDataURL(); SIZES[k] = [thumb.width, thumb.height];
     uploads[k] = { src: srcCanvasOut, full: fullOut, title: title.value.trim() || (kind === 'photo' ? 'my photo' : 'my sticker'), desc: desc.value.trim() };
+    try { await appModel.registerUpload(k, uploads[k].title, uploads[k].desc, kind, srcCanvasOut); } catch (error) { err.textContent = error.message; return; }
     (kind === 'photo' ? customPhotos : customStickers).unshift(k);
     popLayer(L); renderEditor();
     await addItem(k, kind, 95, kind === 'photo' ? 60 : 70);
@@ -791,18 +823,20 @@ function stepLive(door, right, bar) {
   const goBtn = btn(profile.live ? 'save changes ✓' : 'make it live ', 'bigbtn pink', goLive);
   bar.append(btn('← back', 'navbtn', () => { edStep = 2; renderEditor(); }),
     el('div', { className: 'grp', style: 'flex:1' }, [
-      el('div', { style: 'font-size:9px;font-weight:700;color:var(--ink)', textContent: `looking good, ${first}!` }),
-      el('div', { className: 'hint', textContent: profile.live ? 'your changes show up for today’s neighbors right away.' : 'every night at 12:00am PT the hallway refreshes with 8 new locker neighbors, matched on that day’s theme. they can peek in and leave you a note, and you’re one of their 8 too.' })]),
+      el('div', { style: 'font-size:9px;font-weight:700;color:var(--ink)', textContent: `looking good, ${first}! ✿` }),
+      el('div', { className: 'hint', textContent: profile.live ? 'your changes show up for today’s neighbors right away.' : 'finish your profile and add an item with a title and description to join matching. groups refresh at midnight Berkeley time.' })]),
     goBtn);
 }
-function goLive() {
-  syncMe(); const first = !profile.live; profile.live = true;
+async function goLive() {
+  const first = !profile.live;
+  try { await appModel.publish(profile, sprite, items); } catch (error) { toast(error.message); return; }
+  syncMe(); profile.live = true;
   closeEditor(); renderGrid(); updateBadges();
   applySprite();
   if (first) {
-    sayHome(`welcome to the hallway, ${firstName()}! these are today’s locker neighbors but first — the daily quiz!`);
+    sayHome(appModel.activeGroup() ? `welcome to the hallway, ${firstName()}! meet your neighbors and answer today’s quiz!` : `your locker is live, ${firstName()}! your first neighbors arrive at midnight. answer today’s quiz!`);
     setTimeout(openQuiz, reduce ? 0 : 900);
-  } else { toast('locker saved '); sayHome(HOME_HELLO); }
+  } else { toast('locker saved ✿'); sayHome(homeHello()); }
 }
 
 /* ================================================================
@@ -865,64 +899,64 @@ function openSpriteMaker() {
 /* ================================================================
    daily quiz + past quizzes
    ================================================================ */
-const TODAY_Q = { kind: 'multiple choice · or write your own', q: 'free afternoon in berkeley. where are you?',
-  opts: ['watching the sunset at the marina', 'thrifting on telegraph', 'a café with a good book', 'hiking the fire trails', 'napping. obviously.'] };
-const PAST_QS = [
-  ['yesterday', 'favorite study spot?', 'Doe Library', 'today’s 8 neighbors'],
-  ['wed', 'pick a dining hall', 'Crossroads', '8 neighbors'],
-  ['tue', 'what’s on repeat this week?', 'city pop', '8 neighbors'],
-  ['mon', 'MBTI?', 'ENFP', '8 neighbors'],
-  ['sun', 'ideal weekend: select all', 'farmers market, naps', '8 neighbors'],
-  ['sat', 'your major in one emoji', '💻', '8 neighbors'],
-  ['fri', 'boba order?', 'taro, 50%', '8 neighbors'],
-  ['thu', 'north side or south side?', 'south side', '8 neighbors'],
-];
-let quizAnswer = null;
-function openQuiz() {
+function openQuiz(revise = false) {
+  const q = appModel.questionForDay();
+  if (!q) { toast('today’s quiz has not been scheduled yet ✿'); return; }
   const L = el('div', { id: 'quizModal', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
   L._esc = () => popLayer(L);
-  const card = el('div', { className: 'card2' });
-  L.append(card); pushLayer(L);
-  let pick = null;
-  const ask = () => {
+  const card = el('div', { className: 'card2' }); L.append(card); pushLayer(L);
+  const existing = appModel.data.QuestionAnswers.find(a => a.PersonID === myID() && a.QuestionID === q.ID);
+  const labels = { MultipleChoice: 'choose one', Checkbox: 'select all that apply', ShortResponse: 'write your answer' };
+  let selection = new Set(), text = '';
+  function done(answer) {
     card.innerHTML = '';
-    const opts = el('div', { className: 'qopts' });
-    const other = el('input', { className: 'fin', placeholder: 'something else? write it here', maxLength: 60 });
-    TODAY_Q.opts.forEach(o => {
-      const b = el('button', { className: 'qopt', type: 'button', textContent: o }); b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', () => { pick = o; other.value = ''; opts.querySelectorAll('.qopt').forEach(x => x.setAttribute('aria-pressed', x === b)); submit.disabled = false; });
-      opts.append(b);
-    });
-    other.addEventListener('input', () => { pick = other.value.trim() || null; opts.querySelectorAll('.qopt').forEach(x => x.setAttribute('aria-pressed', 'false')); submit.disabled = !pick; });
-    opts.append(other);
-    const submit = btn('submit', 'bigbtn', () => { quizAnswer = pick; done(); }); submit.disabled = true;
-    card.append(el('h2', { textContent: 'daily quiz!' }),
-      el('div', { className: 'qbox' }, [el('span', { className: 'qkind', textContent: TODAY_Q.kind }), document.createTextNode(TODAY_Q.q)]), opts,
-      el('div', { className: 'qfoot' }, [btn('later', 'link', () => popLayer(L)), submit]));
-  };
-  const done = () => {
-    card.innerHTML = '';
-    const same = 40 + (quizAnswer.length * 7) % 90;
     card.append(el('h2', { textContent: 'daily quiz!' }), el('div', { className: 'qdone' }, [
-      el('div', { className: 'big', textContent: 'locked in ' }),
-      el('div', { className: 'stat', textContent: `you said: ${quizAnswer}` }),
-      el('div', { className: 'sub', textContent: `${same} people said something similar so far. at midnight PT your hallway refreshes with 8 of them.` }),
-      el('div', { className: 'sub', textContent: 'today’s neighbors? you were matched on yesterday’s quiz — favorite study spot: Doe Library.' }),
-      btn('see today’s neighbors →', 'bigbtn pink', () => { popLayer(L); sayHome(HOME_HELLO); })]));
-  };
-  if (quizAnswer) done(); else ask();
+      el('div', { className: 'big', textContent: 'locked in ✿' }),
+      el('div', { className: 'stat', textContent: 'you said: ' + appModel.answerLabel(q, answer) }),
+      el('div', { className: 'sub', textContent: 'your answer helps decide your next group at midnight Berkeley time.' }),
+      btn('revise today’s answer', 'chipbtn', () => { popLayer(L); openQuiz(true); }),
+      btn('back to hallway →', 'bigbtn pink', () => { popLayer(L); sayHome(homeHello()); })]));
+  }
+  if (existing?.Answer && !revise) { done(existing.Answer); return; }
+  if (existing?.Answer) { const a = existing.Answer; selection = new Set(a.Type === 'SingleChoice' ? [a.ChoiceID] : a.Type === 'MultipleChoices' ? a.ChoiceIDs : []); text = a.Type === 'ShortText' ? a.Content : ''; }
+  const opts = el('div', { className: 'qopts' });
+  const submit = btn('submit', 'bigbtn', async () => {
+    const answer = q.Type === 'MultipleChoice' ? { Type: 'SingleChoice', ChoiceID: [...selection][0] } : q.Type === 'Checkbox' ? { Type: 'MultipleChoices', ChoiceIDs: [...selection] } : { Type: 'ShortText', Content: text.trim() };
+    try { await appModel.submitAnswer(myID(), q.ID, answer); done(answer); } catch (error) { toast(error.message); }
+  });
+  submit.disabled = q.Type === 'MultipleChoice' ? !selection.size : q.Type === 'ShortResponse' ? !text.trim() : false;
+  if (q.Type === 'ShortResponse') {
+    const input = el('textarea', { className: 'fin', placeholder: 'your answer', value: text, maxLength: 200 });
+    input.setAttribute('aria-label', 'Your answer');
+    input.addEventListener('input', () => { text = input.value; submit.disabled = !text.trim(); }); opts.append(input);
+  } else {
+    opts.setAttribute('role', q.Type === 'MultipleChoice' ? 'radiogroup' : 'group'); opts.setAttribute('aria-label', q.Prompt);
+    q.Choices.forEach(choice => {
+      const b = btn(choice.Label, 'qopt', () => {
+        if (q.Type === 'MultipleChoice') selection = new Set([choice.ID]);
+        else if (selection.has(choice.ID)) selection.delete(choice.ID); else selection.add(choice.ID);
+        opts.querySelectorAll('.qopt').forEach(x => { const checked = selection.has(x.dataset.choice); x.setAttribute('aria-checked', checked); x.setAttribute('aria-pressed', checked); });
+        submit.disabled = q.Type === 'MultipleChoice' && !selection.size;
+      });
+      b.dataset.choice = choice.ID; b.setAttribute('role', q.Type === 'MultipleChoice' ? 'radio' : 'checkbox'); b.setAttribute('aria-checked', selection.has(choice.ID)); b.setAttribute('aria-pressed', selection.has(choice.ID)); opts.append(b);
+    });
+    if (q.Type === 'Checkbox') opts.append(el('div', { className: 'hint', textContent: 'selecting none is also a valid answer' }));
+  }
+  card.append(el('h2', { textContent: 'daily quiz!' }), el('div', { className: 'qbox' }, [el('span', { className: 'qkind', textContent: labels[q.Type] }), document.createTextNode(q.Prompt)]), opts,
+    el('div', { className: 'qfoot' }, [btn('later', 'link', L._esc), submit]));
 }
 function openPastQuizzes() {
-  const L = el('div', { id: 'pastModal', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
-  L._esc = () => popLayer(L);
+  const L = el('div', { id: 'pastModal', className: 'fl' }, [el('div', { className: 'fl-dim' })]); L._esc = () => popLayer(L);
   const g = el('div', { className: 'grid9' });
-  const today = el('button', { className: 'qcard today', type: 'button' }, [el('span', { className: 'd', textContent: 'today' }), el('span', { className: 'q', textContent: TODAY_Q.q }),
-    quizAnswer ? el('span', { className: 'a', textContent: quizAnswer }) : el('span', { className: 'a', textContent: 'answer it →' }), el('span', { className: 'm', textContent: 'matches at midnight PT' })]);
-  today.addEventListener('click', () => { popLayer(L); openQuiz(); });
-  g.append(today);
-  PAST_QS.forEach(([d, q, a, m], i) => { const c = el('div', { className: 'qcard' }, [el('span', { className: 'd', textContent: d }), el('span', { className: 'q', textContent: q }), el('span', { className: 'a', textContent: a }), el('span', { className: 'm', textContent: 'matched with ' + m })]); c.style.animationDelay = i * 30 + 'ms'; g.append(c); });
-  L.append(el('div', { className: 'mtitle', textContent: 'past quizzes' }), g, el('div', { className: 'mclose' }, [btn('close', 'chip', L._esc)]));
-  pushLayer(L);
+  appModel.data.Questions.filter(q => q.QuizDay <= appModel.day()).sort((a, b) => b.QuizDay.localeCompare(a.QuizDay)).forEach(q => {
+    const answer = appModel.data.QuestionAnswers.find(a => a.PersonID === myID() && a.QuestionID === q.ID)?.Answer;
+    const isToday = q.QuizDay === appModel.day();
+    const card = el(isToday ? 'button' : 'div', { className: 'qcard' + (isToday ? ' today' : '') }, [el('span', { className: 'd', textContent: isToday ? 'today' : q.QuizDay }),
+      el('span', { className: 'q', textContent: q.Prompt }), el('span', { className: 'a', textContent: answer ? appModel.answerLabel(q, answer) : isToday ? 'answer it →' : 'not answered' }),
+      el('span', { className: 'm', textContent: isToday ? 'next group at midnight' : q.Type })]);
+    if (isToday) card.addEventListener('click', () => { popLayer(L); openQuiz(); }); g.append(card);
+  });
+  L.append(el('div', { className: 'mtitle', textContent: 'past quizzes' }), g, el('div', { className: 'mclose' }, [btn('close', 'chip', L._esc)])); pushLayer(L);
 }
 
 /* ================================================================
@@ -959,38 +993,12 @@ const YESTERDAY = [
 ];
 A.interior_jordan = A.interior_x_mint_graph; A.interior_marcus = A.interior_x_butter_plaid;
 
-/* ================================================================
-   notes, missed notes, messages
-   ================================================================ */
-// today's notes: physically in your locker until you open them
-const TODAY = [
-  { from: RECEIVED.from, text: RECEIVED.text, when: '8:12 am', read: false },
-  { from: PEOPLE.find(p => p.id === 'sofia'), text: 'your sprite is so good. do you play stardew? i need a farm co-op partner for the weekend', when: '9:40 am', read: false },
-  { from: PEOPLE.find(p => p.id === 'kai'), text: 'fellow North Reading Room regular! i’m the one with the bird book by the window. come say hi, i’ll show you the hawk', when: '11:02 am', read: false },
-];
-// missed: left before the last refresh, never opened. these are the only notes that go to the mailbox
-const MISSED = [
-  { from: YESTERDAY[0], text: 'saw you also said Moffitt is overrated lol. pickup at the RSF thursday? we need a 4th', when: 'yesterday · 6:15 pm', accepted: false },
-  { from: YESTERDAY[1], text: 'your locker setup is clean. i 3D print stuff, want a little nametag keychain for it?', when: 'yesterday · 10:48 pm', accepted: false },
-];
-// messages: one thread per accepted note
-const DMS = [
-  { who: PEOPLE.find(p => p.id === 'diego'), note: 'your sketchbook page of Sather Gate is unreal. tips for drawing buildings?', unread: true,
-    msgs: [['me', 'your sketchbook page of Sather Gate is unreal. tips for drawing buildings?'], ['them', 'haha thank you!! honestly just start with the boxy shapes'], ['them', 'i do a sketch walk on sundays if you wanna come']] },
-];
-const unviewed = () => TODAY.filter(n => !n.read);
+// These are views of the exact same Message records shown in DMs.
+const unviewed = () => appModel.unreadNotes(myID()).map(noteView);
 function unreadNotes() { return profile.live ? unviewed().length : 0; }
-function updateBadges() {
-  const m = profile.live ? MISSED.filter(n => !n.accepted).length : 0, d = profile.live ? DMS.filter(t => t.unread).length : 0;
-  const mb = $('#mailBadge'), db = $('#dmBadge'); mb.hidden = !m; mb.textContent = m; db.hidden = !d; db.textContent = d;
-}
+function updateBadges() { const n = profile.live ? appModel.data.Messages.filter(m => m.Recipient === myID() && !m.IsOpened).length : 0; const b = $('#mailBadge'); b.hidden = !n; b.textContent = n; }
+async function markViewed(n) { await appModel.markOpened(n.id, myID()); updateBadges(); renderGrid(); }
 function backToHall() { renderGrid(); updateBadges(); }
-function acceptNote(n) {
-  n.accepted = true; n.read = true;
-  let t = DMS.find(x => x.who === n.from);
-  if (!t) { t = { who: n.from, note: n.text, unread: false, msgs: [['them', n.text]] }; DMS.unshift(t); }
-  backToHall(); openDMs(t);
-}
 
 function openNoteStack() {
   closeMail(); if (viewer) closeLocker();
@@ -1020,22 +1028,23 @@ function openNoteStack() {
 }
 function sbtnF(icon, w, h, label, cls, on) { const b = sbtn(icon, w, h, label, cls); b.addEventListener('click', on); return b; }
 
-function openOneNote(n) {
-  n.read = true;
+async function openOneNote(n) {
+  await markViewed(n);
   const left = unviewed();
   const L = el('div', { id: 'oneLayer', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
   const close = () => { popLayer(L); backToHall(); };
   L._esc = close;
   const paper = el('div', { id: 'oneNote', className: 'abs' }, [
     el('span', { className: 'count2', textContent: left.length ? `${left.length} more new` : 'all caught up' }),
-    el('div', { className: 'from' }, [img('avatar_' + n.from.id, 24, 24), el('div', {}, [el('b', { textContent: `note from ${n.from.name}` }), el('span', { textContent: `${n.when} · today’s neighbor` })])]),
+    el('div', { className: 'from' }, [img('avatar_' + n.from.id, 24, 24), el('div', {}, [el('b', { textContent: `note from ${n.from.name}` }), el('span', { textContent: `${n.when} · saved in messages` })])]),
     el('div', { className: 'body', textContent: n.text })]);
   const next = () => { popLayer(L); if (left.length) openOneNote(left[0]); else backToHall(); };
   const side = el('div', { id: 'stackBtns', className: 'abs' }, [
-    sbtnF('icon_chat', 14, 9, 'accept → message', 'tall', () => { popLayer(L); acceptNote(n); }),
+    sbtnF('icon_mail', 14, 11, 'reply in DMs', 'tall', () => { close(); openConversation(n.conversationID); }),
     sbtnF(null, 0, 0, 'peek at their locker', '', () => { close(); openLocker(n.from); }),
-    sbtnF(null, 0, 0, left.length ? 'not now → next' : 'not now', '', next),
-    left.length ? sbtnF(null, 0, 0, 'see all new notes', 'small', () => { popLayer(L); openAllNotes(); }) : sbtnF(null, 0, 0, '← hallway', 'small', close),
+    left.length ? sbtnF(null, 0, 0, 'next note →', '', () => { popLayer(L); openOneNote(left[0]); }) : sbtnF(null, 0, 0, 'no more new notes', 'dimmed', () => {}),
+    left.length ? sbtnF(null, 0, 0, 'see all new notes', 'small', () => { popLayer(L); openAllNotes(); }) : sbtnF(null, 0, 0, 'open DMs', 'small', () => { close(); state.dmOpen = false; openMail(); }),
+    sbtnF(null, 0, 0, '← hallway', 'small', close),
   ]);
   if (left.length) L._next = () => { popLayer(L); openOneNote(left[0]); };
   L.append(paper, side); pushLayer(L);
@@ -1046,7 +1055,7 @@ function openAllNotes() {
   L._esc = close;
   const list = unviewed();
   const g = el('div', { id: 'allNotes' });
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < Math.max(9, list.length); i++) {
     const n = list[i];
     if (!n) { g.append(el('div', { className: 'ncard empty2' })); continue; }
     const c = el('button', { className: 'ncard unread', type: 'button' }, [
@@ -1056,72 +1065,20 @@ function openAllNotes() {
     c.addEventListener('click', () => { popLayer(L); openOneNote(n); });
     g.append(c);
   }
-  L.append(el('div', { className: 'mtitle', textContent: list.length ? `new notes (${list.length})` : 'all caught up' }), g,
-    el('div', { className: 'mclose' }, [btn('close', 'chip', close)]),
-    el('div', { className: 'abs', style: 'left:0;right:0;top:243px;text-align:center' }, [btn('open messages →', 'chip', () => { close(); openDMs(); })]));
+  const dmBtn = btn('viewed notes live in your DMs →', 'chip', () => { close(); state.dmOpen = false; openMail(); });
+  L.append(el('div', { className: 'mtitle', textContent: list.length ? `new notes (${list.length})` : 'all caught up ✿' }), g,
+    el('div', { className: 'mclose' }, [btn('close', 'chip', close)]), el('div', { className: 'abs', style: 'left:0;right:0;top:243px;text-align:center' }, [dmBtn]));
   pushLayer(L);
 }
 
-/* ---------- messages: a list of threads, then a chat ---------- */
-const REPLIES = ['haha yes', 'omg okay when are you free?', 'lowkey this made my day', 'down! thursday works for me', 'wait that’s so funny', 'let’s do it'];
-function openDMs(thread) {
-  closeMail();
-  const old = $('#dmLayer'); if (old) popLayer(old);
-  const L = el('div', { id: 'dmLayer', className: 'fl' }, [el('div', { className: 'fl-dim' })]);
-  const close = () => { popLayer(L); updateBadges(); };
-  L._esc = close; L.querySelector('.fl-dim').addEventListener('click', close);
-  const box = el('div', { id: 'dmBox', className: 'abs' }); L.append(box); pushLayer(L);
-  const list = () => {
-    box.innerHTML = '';
-    const head = el('div', { className: 'dmhead' }, [el('b', { textContent: 'messages' }), btn('close', 'chip', close)]);
-    const rows = el('div', { className: 'dmrows' });
-    if (!DMS.length) rows.append(el('p', { className: 'empty', textContent: 'no messages yet.\naccept a note to start one.' }));
-    DMS.forEach(t => {
-      const last = t.msgs[t.msgs.length - 1];
-      const r = el('button', { className: 'dmrow' + (t.unread ? ' unread' : ''), type: 'button' }, [
-        img('avatar_' + t.who.id, 24, 24, { className: 'av' }),
-        el('div', { className: 'mid' }, [el('b', { textContent: t.who.name }), el('span', { textContent: (last[0] === 'me' ? 'you: ' : '') + last[1] })]),
-        t.unread ? el('i', { className: 'dot' }) : el('i')]);
-      r.addEventListener('click', () => chat(t));
-      rows.append(r);
-    });
-    box.append(head, rows);
-  };
-  const chat = t => {
-    t.unread = false; updateBadges();
-    box.innerHTML = '';
-    const back = btn('←', 'chip', list); back.setAttribute('aria-label', 'Back to messages');
-    const head = el('div', { className: 'dmhead' }, [back, img('avatar_' + t.who.id, 24, 24, { className: 'av' }),
-      el('div', { className: 'mid' }, [el('b', { textContent: t.who.name }), el('span', { textContent: t.who.line })]),
-      btn('locker', 'chip', () => { close(); openLocker(t.who); })]);
-    const feed = el('div', { className: 'dmfeed' });
-    const paint = () => {
-      feed.innerHTML = '';
-      feed.append(el('div', { className: 'notecard' }, [el('span', { textContent: 'started from a note' }), document.createTextNode(t.note)]));
-      t.msgs.slice(t.msgs[0] && t.msgs[0][1] === t.note ? 1 : 0).forEach(([who, txt]) => feed.append(el('div', { className: 'bub ' + who, textContent: txt })));
-      if (t.typing) feed.append(el('div', { className: 'bub them typing', textContent: '• • •' }));
-      feed.scrollTop = feed.scrollHeight;
-    };
-    const form = el('form', { className: 'dmbar' });
-    const input = el('input', { className: 'fin', id: 'dmText', placeholder: `message ${t.who.name.split(' ')[0]}...`, maxLength: 200, autocomplete: 'off' });
-    form.append(input, el('button', { className: 'chip go', textContent: 'send', type: 'submit' }));
-    form.addEventListener('submit', e => {
-      e.preventDefault(); const v = input.value.trim(); if (!v) return;
-      t.msgs.push(['me', v]); input.value = ''; paint();
-      if (!t.typing) { t.typing = true; setTimeout(paint, 600); setTimeout(() => { t.typing = false; t.msgs.push(['them', REPLIES[t.msgs.length % REPLIES.length]]); if ($('#dmLayer')) paint(); }, 2200); }
-    });
-    box.append(head, feed, form); paint(); input.focus();
-  };
-  thread ? chat(thread) : list();
-}
 
 /* ================================================================
    midnight PT countdown
    ================================================================ */
 function secsToMidnightPT() {
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date()).map(p => [p.type, p.value]));
-  const now = (+parts.hour % 24) * 3600 + (+parts.minute) * 60 + (+parts.second);
-  return 86400 - now;
+  const state = appModel?.data;
+  if (state?.ServerNow && state.NextRefreshAt) return Math.max(0, Math.ceil((Date.parse(state.NextRefreshAt) - Date.parse(state.ServerNow) - (Date.now() - appModel.receivedAt)) / 1000));
+  return Math.max(0, Math.ceil((HomeroomDemo.midnight(HomeroomDemo.shiftDay(HomeroomDemo.day(), 1)) - Date.now()) / 1000));
 }
 function tickCountdown() {
   const s = secsToMidnightPT(), pad = n => String(n).padStart(2, '0');
@@ -1166,12 +1123,119 @@ addEventListener('keydown', e => { const top = layers[layers.length - 1]; if (e.
 /* ================================================================
    boot
    ================================================================ */
+// Register procedural avatar parts and the fixed frames as actual example media.
+Object.keys(EYES).forEach(eyes => A['eyes_' + eyes] = renderSprite({ ...sprite, eyes }, [6, 10, 12, 8]));
+Object.keys(MOUTHS).forEach(mouth => A['mouth_' + mouth] = renderSprite({ ...sprite, mouth }, [8, 14, 8, 6]));
+Object.keys(HAIRS).forEach(hairStyle => A['hair_' + hairStyle] = renderSprite({ ...sprite, hairStyle }));
+['small', 'medium', 'large'].forEach((name, i) => A['frame_' + name] = framePhoto(canvas(4, 4)[0], PHOTO_SIZES[i]).toDataURL());
+const hydratedPeople = new Map();
+async function hydrateServerState(state) {
+  const own = state.People.find(p => p.PersonID === state.CurrentPersonID);
+  if (!own) return;
+  $('#btnReset').hidden = false;
+  $('#btnReset').textContent = state.IsTemporary ? 'reset demo' : 'sign out';
+  $('#btnSkipDay').hidden = !state.DemoMode || own.OnboardingStatus !== 'live';
+  const catalog = new Map(state.MediaBucket.Assets.map(a => [a.ID, a]));
+  const assetSource = asset => A[asset.StorageKey] || asset.StorageKey;
+  const procedural = config => ({ eyes: config.EyesStyleID.replace('system:eyes_', ''), mouth: config.MouthStyleID.replace('system:mouth_', ''), hairStyle: config.HairStyleID.replace('system:hair_', ''), skin: config.SkinColor, hair: config.HairColor, shirt: config.ShirtColor, bg: config.BackgroundColor, blush: config.Blush });
+  if (!ED) {
+    for (const [key, value] of Object.entries(own.PersonMeta)) profile[key] = Array.isArray(value) ? value.join(', ') : value;
+    profile.live = own.OnboardingStatus === 'live';
+    profile.skin = Object.keys(LOCKER_COLORS).find(key => LOCKER_COLORS[key] === own.Locker.LockerMeta.OuterBackground) || 'blue';
+    const wall = catalog.get(own.Locker.LockerMeta.InnerBackground.MediaAssetID)?.StorageKey || '';
+    profile.paper = PAPERS.find(paper => wall.endsWith('_' + paper)) || 'floral';
+    profile.doorSticker = own.Locker.LockerMeta.OuterStickers[0]?.SystemAssetID.replace('system:', '') || '';
+    Object.assign(sprite, procedural(own.AvatarConfiguration));
+  }
+  ME.id = own.PersonID;
+  const projections = [];
+  for (const record of state.People) {
+    const isOwn = record.PersonID === own.PersonID;
+    const serialized = JSON.stringify(record);
+    let projected = hydratedPeople.get(record.PersonID);
+    if (!projected || projected.serialized !== serialized) {
+      const details = record.PersonMeta;
+      const ui = isOwn ? ME : {};
+      Object.assign(ui, { id: record.PersonID, name: details.name || 'You', you: isOwn, skin: Object.keys(LOCKER_COLORS).find(k => LOCKER_COLORS[k] === record.Locker.LockerMeta.OuterBackground) || 'blue', line: [details.major, details.year].filter(Boolean).join(' · '), pills: [[details.major || 'new bear', '#5a75bd'], [details.mbti || '?', '#c46f8b']], facts: [['pronouns', details.pronouns], ['likes', Array.isArray(details.interests) ? details.interests.join(', ') : details.interests], ['classes', Array.isArray(details.classes) ? details.classes.join(', ') : details.classes], ['eats', details.food], ['studies', details.study], ['listens', details.artist], ['also', details.fun]].filter(([,v]) => v), hello: 'hover over the things in my locker to get to know me', stickers: [], items: [] });
+      while (ui.facts.length < 3) ui.facts.push(['', '']);
+      A['avatar_' + record.PersonID] = renderSprite(procedural(record.AvatarConfiguration));
+      const inner = catalog.get(record.Locker.LockerMeta.InnerBackground.MediaAssetID); A['interior_' + record.PersonID] = inner ? assetSource(inner) : A.interior_you;
+      ui.song = null;
+      const restored = [];
+      for (const placement of record.Locker.LockerBoard.Items) {
+        const media = catalog.get(placement.Asset.MediaAssetID); if (!media) continue;
+        const uploaded = !!media.OwnerPersonID;
+        const kind = placement.FrameStyleID ? 'photo' : media.Kind === 'Sticker' ? 'sticker' : 'object';
+        const raw = uploaded ? await loadImg(assetSource(media)) : null;
+        const sourceSize = uploaded ? [raw.naturalWidth || raw.width, raw.naturalHeight || raw.height] : sz(media.StorageKey) || [placement.Width, placement.Height];
+        const it = { id: placement.ID, persistedID: placement.ID, kind, base: uploaded ? null : media.StorageKey, upload: raw, full: uploaded && kind === 'photo' ? assetSource(media) : null, assetKey: media.ID, mediaID: media.ID, size: placement.FrameStyleID?.endsWith('large') ? 2 : placement.FrameStyleID?.endsWith('medium') ? 1 : 0, scale: uploaded && kind === 'photo' ? 1 : placement.Width / sourceSize[0], rot: placement.Orientation, flip: placement.FlipX, cx: placement.X + placement.Width / 2, cy: placement.Y + placement.Height / 2, title: placement.Title, desc: placement.Description };
+        if (placement.SpotifyTrack) {
+          it.song = { id: placement.SpotifyTrack.ID, title: placement.SpotifyTrack.Title, artist: placement.SpotifyTrack.Artist };
+          ui.song = songForItem(it);
+        }
+        await bake(it); restored.push(it); ui.items.push([it.key, Math.round(it.cx - it.W / 2), Math.round(it.cy - it.H / 2), it.title, it.desc, it.full]);
+      }
+      projected = { serialized, ui, restored }; hydratedPeople.set(record.PersonID, projected);
+    }
+    if (isOwn && !ED) items = projected.restored;
+    projections.push(projected.ui);
+  }
+  PEOPLE.splice(0, PEOPLE.length, ...projections);
+  if (!ED) {
+    for (const media of state.MediaBucket.Assets.filter(a => a.OwnerPersonID === own.PersonID)) {
+      appModel.uploadRecords.set(media.ID, media);
+      if (uploads[media.ID]) continue;
+      const raw = await loadImg(assetSource(media)); const kind = media.Kind === 'Photo' ? 'photo' : 'sticker';
+      uploads[media.ID] = { src: raw, full: kind === 'photo' ? assetSource(media) : null, title: media.Title, desc: media.Description };
+      const thumb = kind === 'photo' ? framePhoto(raw, PHOTO_SIZES[0]) : raw;
+      A[media.ID] = kind === 'photo' ? thumb.toDataURL() : assetSource(media); SIZES[media.ID] = [thumb.width, thumb.height];
+      (kind === 'photo' ? customPhotos : customStickers).push(media.ID);
+    }
+    applySprite();
+  }
+  renderGrid(); updateBadges();
+  $('#sign').textContent = appModel.activeGroup() ? 'Today’s locker neighbors' : profile.live ? 'New neighbors at midnight' : 'Make your locker';
+  tickCountdown();
+  if (mailLayer) {
+    renderMail();
+    if (state.dmOpen && document.visibilityState !== 'hidden') {
+      const unopened = appModel.thread(state.conversationID).filter(m => m.Recipient === myID() && !m.IsOpened);
+      if (unopened.length) queueMicrotask(async () => { for (const message of unopened) { try { await appModel.markOpened(message.ID, myID()); } catch {} } });
+    }
+  }
+  if (!viewer && !ED && !layers.length) sayHome(homeHello());
+}
+const useBackend = /^https?:$/.test(location.protocol) && location.hostname !== 'homeroom.test' && location.hash !== '#demo';
+let backendConfig = null;
+window.addEventListener('pagehide', () => { if (useBackend) appModel.releaseMock?.(); });
+$('#btnSkipDay').addEventListener('click', async () => {
+  const button = $('#btnSkipDay'); button.disabled = true;
+  try { await appModel.advanceDay(); if (viewer) closeLocker(); closeMail(); const quiz = $('#quizModal'); if (quiz) popLayer(quiz); openQuiz(); }
+  catch (error) { toast(error.message); } finally { button.disabled = false; }
+});
+$('#btnReset').addEventListener('click', async () => {
+  if (!confirm(useBackend && !appModel.data.IsTemporary ? 'Sign out? Your profile and history will stay saved.' : 'Restart the mock demo? This run will be discarded.')) return;
+  const button = $('#btnReset'); button.disabled = true;
+  try {
+    if (useBackend && appModel.personID) await appModel.logout();
+    const target = new URL(location.href); target.hash = useBackend || location.protocol === 'file:' ? '' : 'demo';
+    location.replace(target.href); location.reload();
+  } catch (error) { toast(error.message); button.disabled = false; }
+});
+appModel = HomeroomDemo.createDemo(PEOPLE, A, SIZES, new Date(), AV);
+appModel.onChange = () => { renderGrid(); updateBadges(); if (mailLayer) { if (state.dmOpen) openConversation(state.conversationID); else renderMail(); } };
 applySprite();
 renderGrid(); updateBadges();
-if (location.hash === '#hallway') {
-  Object.assign(sprite, { hairStyle: 'long', hair: '#2a2026', skin: '#efc7a2', bg: '#e9dcc0', shirt: '#5a75bd' }); applySprite();
-  // skip onboarding: jump straight to the hallway with the example profile
-  Object.assign(profile, EXAMPLE); startItems(); profile.live = true; syncMe(); renderGrid(); updateBadges();
-  setTimeout(openQuiz, 600);
-} else openLogin();
+async function boot() {
+  if (useBackend) {
+    appModel = new HomeroomRemote.RemoteModel(appModel);
+    appModel.onChange = hydrateServerState;
+    try { backendConfig = await appModel.request('/api/config'); await appModel.restore(); if (profile.live) { renderGrid(); sayHome(homeHello()); } else await openEditor(1); }
+    catch (error) { if (error.status === 401) openLogin(); else toast(error.message); }
+  } else if (location.hash === '#hallway') {
+    Object.assign(profile, EXAMPLE); startItems(); appModel.publish(profile, sprite, items); profile.live = true; syncMe(); renderGrid(); updateBadges();
+    setTimeout(openQuiz, 600);
+  } else openLogin();
+}
+boot();
 </script>

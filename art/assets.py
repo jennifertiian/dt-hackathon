@@ -624,10 +624,6 @@ avatar("you", h("#fff1b8"), SK[1], h("#2a2026"), "bun")
 # =================================================================
 # UI icons
 # =================================================================
-s = S(13, 12); m = {(x - 1, y - 1) for (x, y) in heart_mask()}; m = {(x, y) for (x, y) in m if x < 13 and y < 12}
-s.outline(m, h("#8e3a2a")); s.save("icon_heart_empty")
-s = S(13, 12); s.fill(m, h("#d9573b")); s.outline(m, h("#8e3a2a")); s.p(3, 3, P4); s.p(4, 3, P3); s.save("icon_heart_full")
-
 s = S(14, 11)
 s.rect(0, 0, 13, 10, OL); s.rect(1, 1, 12, 9, CU0)
 for i in range(6): s.p(1 + i, 1 + i * 2 // 3 + (1 if i > 2 else 0), OL); s.p(12 - i, 1 + i * 2 // 3 + (1 if i > 2 else 0), OL)
@@ -640,13 +636,6 @@ for i in range(10):
 s.p(11, 1, h("#d9573b")); s.p(12, 1, h("#d9573b")); s.p(12, 2, h("#d9573b")); s.p(11, 2, h("#c4583d"))
 s.p(1, 11, OLD); s.p(2, 11, h("#f6e0b8")); s.p(1, 10, h("#f6e0b8"))
 s.save("icon_pencil")
-
-s = S(13, 13)
-hd = disc(6, 4, 3); s.fill(hd, h("#f6e0b8")); s.outline(hd, OL)
-sh = {(x, y) for (x, y) in ellipse(6, 13.5, 5.5, 4.5) if y <= 12}
-s.fill(sh, h("#97b3e8")); s.outline({(x, y) for (x, y) in sh}, OL)
-s.p(5, 4, OLD); s.p(7, 4, OLD)
-s.save("icon_person")
 
 # envelope (open + closed) for the send animation
 def envelope(closed):

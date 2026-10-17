@@ -2,3 +2,18 @@ __pycache__/
 *.pyc
 .DS_Store
 art/*_x4.png
+
+node_modules/
+
+.env
+.env.*
+!.env.example
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local directory exports contain real roster data.
+/contacts-directory-visible*.csv
+/directory-scan*.csv
+/directory-scan.txt
